@@ -3,14 +3,6 @@
 previewsEnabled: true
 previewsExpireAfterDays: 3
 
-# This gives us a Postgresql database
-databases:
-  - name: hikerherd_postgres_db
-    databaseName: hikerherd
-    # Pricing plans for prod and preview dbs
-    plan: free
-    previewPlan: free
-
 services:
   # This is our web service, which runs the app itself
   - type: web
@@ -51,3 +43,11 @@ services:
         # This means we have to enter it ourselves in the dashboard.
         # We don't wany secrets in this file.
         sync: false
+
+# This gives us a Postgresql database
+databases:
+  - name: hikerherd_postgres_db
+    databaseName: hikerherd
+    # Pricing plans for prod and preview dbs
+    plan: free
+    previewPlan: free
