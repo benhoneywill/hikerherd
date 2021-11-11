@@ -1,0 +1,58 @@
+# Create preview environments each time a PR is made
+# This will recreate each service including a fresh DB for each preview
+previewsEnabled: true
+
+# We define secret env vars in a group so that they can be accessed
+# by preview deployments. Things like 3rd party API tokens go here.
+# `sync: false` means that these must be entered manually.
+# DO NOT ENTER SECRETS IN THIS FILE.
+envVarGroups:
+  - name: secrets
+    envVars:
+      - key: POSTMARK_API_TOKEN
+        sync: false
+
+# This gives us a Postgresql database
+databases:
+  - name: hikerherd-db
+    # Pricing plans for prod and preview dbs
+    plan: free
+    previewPlan: free
+
+services:
+  # This is our web service, which runs the app itself
+  - type: web
+    name: hikerherd
+    env: node
+
+    # Pricing plans for prod and preview apps
+    plan: free
+    previewPlan: free
+
+    # When new preview deployments are created we seed the database
+    initialDeployHook: blitz db seed
+
+    # Build and start commands
+    buildCommand: npm ci && npm run build && npm run migrate
+    startCommand: npm run start
+
+    # Define all of the env vars for the app
+    envVars:
+      # Include the secret env vars declared above
+      - fromGroup: secrets
+      # Declare the rest of the env vars
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        fromService:
+          # The host is different for preview deploys so fetch it
+          # from the service itself
+          name: hikerherd
+          type: web
+          property: host
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hikerherd-db
+          property: connectionString
+      - key: SESSION_SECRET_KEY
+        generateValue: true
