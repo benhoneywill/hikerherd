@@ -19,7 +19,7 @@ const HomePage: BlitzPage = () => {
 
   return (
     <>
-      <h1>Home (preview)</h1>
+      <h1>Home (preview test)</h1>
       <Link href={Routes.NewPostPage()} passHref>
         <Button as="a">New post</Button>
       </Link>
