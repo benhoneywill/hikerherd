@@ -1,3 +1,4 @@
+import type { FC } from "react";
 import type { PromiseReturnType } from "blitz";
 
 import { AuthenticationError, Link, useMutation, Routes } from "blitz";

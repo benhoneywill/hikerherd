@@ -1,3 +1,5 @@
+import type { FC } from "react";
+
 import { useMutation } from "blitz";
 
 import { TextField } from "app/core/components/text-field";

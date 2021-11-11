@@ -1,6 +1,8 @@
+import type { BlitzPage } from "blitz";
+
 import { Head, ErrorComponent } from "blitz";
 
-const NotFoundPage = () => {
+const NotFoundPage: BlitzPage = () => {
   return (
     <>
       <Head>

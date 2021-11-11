@@ -1,3 +1,5 @@
+import type { FC } from "react";
+
 import { useSession, Link, Routes, useMutation } from "blitz";
 import { Suspense } from "react";
 
@@ -13,7 +15,7 @@ import { SkeletonCircle } from "@chakra-ui/skeleton";
 import { useCurrentUser } from "app/users/hooks/use-current-user";
 import logoutMutation from "app/auth/mutations/logout-mutation";
 
-const UserMenuButton = () => {
+const UserMenuButton: FC = () => {
   const user = useCurrentUser();
 
   return (
@@ -31,7 +33,7 @@ const UserMenuButton = () => {
   );
 };
 
-const UserMenu = () => {
+const UserMenu: FC = () => {
   const [logout] = useMutation(logoutMutation);
 
   return (
@@ -48,7 +50,7 @@ const UserMenu = () => {
   );
 };
 
-export const Header = () => {
+export const Header: FC = () => {
   const session = useSession({ suspense: false });
   const isLoggedIn = !!session.userId;
   const isLoggedOut = !session.userId && !session.isLoading;
