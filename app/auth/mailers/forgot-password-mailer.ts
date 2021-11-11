@@ -1,7 +1,7 @@
 import type { User } from "db";
 
 import { postmark } from "integrations/postmark";
-import { ORIGIN } from "app/core/constants/public-env";
+import { ORIGIN } from "app/core/constants/env";
 
 type ResetPasswordOptions = {
   token: string;
