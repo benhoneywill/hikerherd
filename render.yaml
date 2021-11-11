@@ -1,20 +1,12 @@
 # Create preview environments each time a PR is made
 # This will recreate each service including a fresh DB for each preview
 previewsEnabled: true
-
-# We define secret env vars in a group so that they can be accessed
-# by preview deployments. Things like 3rd party API tokens go here.
-# `sync: false` means that these must be entered manually.
-# DO NOT ENTER SECRETS IN THIS FILE.
-envVarGroups:
-  - name: secrets
-    envVars:
-      - key: POSTMARK_API_TOKEN
-        sync: false
+previewsExpireAfterDays: 3
 
 # This gives us a Postgresql database
 databases:
-  - name: hikerherd-db
+  - name: hikerherd_postgres_db
+    databaseName: hikerherd
     # Pricing plans for prod and preview dbs
     plan: free
     previewPlan: free
@@ -22,15 +14,12 @@ databases:
 services:
   # This is our web service, which runs the app itself
   - type: web
-    name: hikerherd
+    name: hikerherd_blitz_app
     env: node
 
     # Pricing plans for prod and preview apps
     plan: free
     previewPlan: free
-
-    # When new preview deployments are created we seed the database
-    initialDeployHook: blitz db seed
 
     # Build and start commands
     buildCommand: yarn --frozen-lockfile --prod=false && yarn build && yarn migrate
@@ -38,17 +27,27 @@ services:
 
     # Define all of the env vars for the app
     envVars:
-      # Include the secret env vars declared above
-      - fromGroup: secrets
-
-      # Declare the rest of the env vars
       - key: NODE_ENV
         value: production
 
       - key: DATABASE_URL
         fromDatabase:
-          name: hikerherd-db
+          name: hikerherd_postgres_db
           property: connectionString
 
       - key: SESSION_SECRET_KEY
         generateValue: true
+
+      - key: BLITZ_PUBLIC_PREVIEW_SUBDOMAIN
+        fromService:
+          type: web
+          name: hikerherd_blitz_app
+          property: host
+
+      - key: BLITZ_PUBLIC_HOST
+        value: www.hikerherd.com
+
+      - key: POSTMARK_API_TOKEN
+        # This means we have to enter it ourselves in the dashboard.
+        # We don't wany secrets in this file.
+        sync: false
