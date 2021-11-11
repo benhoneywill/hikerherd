@@ -33,7 +33,7 @@ services:
     initialDeployHook: blitz db seed
 
     # Build and start commands
-    buildCommand: npm ci && npm run build && npm run migrate
+    buildCommand: npm ci --include=dev && npm run build && npm run migrate
     startCommand: npm run start
 
     # Define all of the env vars for the app
