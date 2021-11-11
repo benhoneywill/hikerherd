@@ -1,7 +1,7 @@
 import type { Post } from "db";
 import type { BlitzPage, GetServerSideProps } from "blitz";
 
-import { invokeWithMiddleware } from "blitz";
+import { invokeWithMiddleware, NotFoundError } from "blitz";
 
 import { Layout } from "app/core/layouts/layout";
 
@@ -21,19 +21,23 @@ const PostPage: BlitzPage<PostPage> = ({ post }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
-  const post = await invokeWithMiddleware(
-    postBySlugQuery,
-    { slug: params?.slug as string },
-    { req, res }
-  );
+  try {
+    const post = await invokeWithMiddleware(
+      postBySlugQuery,
+      { slug: params?.slug as string },
+      { req, res }
+    );
 
-  if (!post) {
-    return {
-      notFound: true,
-    };
+    return { props: { post } };
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      return {
+        notFound: true,
+      };
+    } else {
+      throw error;
+    }
   }
-
-  return { props: { post } };
 };
 
 PostPage.getLayout = (page) => <Layout title="Post">{page}</Layout>;
