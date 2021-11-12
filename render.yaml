@@ -1,31 +1,40 @@
-# Create preview environments each time a PR is made
-# This will recreate each service including a fresh DB for each preview
-previewsEnabled: true
-previewsExpireAfterDays: 3
+# This file defines the deployment infrastructure for http://render.com
+
+# Create preview environments each time a PR is made (disabled for now)
+
+# previewsEnabled: true
+# previewsExpireAfterDays: 3
 
 # This gives us a Postgresql database
+
 databases:
   - name: hikerherd_postgres_db
     databaseName: hikerherd
+
     # Pricing plans for prod and preview dbs
+
     plan: free
-    previewPlan: free
+    # previewPlan: free
 
 services:
-  # This is our web service, which runs the app itself
   - type: web
+    # This is our web service, which runs the app itself
+
     name: hikerherd_blitz_app
     env: node
 
     # Pricing plans for prod and preview apps
+
     plan: free
-    previewPlan: free
+    # previewPlan: free
 
     # Build and start commands
+
     buildCommand: yarn --frozen-lockfile --prod=false && yarn build && yarn migrate
     startCommand: yarn start
 
     # Define all of the env vars for the app
+
     envVars:
       - key: NODE_ENV
         value: production
@@ -38,16 +47,9 @@ services:
       - key: SESSION_SECRET_KEY
         generateValue: true
 
-      - key: BLITZ_PUBLIC_PREVIEW_SUBDOMAIN
-        fromService:
-          type: web
-          name: hikerherd_blitz_app
-          property: host
-
-      - key: BLITZ_PUBLIC_HOST
-        value: www.hikerherd.com
+      - key: BLITZ_PUBLIC_APP_ORIGIN
+        value: https://www.hikerherd.com
 
       - key: POSTMARK_API_TOKEN
-        # This means we have to enter it ourselves in the dashboard.
-        # We don't wany secrets in this file.
-        sync: false
+        previewValue: API_TEST_TOKEN
+        sync: false # (Keep secrets out of version control)
