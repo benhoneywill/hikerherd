@@ -14,7 +14,7 @@ const changePasswordMutation = resolver.pipe(
     return db.post.create({
       data: {
         title,
-        content,
+        content: JSON.stringify(content),
         publishedAt: publish ? new Date() : null,
         authorId: ctx.session.userId,
         slug: slugify(title, { withRandomSuffix: true }),

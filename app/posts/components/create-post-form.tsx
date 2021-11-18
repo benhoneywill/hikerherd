@@ -5,6 +5,7 @@ import { useMutation } from "blitz";
 
 import { TextField } from "app/core/components/text-field";
 import { Form, FORM_ERROR } from "app/core/components/form";
+import { Tiptap } from "app/core/components/tiptap";
 
 import createPostMutation from "../mutations/create-post-mutation";
 import { CreatePostSchema } from "../schemas/create-post-schema";
@@ -36,7 +37,7 @@ export const CreatePostForm: FC<CreatePostFormProps> = ({ onSuccess }) => {
         }}
       >
         <TextField name="title" label="Title" placeholder="Title" />
-        <TextField name="content" label="Content" placeholder="Content" />
+        <Tiptap name="content" />
       </Form>
     </div>
   );

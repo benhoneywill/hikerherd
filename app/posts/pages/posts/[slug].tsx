@@ -2,6 +2,10 @@ import type { Post } from "db";
 import type { BlitzPage, GetServerSideProps } from "blitz";
 
 import { invokeWithMiddleware, NotFoundError } from "blitz";
+import { useMemo } from "react";
+
+import StarterKit from "@tiptap/starter-kit";
+import { generateHTML } from "@tiptap/react";
 
 import { Layout } from "app/core/layouts/layout";
 
@@ -12,10 +16,16 @@ type PostPage = {
 };
 
 const PostPage: BlitzPage<PostPage> = ({ post }) => {
+  const jsonContent = useMemo(() => JSON.parse(post.content || "{}"), [post.content]);
+
+  const htmlContent = useMemo(() => {
+    return generateHTML(jsonContent, [StarterKit]);
+  }, [jsonContent]);
+
   return (
     <div>
       <h1>{post.title}</h1>
-      <p>{post.content}</p>
+      <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
     </div>
   );
 };
