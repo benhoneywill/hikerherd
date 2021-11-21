@@ -3,12 +3,12 @@ import type { FC } from "react";
 import { useSession, Link, Routes, useMutation } from "blitz";
 import { Suspense } from "react";
 
-import { Flex, HStack, Text } from "@chakra-ui/layout";
+import { Flex } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { Avatar } from "@chakra-ui/avatar";
 import { Fade } from "@chakra-ui/transition";
 import { Menu, MenuList, MenuItem, MenuButton } from "@chakra-ui/menu";
-import { FaArrowRight, FaChevronDown, FaSignOutAlt, FaUserAlt } from "react-icons/fa";
+import { FaArrowRight, FaChevronDown, FaSignOutAlt, FaUserAlt, FaNewspaper } from "react-icons/fa";
 import Icon from "@chakra-ui/icon";
 import { SkeletonCircle } from "@chakra-ui/skeleton";
 
@@ -41,6 +41,11 @@ const UserMenu: FC = () => {
       <Link href={Routes.MyProfilePage()} passHref>
         <MenuItem as="a" icon={<FaUserAlt />}>
           My profile
+        </MenuItem>
+      </Link>
+      <Link href={Routes.MyPostsPage()} passHref>
+        <MenuItem as="a" icon={<FaNewspaper />}>
+          My posts
         </MenuItem>
       </Link>
       <MenuItem as="button" onClick={() => logout()} icon={<FaSignOutAlt />}>

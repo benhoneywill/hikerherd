@@ -1,16 +1,22 @@
 import type { Prisma } from "db";
+import type { Ctx } from "blitz";
 
+import { AuthenticationError } from "blitz";
 import { paginate } from "blitz";
 
 import db from "db";
 
-type LatestPostsOptions = {
+type MyPostsOptions = {
   skip?: Prisma.PostFindManyArgs["skip"];
   take?: Prisma.PostFindManyArgs["take"];
 };
 
-const latestPostsQuery = async ({ skip = 0, take = 15 }: LatestPostsOptions) => {
-  const where = { publishedAt: { not: null } };
+const myPostsQuery = async ({ skip = 0, take = 15 }: MyPostsOptions, { session }: Ctx) => {
+  if (!session.userId) {
+    throw new AuthenticationError();
+  }
+
+  const where = { authorId: session.userId };
 
   const result = await paginate({
     skip,
@@ -20,7 +26,7 @@ const latestPostsQuery = async ({ skip = 0, take = 15 }: LatestPostsOptions) => 
       return db.post.findMany({
         ...paginateArgs,
         where,
-        orderBy: { publishedAt: "desc" },
+        orderBy: { createdAt: "desc" },
       });
     },
   });
@@ -28,4 +34,4 @@ const latestPostsQuery = async ({ skip = 0, take = 15 }: LatestPostsOptions) => 
   return result;
 };
 
-export default latestPostsQuery;
+export default myPostsQuery;

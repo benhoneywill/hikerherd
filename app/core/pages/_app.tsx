@@ -15,10 +15,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 
   return (
     <ChakraProvider>
-      <ErrorBoundary
-        FallbackComponent={AppErrorFallback}
-        onReset={useQueryErrorResetBoundary().reset}
-      >
+      <ErrorBoundary FallbackComponent={AppErrorFallback} onReset={reset}>
         {getLayout(
           <Suspense fallback={<PageLoader />}>
             <Component {...pageProps} />

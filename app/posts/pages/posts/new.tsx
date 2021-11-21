@@ -4,17 +4,20 @@ import { useRouter, Routes } from "blitz";
 
 import { Layout } from "app/core/layouts/layout";
 
-import { CreatePostForm } from "../../components/create-post-form";
+import { PostForm } from "../../components/post-form";
 
 const NewPostPage: BlitzPage = () => {
   const router = useRouter();
 
   return (
     <div>
-      <CreatePostForm
+      <PostForm
         onSuccess={(post) => {
-          const next = router.query.next ? decodeURIComponent(router.query.next as string) : "/";
-          router.push(next);
+          if (post.publishedAt) {
+            router.push(Routes.PostPage({ slug: post.slug }));
+          } else {
+            router.push(Routes.MyPostsPage());
+          }
         }}
       />
     </div>
@@ -22,6 +25,6 @@ const NewPostPage: BlitzPage = () => {
 };
 
 NewPostPage.authenticate = { redirectTo: Routes.LoginPage() };
-NewPostPage.getLayout = (page) => <Layout title="Log In">{page}</Layout>;
+NewPostPage.getLayout = (page) => <Layout title="New post">{page}</Layout>;
 
 export default NewPostPage;

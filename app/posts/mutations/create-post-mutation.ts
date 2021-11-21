@@ -6,7 +6,7 @@ import db from "db";
 
 import { CreatePostSchema } from "../schemas/create-post-schema";
 
-const changePasswordMutation = resolver.pipe(
+const createPostMutation = resolver.pipe(
   resolver.zod(CreatePostSchema),
   resolver.authorize(),
 
@@ -23,4 +23,4 @@ const changePasswordMutation = resolver.pipe(
   }
 );
 
-export default changePasswordMutation;
+export default createPostMutation;

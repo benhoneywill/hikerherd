@@ -70,7 +70,7 @@ model Token {
 }
 
 model Post {
-  id          String    @id @default(cuid())
+  id          Int       @id @default(autoincrement())
   title       String
   slug        String    @unique
   createdAt   DateTime  @default(now())
@@ -85,7 +85,7 @@ model Post {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -96,8 +96,8 @@ model Comment {
   author   User @relation(fields: [authorId], references: [id])
   authorId Int
 
-  parentCommentId String?
-  parentPostId    String?
+  parentCommentId Int?
+  parentPostId    Int?
 
   replies Comment[] @relation("CommentToComment")
 }

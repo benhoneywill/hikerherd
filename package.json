@@ -25,15 +25,16 @@
     ]
   },
   "dependencies": {
-    "@chakra-ui/react": "1.1.2",
+    "@chakra-ui/react": "1.7.2",
     "@emotion/react": "11.1.4",
     "@emotion/styled": "11.0.0",
     "@prisma/client": "3.4.1",
+    "@tiptap/extension-image": "2.0.0-beta.24",
     "@tiptap/react": "2.0.0-beta.95",
     "@tiptap/starter-kit": "2.0.0-beta.142",
     "blitz": "0.42.4",
     "final-form": "4.20.4",
-    "framer-motion": "3.2.0",
+    "framer-motion": "5.3.1",
     "postmark": "2.7.8",
     "react": "18.0.0-alpha-e0aa5e205-20211109",
     "react-dom": "18.0.0-alpha-e0aa5e205-20211109",
