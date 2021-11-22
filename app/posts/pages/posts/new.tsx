@@ -2,9 +2,9 @@ import type { BlitzPage } from "blitz";
 
 import { useRouter, Routes } from "blitz";
 
-import { Layout } from "app/core/layouts/layout";
+import Layout from "app/core/layouts/layout";
 
-import { PostForm } from "../../components/post-form";
+import PostForm from "../../components/post-form";
 
 const NewPostPage: BlitzPage = () => {
   const router = useRouter();

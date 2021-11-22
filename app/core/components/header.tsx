@@ -12,7 +12,7 @@ import { FaArrowRight, FaChevronDown, FaSignOutAlt, FaUserAlt, FaNewspaper } fro
 import Icon from "@chakra-ui/icon";
 import { SkeletonCircle } from "@chakra-ui/skeleton";
 
-import { useCurrentUser } from "app/users/hooks/use-current-user";
+import useCurrentUser from "app/users/hooks/use-current-user";
 import logoutMutation from "app/auth/mutations/logout-mutation";
 
 const UserMenuButton: FC = () => {
@@ -55,7 +55,7 @@ const UserMenu: FC = () => {
   );
 };
 
-export const Header: FC = () => {
+const Header: FC = () => {
   const session = useSession({ suspense: false });
   const isLoggedIn = !!session.userId;
   const isLoggedOut = !session.userId && !session.isLoading;
@@ -90,3 +90,5 @@ export const Header: FC = () => {
     </Flex>
   );
 };
+
+export default Header;

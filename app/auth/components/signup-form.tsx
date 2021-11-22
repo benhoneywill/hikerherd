@@ -1,50 +1,64 @@
 import type { FC } from "react";
 
+import type { SignupValues } from "app/auth/schemas/signup-schema";
+
+import type { SignupResult } from "app/auth/mutations/signup-mutation";
+
 import { useMutation } from "blitz";
 
-import { TextField } from "app/core/components/text-field";
-import { Form, FORM_ERROR } from "app/core/components/form";
+import TextField from "app/core/components/text-field";
+import Form, { FORM_ERROR } from "app/core/components/form";
 import signupMutation from "app/auth/mutations/signup-mutation";
-import { SignupSchema } from "app/auth/schemas/signup-schema";
+import signupSchema from "app/auth/schemas/signup-schema";
+
+import UserCreateError from "../errors/user-create-error";
 
 type SignupFormProps = {
-  onSuccess?: () => void;
+  onSuccess?: (user: SignupResult) => void;
 };
 
-export const SignupForm: FC<SignupFormProps> = ({ onSuccess }) => {
+const SignupForm: FC<SignupFormProps> = ({ onSuccess }) => {
   const [signup] = useMutation(signupMutation);
 
-  return (
-    <div>
-      <h1>Create an Account</h1>
+  const initialValues = { email: "", password: "" };
 
-      <Form
-        submitText="Create Account"
-        schema={SignupSchema}
-        initialValues={{ email: "", password: "" }}
-        onSubmit={async (values) => {
-          try {
-            await signup(values);
-            if (onSuccess) onSuccess();
-          } catch (error: any) {
-            if (error.code === "P2002") {
-              // This error comes from Prisma
-              if (error.meta?.target?.includes("email")) {
-                return { email: "This email is already being used" };
-              }
-              if (error.meta?.target?.includes("username")) {
-                return { username: "This username is already being used" };
-              }
-            } else {
-              return { [FORM_ERROR]: error.toString() };
-            }
-          }
-        }}
-      >
-        <TextField name="email" label="Email" placeholder="Email" />
-        <TextField name="username" label="Username" placeholder="Username" />
-        <TextField name="password" label="Password" placeholder="Password" type="password" />
-      </Form>
-    </div>
+  const handleError = (error: unknown) => {
+    if (error instanceof UserCreateError && error.emailTaken) {
+      return { email: "This email is already being used" };
+    }
+
+    if (error instanceof UserCreateError && error.usernameTaken) {
+      return { username: "This username is already being used" };
+    }
+
+    if (error instanceof Error) {
+      return { [FORM_ERROR]: error.message };
+    }
+
+    return { [FORM_ERROR]: "There was an unexpected error" };
+  };
+
+  const handleSubmit = async (values: SignupValues) => {
+    try {
+      const result = await signup(values);
+      if (onSuccess) onSuccess(result);
+    } catch (error) {
+      return handleError(error);
+    }
+  };
+
+  return (
+    <Form
+      submitText="Join the herd"
+      schema={signupSchema}
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+    >
+      <TextField name="email" label="Email" placeholder="Email" />
+      <TextField name="username" label="Username" placeholder="Username" />
+      <TextField name="password" label="Password" placeholder="Password" type="password" />
+    </Form>
   );
 };
+
+export default SignupForm;

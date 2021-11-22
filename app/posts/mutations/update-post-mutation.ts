@@ -1,31 +1,32 @@
+import type { PromiseReturnType } from "blitz";
+
 import { NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
-import { UpdatePostSchema } from "../schemas/update-post-schema";
+import updatePostSchema from "../schemas/update-post-schema";
 
 const updatePostMutation = resolver.pipe(
-  resolver.zod(UpdatePostSchema),
+  resolver.zod(updatePostSchema),
   resolver.authorize(),
 
-  async ({ id, title, content, publish }, ctx) => {
+  async ({ id, title, content }) => {
     const post = await db.post.findUnique({ where: { id } });
 
     if (!post) {
       throw new NotFoundError();
     }
 
-    const published = publish && !post.publishedAt ? { publishedAt: new Date() } : {};
-
     return db.post.update({
       where: { id },
       data: {
         title,
         content: JSON.stringify(content),
-        ...published,
       },
     });
   }
 );
+
+export type UpdatePostResult = PromiseReturnType<typeof updatePostMutation>;
 
 export default updatePostMutation;

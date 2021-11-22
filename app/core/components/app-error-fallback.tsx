@@ -3,18 +3,14 @@ import type { ErrorFallbackProps } from "blitz";
 
 import { ErrorComponent, AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
-import { LoginForm } from "app/auth/components/login-form";
+import LoginForm from "app/auth/components/login-form";
 
-export const AppErrorFallback: FC<ErrorFallbackProps> = ({ error, resetErrorBoundary }) => {
-  const isAuthenticationError = error instanceof AuthenticationError;
-  const isAuthorizationError = error instanceof AuthorizationError;
-  const isNotFoundError = error instanceof NotFoundError;
-
-  if (isAuthenticationError) {
+const AppErrorFallback: FC<ErrorFallbackProps> = ({ error, resetErrorBoundary }) => {
+  if (error instanceof AuthenticationError) {
     return <LoginForm onSuccess={resetErrorBoundary} />;
   }
 
-  if (isAuthorizationError) {
+  if (error instanceof AuthorizationError) {
     return (
       <ErrorComponent
         statusCode={error.statusCode}
@@ -23,7 +19,7 @@ export const AppErrorFallback: FC<ErrorFallbackProps> = ({ error, resetErrorBoun
     );
   }
 
-  if (isNotFoundError) {
+  if (error instanceof NotFoundError) {
     return <ErrorComponent statusCode={404} title="This page could not be found" />;
   }
 
@@ -31,3 +27,5 @@ export const AppErrorFallback: FC<ErrorFallbackProps> = ({ error, resetErrorBoun
     <ErrorComponent statusCode={error.statusCode || 400} title={error.message || error.name} />
   );
 };
+
+export default AppErrorFallback;

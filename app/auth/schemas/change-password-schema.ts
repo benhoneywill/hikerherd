@@ -1,8 +1,12 @@
 import { z } from "zod";
 
-import { passwordSchema } from "./password-schema";
+import passwordSchema from "./password-schema";
 
-export const ChangePasswordSchema = z.object({
+const changePasswordSchema = z.object({
   currentPassword: z.string(),
   newPassword: passwordSchema,
 });
+
+export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
+
+export default changePasswordSchema;

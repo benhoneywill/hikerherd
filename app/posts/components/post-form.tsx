@@ -1,56 +1,62 @@
 import type { FC } from "react";
-import type { PromiseReturnType } from "blitz";
+import type { Post } from "db";
+import type { CreatePostValues } from "../schemas/create-post-schema";
+import type { CreatePostResult } from "../mutations/create-post-mutation";
+import type { UpdatePostResult } from "../mutations/update-post-mutation";
 
 import { useMutation } from "blitz";
 
-import { TextField } from "app/core/components/text-field";
-import { Form, FORM_ERROR } from "app/core/components/form";
-import { Tiptap } from "app/core/components/tiptap";
+import TextField from "app/core/components/text-field";
+import Form, { FORM_ERROR } from "app/core/components/form";
+import Tiptap from "app/core/components/tiptap";
 
 import createPostMutation from "../mutations/create-post-mutation";
-import { CreatePostSchema } from "../schemas/create-post-schema";
+import createPostSchema from "../schemas/create-post-schema";
 import updatePostMutation from "../mutations/update-post-mutation";
 
 type PostFormProps = {
-  post?: { id: number; title: string; content: string | null; publishedAt: Date | null };
-  onSuccess?: (
-    post: PromiseReturnType<typeof createPostMutation | typeof updatePostMutation>
-  ) => void;
+  post?: Pick<Post, "id" | "title" | "content" | "publishedAt">;
+  onSuccess?: (post: CreatePostResult | UpdatePostResult) => void;
 };
 
-export const PostForm: FC<PostFormProps> = ({ post, onSuccess }) => {
+const PostForm: FC<PostFormProps> = ({ post, onSuccess }) => {
   const [createPost] = useMutation(createPostMutation);
   const [updatePost] = useMutation(updatePostMutation);
 
   const initialValues = {
-    title: post?.title || "",
-    content: post?.content ? JSON.parse(post.content) : "",
-    publish: !!post?.publishedAt || false,
+    title: post ? post.title : "",
+    content: post ? JSON.parse(post.content) : "",
+  };
+
+  const handleSubmit = async (values: CreatePostValues) => {
+    try {
+      let result;
+
+      if (post) {
+        result = await updatePost({ id: post.id, ...values });
+      } else {
+        result = await createPost(values);
+      }
+
+      if (onSuccess) onSuccess(result);
+    } catch (error: unknown) {
+      return {
+        [FORM_ERROR]: "Sorry, there was an unexpected error. Please try again.",
+      };
+    }
   };
 
   return (
     <Form
       submitText="Post"
-      schema={CreatePostSchema}
+      schema={createPostSchema}
       initialValues={initialValues}
-      onSubmit={async (values) => {
-        try {
-          let result;
-          if (post) {
-            result = await updatePost({ id: post.id, ...values });
-          } else {
-            result = await createPost(values);
-          }
-          if (onSuccess) onSuccess(result);
-        } catch (error: any) {
-          return {
-            [FORM_ERROR]: "Sorry, there was an unexpected error. Please try again.",
-          };
-        }
-      }}
+      onSubmit={handleSubmit}
     >
       <TextField name="title" label="Title" placeholder="Title" />
       <Tiptap name="content" />
     </Form>
   );
 };
+
+export default PostForm;

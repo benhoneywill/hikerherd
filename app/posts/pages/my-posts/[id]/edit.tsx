@@ -10,10 +10,10 @@ import {
   useRouter,
 } from "blitz";
 
-import { Layout } from "app/core/layouts/layout";
-import { PostForm } from "app/posts/components/post-form";
+import Layout from "app/core/layouts/layout";
+import PostForm from "app/posts/components/post-form";
 
-import postBySlugQuery from "../../../queries/post-by-slug-query";
+import postBySlugQuery from "../../../queries/public-post-query";
 
 type EditPostPage = {
   post: Post;
@@ -62,6 +62,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
   }
 };
 
+EditPostPage.authenticate = { redirectTo: Routes.LoginPage() };
 EditPostPage.getLayout = (page) => <Layout title="Edit post">{page}</Layout>;
 
 export default EditPostPage;

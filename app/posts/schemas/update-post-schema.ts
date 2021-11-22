@@ -1,10 +1,13 @@
 import { z } from "zod";
 
-import { JsonSchema } from "app/core/schemas/json-schema";
+import JsonSchema from "app/core/schemas/json-schema";
 
-export const UpdatePostSchema = z.object({
+const updatePostSchema = z.object({
   id: z.number(),
-  title: z.string(),
+  title: z.string().min(3),
   content: JsonSchema,
-  publish: z.boolean(),
 });
+
+export type PostValues = z.infer<typeof updatePostSchema>;
+
+export default updatePostSchema;

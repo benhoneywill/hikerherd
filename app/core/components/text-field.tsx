@@ -1,5 +1,5 @@
 import type { UseFieldConfig } from "react-final-form";
-import type { ComponentPropsWithoutRef, PropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef } from "react";
 
 import { forwardRef } from "react";
 
@@ -16,15 +16,14 @@ type TextFieldProps = ComponentPropsWithoutRef<typeof Input> & {
   fieldProps?: UseFieldConfig<string>;
 };
 
-export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
+const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   ({ name, label, controlProps, fieldProps, labelProps, ...props }, ref) => {
-    const {
-      input,
-      meta: { touched, error, submitError, submitting },
-    } = useField(name, {
+    const { input, meta } = useField(name, {
       parse: props.type === "number" ? (v) => Number(v) : (v) => (v === "" ? null : v),
       ...fieldProps,
     });
+
+    const { touched, error, submitError, submitting } = meta;
 
     const normalizedError = Array.isArray(error) ? error.join(", ") : error || submitError;
 
@@ -40,3 +39,5 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     );
   }
 );
+
+export default TextField;

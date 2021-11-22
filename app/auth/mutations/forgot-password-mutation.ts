@@ -1,52 +1,54 @@
-import { resolver, generateToken, hash256 } from "blitz";
+import type { PromiseReturnType } from "blitz";
 
-import { sendForgotPasswordEmail } from "app/auth/mailers/forgot-password-mailer";
+import { resolver } from "blitz";
 
-import db from "db";
+import passwordMailer from "app/auth/mailers/password-mailer";
 
-import { ForgotPasswordSchema } from "../schemas/forgot-password-schema";
+import db, { TokenType } from "db";
 
-const RESET_PASSWORD_TOKEN_EXPIRATION_IN_HOURS = 4;
+import forgotPasswordSchema from "../schemas/forgot-password-schema";
+import generatePasswordResetToken from "../helpers/generate-password-reset-token";
 
 const forgotPasswordMutation = resolver.pipe(
-  resolver.zod(ForgotPasswordSchema),
+  resolver.zod(forgotPasswordSchema),
 
   async ({ email }) => {
-    // 1. Get the user
+    // See if a user exists for the provided email address
     const user = await db.user.findFirst({ where: { email: email.toLowerCase() } });
 
-    // 2. Generate the token and expiration date.
-    const token = generateToken();
-    const hashedToken = hash256(token);
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + RESET_PASSWORD_TOKEN_EXPIRATION_IN_HOURS);
+    if (!user) {
+      // If no user was found wait a bit so hackers can't tell the difference
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } else {
+      // Delete any old password reset tokens
+      await db.token.deleteMany({
+        where: {
+          type: TokenType.RESET_PASSWORD,
+          userId: user.id,
+        },
+      });
 
-    // 3. If user with this email was found
-    if (user) {
-      // 4. Delete any existing password reset tokens
-      await db.token.deleteMany({ where: { type: "RESET_PASSWORD", userId: user.id } });
-
-      // 5. Save this new token in the database.
+      // Create a new password reset token
+      const { token, hashedToken, expiresAt } = generatePasswordResetToken();
       await db.token.create({
         data: {
           user: { connect: { id: user.id } },
-          type: "RESET_PASSWORD",
+          type: TokenType.RESET_PASSWORD,
           expiresAt,
           hashedToken,
           sentTo: user.email,
         },
       });
 
-      // 6. Send the email
-      await sendForgotPasswordEmail(user, { token });
-    } else {
-      // 7. If no user found wait the same time so attackers can't tell the difference
-      await new Promise((resolve) => setTimeout(resolve, 750));
+      // Send the password reset email
+      passwordMailer.sendPasswordReset(user, { token });
     }
 
-    // 8. Return the same result whether a password reset email was sent or not
-    return;
+    // Whether or not the email was sent, return the same response
+    return { success: true };
   }
 );
+
+export type ForgotPasswordResult = PromiseReturnType<typeof forgotPasswordMutation>;
 
 export default forgotPasswordMutation;

@@ -1,3 +1,7 @@
 import { z } from "zod";
 
-export const passwordSchema = z.string().min(10).max(100);
+const passwordSchema = z.string().min(10).max(100);
+
+export type PasswordValues = z.infer<typeof passwordSchema>;
+
+export default passwordSchema;

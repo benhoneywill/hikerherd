@@ -1,19 +1,25 @@
+import type { PromiseReturnType } from "blitz";
+
 import { NotFoundError, SecurePassword, resolver } from "blitz";
 
 import db from "db";
 
-import { ChangePasswordSchema } from "../schemas/change-password-schema";
-import { authenticateUser } from "../helpers/authenticate-user";
+import changePasswordSchema from "../schemas/change-password-schema";
+import authenticateOrError from "../helpers/authenticate-or-error";
 
 const changePasswordMutation = resolver.pipe(
-  resolver.zod(ChangePasswordSchema),
+  resolver.zod(changePasswordSchema),
   resolver.authorize(),
 
   async ({ currentPassword, newPassword }, ctx) => {
-    const user = await db.user.findFirst({ where: { id: ctx.session.userId! } });
-    if (!user) throw new NotFoundError();
+    const currentUser = await db.user.findFirst({
+      where: { id: ctx.session.userId },
+      select: { email: true },
+    });
 
-    await authenticateUser(user.email, currentPassword);
+    if (!currentUser) throw new NotFoundError();
+
+    const user = await authenticateOrError(currentUser.email, currentPassword);
 
     const hashedPassword = await SecurePassword.hash(newPassword.trim());
 
@@ -22,8 +28,10 @@ const changePasswordMutation = resolver.pipe(
       data: { hashedPassword },
     });
 
-    return true;
+    return { success: true };
   }
 );
+
+export type ChangePasswordResult = PromiseReturnType<typeof changePasswordMutation>;
 
 export default changePasswordMutation;

@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { passwordSchema } from "./password-schema";
+import passwordSchema from "./password-schema";
 
-export const ResetPasswordSchema = z
+const resetPasswordSchema = z
   .object({
     password: passwordSchema,
     passwordConfirmation: passwordSchema,
@@ -12,3 +12,7 @@ export const ResetPasswordSchema = z
     message: "Passwords don't match",
     path: ["passwordConfirmation"],
   });
+
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
+
+export default resetPasswordSchema;

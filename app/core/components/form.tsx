@@ -10,7 +10,10 @@ import { Alert, AlertIcon } from "@chakra-ui/alert";
 
 export { FORM_ERROR } from "final-form";
 
-type FormProps<S extends z.ZodType<any, any>> = PropsWithoutRef<
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type GenericZodSchema = z.ZodType<any, any>;
+
+type FormProps<S extends GenericZodSchema> = PropsWithoutRef<
   Omit<JSX.IntrinsicElements["form"], "onSubmit">
 > & {
   children: ReactNode;
@@ -20,7 +23,7 @@ type FormProps<S extends z.ZodType<any, any>> = PropsWithoutRef<
   initialValues?: FinalFormProps<z.infer<S>>["initialValues"];
 };
 
-export const Form = <S extends z.ZodType<any, any>>({
+const Form = <S extends GenericZodSchema>({
   children,
   submitText,
   schema,
@@ -35,14 +38,14 @@ export const Form = <S extends z.ZodType<any, any>>({
       onSubmit={onSubmit}
       render={({ handleSubmit, submitting, submitError }) => (
         <form onSubmit={handleSubmit} {...props}>
-          {children}
-
           {submitError && (
             <Alert status="error">
               <AlertIcon />
               {submitError}
             </Alert>
           )}
+
+          {children}
 
           {submitText && (
             <Button type="submit" isDisabled={submitting} isLoading={submitting}>
@@ -54,3 +57,5 @@ export const Form = <S extends z.ZodType<any, any>>({
     />
   );
 };
+
+export default Form;

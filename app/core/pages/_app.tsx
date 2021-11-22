@@ -6,8 +6,8 @@ import { ErrorBoundary, useQueryErrorResetBoundary } from "blitz";
 
 import { ChakraProvider } from "@chakra-ui/react";
 
-import { AppErrorFallback } from "app/core/components/app-error-fallback";
-import { PageLoader } from "app/core/components/page-loader";
+import AppErrorFallback from "app/core/components/app-error-fallback";
+import PageLoader from "app/core/components/page-loader";
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   const { reset } = useQueryErrorResetBoundary();

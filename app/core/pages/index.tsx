@@ -5,12 +5,12 @@ import { useState } from "react";
 
 import { Button } from "@chakra-ui/button";
 
-import { Layout } from "app/core/layouts/layout";
+import Layout from "app/core/layouts/layout";
 import latestPostsQuery from "app/posts/queries/latest-posts-query";
-import { PostList } from "app/posts/components/post-list";
+import PostList from "app/posts/components/post-list";
 
 const HomePage: BlitzPage = () => {
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
 
   const [posts] = usePaginatedQuery(latestPostsQuery, {
     skip: 10 * (page - 1),

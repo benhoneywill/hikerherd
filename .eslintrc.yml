@@ -1,14 +1,14 @@
 # Extend the recommended Blitz config
-extends: "blitz"
+extends:
+  - "eslint:recommended"
+  - "plugin:@typescript-eslint/recommended"
+  - "blitz"
 
 plugins:
   - "@typescript-eslint"
 
 rules:
-  # We prefer named exports to default exports.
-  # There are some exceptions in the "overides" below
-  import/no-default-export: error
-  import/prefer-default-export: "off"
+  import/prefer-default-export: error
 
   # Typescript type import should use "import type"
   "@typescript-eslint/consistent-type-imports": error
@@ -17,25 +17,18 @@ rules:
   import/order:
     - error
     - groups: [type, builtin, external, internal, parent, sibling, index, object]
-      newlines-between: always
+      newlines-between: always-and-inside-groups
       pathGroupsExcludedImportTypes:
         - type
       pathGroups:
+        - pattern: "+(react|blitz)"
+          group: builtin
+          position: before
         - pattern: "+(app|db|integrations|public|test)/**"
           group: internal
           position: before
-        - pattern: "+(blitz|react)"
-          group: builtin
-          position: before
 
 overrides:
-  # Files matching these patterns require default exports
-  - files:
-      - "**/pages/**/*"
-      - "**/queries/**/*"
-      - "**/mutations/**/*"
-      - db/**/*
-      - "*.config.ts"
+  - files: "**/*.test.ts"
     rules:
-      import/no-default-export: "off"
-      import/prefer-default-export: error
+      "@typescript-eslint/no-explicit-any": "off"

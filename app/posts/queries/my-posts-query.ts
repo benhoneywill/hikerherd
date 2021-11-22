@@ -11,12 +11,12 @@ type MyPostsOptions = {
   take?: Prisma.PostFindManyArgs["take"];
 };
 
-const myPostsQuery = async ({ skip = 0, take = 15 }: MyPostsOptions, { session }: Ctx) => {
-  if (!session.userId) {
+const myPostsQuery = async ({ skip = 0, take = 15 }: MyPostsOptions, ctx: Ctx) => {
+  if (!ctx.session.userId) {
     throw new AuthenticationError();
   }
 
-  const where = { authorId: session.userId };
+  const where = { authorId: ctx.session.userId };
 
   const result = await paginate({
     skip,

@@ -4,21 +4,21 @@ import { hash256 } from "blitz";
 
 import db from "db";
 
-import * as forgotPasswordMailer from "../mailers/forgot-password-mailer";
+import passwordMailer from "../mailers/password-mailer";
 
 import forgotPasswordMutation from "./forgot-password-mutation";
 
 const generatedToken = "plain-token";
 
-const sendForgotPasswordEmail = jest.spyOn(forgotPasswordMailer, "sendForgotPasswordEmail");
+const sendPasswordReset = jest.spyOn(passwordMailer, "sendPasswordReset");
 
 jest.mock("blitz", () => ({
-  ...jest.requireActual<Record<string, unknown>>("blitz")!,
+  ...jest.requireActual<Record<string, unknown>>("blitz"),
   generateToken: () => generatedToken,
 }));
 
 beforeEach(() => {
-  sendForgotPasswordEmail.mockReset();
+  sendPasswordReset.mockReset();
 });
 
 describe("forgotPassword mutation", () => {
@@ -63,6 +63,6 @@ describe("forgotPassword mutation", () => {
     expect(token.sentTo).toBe(user.email);
     expect(token.hashedToken).toBe(hash256(generatedToken));
     expect(token.expiresAt > new Date()).toBe(true);
-    expect(sendForgotPasswordEmail).toBeCalledTimes(1);
+    expect(sendPasswordReset).toBeCalledTimes(1);
   });
 });

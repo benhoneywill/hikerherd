@@ -8,34 +8,28 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { generateHTML } from "@tiptap/react";
 
-import { Layout } from "app/core/layouts/layout";
+import Layout from "app/core/layouts/layout";
 import { StyledTiptapContent } from "app/core/components/tiptap";
 
-import postBySlugQuery from "../../../queries/post-by-slug-query";
+import publicPostQuery from "../../queries/public-post-query";
 
 type PostPage = {
   post: Post;
 };
 
-const defaultContent = { type: "doc", content: [] };
-
 const PostPage: BlitzPage<PostPage> = ({ post }) => {
-  const jsonContent = useMemo(() => {
+  const html = useMemo(() => {
     try {
-      return post.content ? JSON.parse(post.content) : defaultContent;
+      return generateHTML(JSON.parse(post.content), [StarterKit, Image]);
     } catch {
-      return defaultContent;
+      return "<p>There was an error rendering this post</p>";
     }
   }, [post.content]);
-
-  const htmlContent = useMemo(() => {
-    return generateHTML(jsonContent, [StarterKit, Image]);
-  }, [jsonContent]);
 
   return (
     <div>
       <h1>{post.title}</h1>
-      <StyledTiptapContent dangerouslySetInnerHTML={{ __html: htmlContent }} />
+      <StyledTiptapContent dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 };
@@ -43,7 +37,7 @@ const PostPage: BlitzPage<PostPage> = ({ post }) => {
 export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
   try {
     const post = await invokeWithMiddleware(
-      postBySlugQuery,
+      publicPostQuery,
       { slug: params?.slug as string },
       { req, res }
     );
@@ -51,9 +45,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
     return { props: { post } };
   } catch (error) {
     if (error instanceof NotFoundError) {
-      return {
-        notFound: true,
-      };
+      return { notFound: true };
     } else {
       throw error;
     }

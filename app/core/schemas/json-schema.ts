@@ -5,6 +5,10 @@ type Json = Literal | { [key: string]: Json } | Json[];
 
 const literalSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
 
-export const JsonSchema: z.ZodSchema<Json> = z.lazy(() =>
-  z.union([literalSchema, z.array(JsonSchema), z.record(JsonSchema)])
+const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
+  z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)])
 );
+
+export type jsonValues = z.infer<typeof jsonSchema>;
+
+export default jsonSchema;

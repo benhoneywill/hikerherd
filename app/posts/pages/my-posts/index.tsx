@@ -5,12 +5,12 @@ import { useState } from "react";
 
 import { Button } from "@chakra-ui/button";
 
-import { Layout } from "app/core/layouts/layout";
+import Layout from "app/core/layouts/layout";
 import myPostsQuery from "app/posts/queries/my-posts-query";
-import { PostList } from "app/posts/components/post-list";
+import PostList from "app/posts/components/post-list";
 
 const MyPostsPage: BlitzPage = () => {
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
 
   const [posts] = usePaginatedQuery(myPostsQuery, {
     skip: 10 * (page - 1),
@@ -23,11 +23,12 @@ const MyPostsPage: BlitzPage = () => {
       <Link href={Routes.NewPostPage()} passHref>
         <Button as="a">New post</Button>
       </Link>
-      <PostList posts={posts.items} myPosts />
+      <PostList posts={posts.items} />
     </>
   );
 };
 
+MyPostsPage.authenticate = { redirectTo: Routes.LoginPage() };
 MyPostsPage.getLayout = (page) => <Layout title="My Posts">{page}</Layout>;
 
 export default MyPostsPage;

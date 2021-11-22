@@ -4,9 +4,9 @@ import { Head } from "blitz";
 
 import { Box } from "@chakra-ui/layout";
 
-import { Header } from "../components/header";
+import Header from "../components/header";
 
-export const Layout: BlitzLayout<{ title?: string }> = ({ title, children }) => {
+const Layout: BlitzLayout<{ title?: string }> = ({ title, children }) => {
   return (
     <>
       <Head>
@@ -22,3 +22,5 @@ export const Layout: BlitzLayout<{ title?: string }> = ({ title, children }) => 
     </>
   );
 };
+
+export default Layout;

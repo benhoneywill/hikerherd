@@ -76,7 +76,7 @@ describe("resetPassword mutation", () => {
 
     // Updates user's password
     const updatedUser = await db.user.findFirst({ where: { id: user.id } });
-    expect(await SecurePassword.verify(updatedUser!.hashedPassword, newPassword)).toBe(
+    expect(await SecurePassword.verify(updatedUser?.hashedPassword, newPassword)).toBe(
       SecurePassword.VALID
     );
   });

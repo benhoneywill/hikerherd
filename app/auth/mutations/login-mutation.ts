@@ -1,17 +1,20 @@
+import type { PromiseReturnType } from "blitz";
+
 import { resolver } from "blitz";
 
-import { LoginSchema } from "../schemas/login-schema";
-import { authenticateUser } from "../helpers/authenticate-user";
+import loginSchema from "../schemas/login-schema";
+import authenticateOrError from "../helpers/authenticate-or-error";
 
 export const loginMutation = resolver.pipe(
-  resolver.zod(LoginSchema),
+  resolver.zod(loginSchema),
 
   async ({ email, password }, ctx) => {
-    // This throws an error if credentials are invalid
-    const user = await authenticateUser(email, password);
+    const user = await authenticateOrError(email, password);
     await ctx.session.$create({ userId: user.id, role: user.role });
     return user;
   }
 );
+
+export type LoginResult = PromiseReturnType<typeof loginMutation>;
 
 export default loginMutation;

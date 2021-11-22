@@ -169,7 +169,7 @@ type TiptapProps = {
   fieldProps?: UseFieldConfig<string>;
 };
 
-export const Tiptap: FC<TiptapProps> = ({ name, fieldProps }) => {
+const Tiptap: FC<TiptapProps> = ({ name, fieldProps }) => {
   const { input } = useField(name, fieldProps);
 
   const editor = useEditor({
@@ -193,3 +193,5 @@ export const Tiptap: FC<TiptapProps> = ({ name, fieldProps }) => {
     </StyledTiptapContent>
   );
 };
+
+export default Tiptap;
