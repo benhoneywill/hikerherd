@@ -29,7 +29,11 @@
     "@emotion/react": "11.1.4",
     "@emotion/styled": "11.0.0",
     "@prisma/client": "3.4.1",
+    "@tiptap/extension-focus": "2.0.0-beta.37",
     "@tiptap/extension-image": "2.0.0-beta.24",
+    "@tiptap/extension-link": "2.0.0-beta.28",
+    "@tiptap/extension-placeholder": "2.0.0-beta.44",
+    "@tiptap/html": "2.0.0-beta.139",
     "@tiptap/react": "2.0.0-beta.95",
     "@tiptap/starter-kit": "2.0.0-beta.142",
     "blitz": "0.42.4",
@@ -40,6 +44,7 @@
     "react-dom": "18.0.0-alpha-e0aa5e205-20211109",
     "react-final-form": "6.5.7",
     "react-icons": "4.3.1",
+    "sharp": "0.29.3",
     "zod": "3.11.6"
   },
   "devDependencies": {

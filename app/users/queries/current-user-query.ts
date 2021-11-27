@@ -1,9 +1,8 @@
-import type { Ctx } from "blitz";
+import { resolver } from "blitz";
 
 import db from "db";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const currentUserQuery = async (_: any, ctx: Ctx) => {
+const currentUserQuery = resolver.pipe(async (_, ctx) => {
   if (!ctx.session.userId) return null;
 
   const user = await db.user.findFirst({
@@ -12,6 +11,6 @@ const currentUserQuery = async (_: any, ctx: Ctx) => {
   });
 
   return user;
-};
+});
 
 export default currentUserQuery;

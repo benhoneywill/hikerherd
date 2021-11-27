@@ -5,7 +5,8 @@ type SlugifyOptions = {
 const slugify = (string: string, options: SlugifyOptions = {}) => {
   let slug = string
     .replace(/[^-a-zA-Z0-9\s]/g, "")
-    .replace(/\s+/g, "-")
+    .trim()
+    .replace(/[\s-]+/g, "-")
     .toLowerCase();
 
   if (options.withRandomSuffix) {

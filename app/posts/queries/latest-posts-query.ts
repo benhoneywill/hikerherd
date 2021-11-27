@@ -1,31 +1,30 @@
-import type { Prisma } from "db";
+import { paginate, resolver } from "blitz";
 
-import { paginate } from "blitz";
+import paginationSchema from "app/core/schemas/pagination-schema";
 
 import db from "db";
 
-type LatestPostsOptions = {
-  skip?: Prisma.PostFindManyArgs["skip"];
-  take?: Prisma.PostFindManyArgs["take"];
-};
+const latestPostsQuery = resolver.pipe(
+  resolver.zod(paginationSchema),
 
-const latestPostsQuery = async ({ skip = 0, take = 15 }: LatestPostsOptions) => {
-  const where = { publishedAt: { not: null } };
+  async ({ skip, take }) => {
+    const where = { publishedAt: { not: null } };
 
-  const result = await paginate({
-    skip,
-    take,
-    count: () => db.post.count({ where }),
-    query: (paginateArgs) => {
-      return db.post.findMany({
-        ...paginateArgs,
-        where,
-        orderBy: { publishedAt: "desc" },
-      });
-    },
-  });
+    const result = await paginate({
+      skip,
+      take,
+      count: () => db.post.count({ where }),
+      query: (paginateArgs) => {
+        return db.post.findMany({
+          ...paginateArgs,
+          where,
+          orderBy: { publishedAt: "desc" },
+        });
+      },
+    });
 
-  return result;
-};
+    return result;
+  }
+);
 
 export default latestPostsQuery;

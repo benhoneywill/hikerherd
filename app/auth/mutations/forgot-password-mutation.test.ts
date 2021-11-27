@@ -21,7 +21,7 @@ beforeEach(() => {
   sendPasswordReset.mockReset();
 });
 
-describe("forgotPassword mutation", () => {
+describe("forgotPasswordMutation", () => {
   it("does not throw error if user doesn't exist", async () => {
     await expect(
       forgotPasswordMutation({ email: "no-user@email.com" }, {} as Ctx)

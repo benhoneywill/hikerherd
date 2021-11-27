@@ -8,7 +8,7 @@ import { useMutation } from "blitz";
 
 import TextField from "app/core/components/text-field";
 import Form, { FORM_ERROR } from "app/core/components/form";
-import Tiptap from "app/core/components/tiptap";
+import EditorField from "app/core/components/editor-field";
 
 import createPostMutation from "../mutations/create-post-mutation";
 import createPostSchema from "../schemas/create-post-schema";
@@ -54,7 +54,11 @@ const PostForm: FC<PostFormProps> = ({ post, onSuccess }) => {
       onSubmit={handleSubmit}
     >
       <TextField name="title" label="Title" placeholder="Title" />
-      <Tiptap name="content" />
+      <EditorField
+        name="content"
+        fontSize="xl"
+        features={{ image: true, blockquote: true, heading: true, horizontalRule: true }}
+      />
     </Form>
   );
 };

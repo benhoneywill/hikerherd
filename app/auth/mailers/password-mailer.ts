@@ -1,6 +1,6 @@
 import type { User } from "db";
 
-import postmark from "integrations/postmark";
+import postmark from "app/core/integrations/postmark";
 
 const APP_ORIGIN = process.env.BLITZ_PUBLIC_APP_ORIGIN;
 

@@ -1,27 +1,29 @@
-import type { Post } from "db";
 import type { BlitzPage, GetServerSideProps } from "blitz";
 
-import { invokeWithMiddleware, NotFoundError } from "blitz";
+import { NotFoundError } from "blitz";
+
+import { useParam } from "blitz";
+
+import { useQuery } from "blitz";
 import { useMemo } from "react";
 
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-import { generateHTML } from "@tiptap/react";
+import { generateHTML } from "@tiptap/html";
 
 import Layout from "app/core/layouts/layout";
-import { StyledTiptapContent } from "app/core/components/tiptap";
+import { extensions, EditorHtml } from "app/core/components/editor-field";
+import PrefetchQueryClient from "app/core/helpers/prefetch-query-client";
 
 import publicPostQuery from "../../queries/public-post-query";
 
-type PostPage = {
-  post: Post;
-};
+const PostPage: BlitzPage = () => {
+  const slug = useParam("slug") as string;
+  const [post] = useQuery(publicPostQuery, { slug });
 
-const PostPage: BlitzPage<PostPage> = ({ post }) => {
   const html = useMemo(() => {
     try {
-      return generateHTML(JSON.parse(post.content), [StarterKit, Image]);
-    } catch {
+      return generateHTML(JSON.parse(post.content), extensions);
+    } catch (error) {
+      console.log(error);
       return "<p>There was an error rendering this post</p>";
     }
   }, [post.content]);
@@ -29,20 +31,17 @@ const PostPage: BlitzPage<PostPage> = ({ post }) => {
   return (
     <div>
       <h1>{post.title}</h1>
-      <StyledTiptapContent dangerouslySetInnerHTML={{ __html: html }} />
+      <EditorHtml fontSize="lg" dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
-  try {
-    const post = await invokeWithMiddleware(
-      publicPostQuery,
-      { slug: params?.slug as string },
-      { req, res }
-    );
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const client = new PrefetchQueryClient(ctx);
 
-    return { props: { post } };
+  try {
+    const slug = ctx.params?.slug as string;
+    await client.prefetchQuery(publicPostQuery, { slug });
   } catch (error) {
     if (error instanceof NotFoundError) {
       return { notFound: true };
@@ -50,6 +49,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
       throw error;
     }
   }
+
+  return {
+    props: {
+      dehydratedState: client.dehydrate(),
+    },
+  };
 };
 
 PostPage.getLayout = (page) => <Layout title="Post">{page}</Layout>;

@@ -1,9 +1,10 @@
-import type { Ctx, PromiseReturnType } from "blitz";
+import type { PromiseReturnType } from "blitz";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const logoutMutation = async (_: any, ctx: Ctx) => {
+import { resolver } from "blitz";
+
+const logoutMutation = resolver.pipe(async (_, ctx) => {
   return await ctx.session.$revoke();
-};
+});
 
 export type LogoutResult = PromiseReturnType<typeof logoutMutation>;
 

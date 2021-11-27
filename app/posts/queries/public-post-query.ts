@@ -1,21 +1,23 @@
-import { NotFoundError } from "blitz";
+import { NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
-type publicPostQueryOptions = {
-  slug: string;
-};
+import getPublicPostSchema from "../schemas/get-public-post-schema";
 
-const publicPostQuery = async ({ slug }: publicPostQueryOptions) => {
-  const post = await db.post.findFirst({
-    where: { slug },
-  });
+const publicPostQuery = resolver.pipe(
+  resolver.zod(getPublicPostSchema),
 
-  if (!post || !post.publishedAt) {
-    throw new NotFoundError();
+  async ({ slug }) => {
+    const post = await db.post.findFirst({
+      where: { slug },
+    });
+
+    if (!post || !post.publishedAt) {
+      throw new NotFoundError();
+    }
+
+    return post;
   }
-
-  return post;
-};
+);
 
 export default publicPostQuery;

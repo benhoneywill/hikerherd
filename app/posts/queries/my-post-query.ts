@@ -1,29 +1,30 @@
-import type { Ctx } from "blitz";
+import { NotFoundError, AuthorizationError } from "blitz";
 
-import { NotFoundError } from "blitz";
-
-import { AuthenticationError } from "blitz";
+import { resolver } from "blitz";
 
 import db from "db";
 
-type MyPostOptions = {
-  id: number;
-};
+import getMyPostSchema from "../schemas/get-my-post-schema";
 
-const myPostQuery = async ({ id }: MyPostOptions, ctx: Ctx) => {
-  if (!ctx.session.userId) {
-    throw new AuthenticationError();
+const myPostQuery = resolver.pipe(
+  resolver.zod(getMyPostSchema),
+  resolver.authorize(),
+
+  async ({ id }, ctx) => {
+    const post = await db.post.findUnique({
+      where: { id },
+    });
+
+    if (!post) {
+      throw new NotFoundError();
+    }
+
+    if (post.authorId !== ctx.session.userId) {
+      throw new AuthorizationError();
+    }
+
+    return post;
   }
-
-  const post = await db.post.findUnique({
-    where: { id },
-  });
-
-  if (!post || post.authorId !== ctx.session.userId) {
-    throw new NotFoundError();
-  }
-
-  return post;
-};
+);
 
 export default myPostQuery;

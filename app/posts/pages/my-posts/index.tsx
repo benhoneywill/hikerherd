@@ -7,7 +7,7 @@ import { Button } from "@chakra-ui/button";
 
 import Layout from "app/core/layouts/layout";
 import myPostsQuery from "app/posts/queries/my-posts-query";
-import PostList from "app/posts/components/post-list";
+import MyPostsList from "app/posts/components/my-posts-list";
 
 const MyPostsPage: BlitzPage = () => {
   const [page] = useState(1);
@@ -23,7 +23,7 @@ const MyPostsPage: BlitzPage = () => {
       <Link href={Routes.NewPostPage()} passHref>
         <Button as="a">New post</Button>
       </Link>
-      <PostList posts={posts.items} />
+      <MyPostsList posts={posts.items} />
     </>
   );
 };

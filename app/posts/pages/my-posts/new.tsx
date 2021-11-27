@@ -2,6 +2,8 @@ import type { BlitzPage } from "blitz";
 
 import { useRouter, Routes } from "blitz";
 
+import { Container } from "@chakra-ui/layout";
+
 import Layout from "app/core/layouts/layout";
 
 import PostForm from "../../components/post-form";
@@ -10,7 +12,7 @@ const NewPostPage: BlitzPage = () => {
   const router = useRouter();
 
   return (
-    <div>
+    <Container maxW="container.lg">
       <PostForm
         onSuccess={(post) => {
           if (post.publishedAt) {
@@ -20,7 +22,7 @@ const NewPostPage: BlitzPage = () => {
           }
         }}
       />
-    </div>
+    </Container>
   );
 };
 

@@ -1,24 +1,23 @@
 import type { BlitzPage } from "blitz";
 
-import { useQuery, useRouterQuery } from "blitz";
+import { useQuery, useParam } from "blitz";
 import { useMemo } from "react";
 
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
 import { generateHTML } from "@tiptap/react";
 
 import Layout from "app/core/layouts/layout";
-import { StyledTiptapContent } from "app/core/components/tiptap";
+
+import { EditorHtml, extensions } from "app/core/components/editor-field";
 
 import myPostQuery from "../../../queries/my-post-query";
 
 const MyPostPage: BlitzPage = () => {
-  const query = useRouterQuery();
-  const [post] = useQuery(myPostQuery, { id: Number(query.id as string) });
+  const id = useParam("id") as string;
+  const [post] = useQuery(myPostQuery, { id: Number(id) });
 
   const html = useMemo(() => {
     try {
-      return generateHTML(JSON.parse(post.content), [StarterKit, Image]);
+      return generateHTML(JSON.parse(post.content), extensions);
     } catch {
       return "<p>There was an error rendering your post</p>";
     }
@@ -27,7 +26,7 @@ const MyPostPage: BlitzPage = () => {
   return (
     <div>
       <h1>{post.title}</h1>
-      <StyledTiptapContent dangerouslySetInnerHTML={{ __html: html }} />
+      <EditorHtml fontSize="xl" dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 };

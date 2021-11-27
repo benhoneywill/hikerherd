@@ -14,7 +14,7 @@ const mockCtx: any = {
   },
 };
 
-describe("resetPassword mutation", () => {
+describe("resetPasswordMutation", () => {
   it("works correctly", async () => {
     // Create test user
     const goodToken = "randomPasswordResetToken";
