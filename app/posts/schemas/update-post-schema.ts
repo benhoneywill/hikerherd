@@ -3,7 +3,7 @@ import { z } from "zod";
 import JsonSchema from "app/core/schemas/json-schema";
 
 const updatePostSchema = z.object({
-  id: z.number(),
+  id: z.number().positive(),
   title: z.string().min(3),
   content: JsonSchema,
 });

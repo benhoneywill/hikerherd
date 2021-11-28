@@ -1,3 +1,5 @@
+import type { PromiseReturnType } from "blitz";
+
 import { NotFoundError, AuthorizationError } from "blitz";
 
 import { resolver } from "blitz";
@@ -26,5 +28,7 @@ const myPostQuery = resolver.pipe(
     return post;
   }
 );
+
+export type MyPostResult = PromiseReturnType<typeof myPostQuery>;
 
 export default myPostQuery;

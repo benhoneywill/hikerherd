@@ -1,3 +1,5 @@
+import type { PromiseReturnType } from "blitz";
+
 import { NotFoundError, resolver } from "blitz";
 
 import db from "db";
@@ -19,5 +21,7 @@ const publicPostQuery = resolver.pipe(
     return post;
   }
 );
+
+export type PublicPostResult = PromiseReturnType<typeof publicPostQuery>;
 
 export default publicPostQuery;

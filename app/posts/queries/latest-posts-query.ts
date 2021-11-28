@@ -1,3 +1,5 @@
+import type { PromiseReturnType } from "blitz";
+
 import { paginate, resolver } from "blitz";
 
 import paginationSchema from "app/core/schemas/pagination-schema";
@@ -26,5 +28,7 @@ const latestPostsQuery = resolver.pipe(
     return result;
   }
 );
+
+export type LatestPostsResult = PromiseReturnType<typeof latestPostsQuery>;
 
 export default latestPostsQuery;
