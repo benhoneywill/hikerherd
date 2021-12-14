@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-import JsonSchema from "app/core/schemas/json-schema";
+import editorContentSchema from "app/editor/schemas/editor-content-schema";
 
 const createPostSchema = z.object({
   title: z.string().min(3),
-  content: JsonSchema,
+  content: editorContentSchema,
 });
 
 export type CreatePostValues = z.infer<typeof createPostSchema>;

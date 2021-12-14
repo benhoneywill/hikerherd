@@ -5,7 +5,6 @@ import { resolver, SecurePassword, hash256 } from "blitz";
 import db, { TokenType } from "db";
 
 import ResetPasswordError from "../errors/reset-password-error";
-
 import resetPasswordSchema from "../schemas/reset-password-schema";
 
 import { loginMutation } from "./login-mutation";

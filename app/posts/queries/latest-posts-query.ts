@@ -10,17 +10,17 @@ const latestPostsQuery = resolver.pipe(
   resolver.zod(paginationSchema),
 
   async ({ skip, take }) => {
-    const where = { publishedAt: { not: null } };
-
     const result = await paginate({
       skip,
       take,
-      count: () => db.post.count({ where }),
+      count: () => db.post.count(),
       query: (paginateArgs) => {
         return db.post.findMany({
           ...paginateArgs,
-          where,
-          orderBy: { publishedAt: "desc" },
+          orderBy: { createdAt: "desc" },
+          include: {
+            author: true,
+          },
         });
       },
     });
@@ -30,5 +30,6 @@ const latestPostsQuery = resolver.pipe(
 );
 
 export type LatestPostsResult = PromiseReturnType<typeof latestPostsQuery>;
+export type LatestPostsResultItem = LatestPostsResult["items"][number];
 
 export default latestPostsQuery;

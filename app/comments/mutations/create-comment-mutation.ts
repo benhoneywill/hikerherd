@@ -4,20 +4,23 @@ import { resolver } from "blitz";
 
 import db from "db";
 
+import threadedCommentInclude from "../helpers/threaded-comment-include";
 import createCommentSchema from "../schemas/create-comment-schema";
 
 const createCommentMutation = resolver.pipe(
   resolver.zod(createCommentSchema),
   resolver.authorize(),
 
-  async ({ parentPostId, parentCommentId, content }, ctx) => {
+  async ({ rootId, rootType, parentId, content }, ctx) => {
     return db.comment.create({
       data: {
-        parentPostId,
-        parentCommentId,
+        rootId,
+        rootType,
+        parentId,
         content: JSON.stringify(content),
         authorId: ctx.session.userId,
       },
+      include: threadedCommentInclude({ depth: 0 }),
     });
   }
 );

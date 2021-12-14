@@ -1,5 +1,9 @@
-import type { FormProps as FinalFormProps } from "react-final-form";
-import type { z } from "zod";
+import type {
+  FormProps as FinalFormProps,
+  FormRenderProps,
+  RenderableProps,
+} from "react-final-form";
+import type { TypeOf, z } from "zod";
 import type { ReactNode, PropsWithoutRef } from "react";
 
 import { validateZodSchema } from "blitz";
@@ -7,6 +11,7 @@ import { validateZodSchema } from "blitz";
 import { Form as FinalForm } from "react-final-form";
 import { Button } from "@chakra-ui/button";
 import { Alert, AlertIcon } from "@chakra-ui/alert";
+import { HStack, Stack } from "@chakra-ui/layout";
 
 export { FORM_ERROR } from "final-form";
 
@@ -21,6 +26,7 @@ type FormProps<S extends GenericZodSchema> = PropsWithoutRef<
   schema: S;
   onSubmit: FinalFormProps<z.infer<S>>["onSubmit"];
   initialValues?: FinalFormProps<z.infer<S>>["initialValues"];
+  aditionalActions?: (props: RenderableProps<FormRenderProps<TypeOf<S>>>) => JSX.Element;
 };
 
 const Form = <S extends GenericZodSchema>({
@@ -29,6 +35,7 @@ const Form = <S extends GenericZodSchema>({
   schema,
   initialValues,
   onSubmit,
+  aditionalActions,
   ...props
 }: FormProps<S>) => {
   return (
@@ -36,22 +43,26 @@ const Form = <S extends GenericZodSchema>({
       initialValues={initialValues}
       validate={validateZodSchema(schema)}
       onSubmit={onSubmit}
-      render={({ handleSubmit, submitting, submitError }) => (
-        <form onSubmit={handleSubmit} {...props}>
-          {submitError && (
-            <Alert status="error">
-              <AlertIcon />
-              {submitError}
-            </Alert>
-          )}
+      render={(form) => (
+        <form onSubmit={form.handleSubmit} {...props}>
+          <Stack>
+            {form.submitError && (
+              <Alert status="error">
+                <AlertIcon />
+                {form.submitError}
+              </Alert>
+            )}
 
-          {children}
+            <div>{children}</div>
 
-          {submitText && (
-            <Button type="submit" isDisabled={submitting} isLoading={submitting}>
-              {submitText}
-            </Button>
-          )}
+            <HStack>
+              {aditionalActions && aditionalActions(form)}
+
+              <Button type="submit" isLoading={form.submitting}>
+                {submitText}
+              </Button>
+            </HStack>
+          </Stack>
         </form>
       )}
     />

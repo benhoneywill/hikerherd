@@ -1,8 +1,7 @@
 import type { Ctx, InvokeWithMiddlewareConfig } from "blitz";
 
 import { dehydrate } from "blitz";
-
-import { invokeWithMiddleware, getQueryKey, QueryClient } from "blitz";
+import { invokeWithMiddleware, getQueryKey, getInfiniteQueryKey, QueryClient } from "blitz";
 
 type QueryResolver<Params, Result> = (params: Params, ctx: Ctx) => Promise<Result>;
 
@@ -19,6 +18,16 @@ class PrefetchQueryClient {
     const queryKey = getQueryKey(query, params);
     const result = await invokeWithMiddleware(query, params, this.context);
     await this.queryClient.prefetchQuery(queryKey, () => result);
+    return result;
+  }
+
+  async prefetchInfiniteQuery<Params, Result>(
+    query: QueryResolver<Params, Result>,
+    params: Params
+  ) {
+    const queryKey = getInfiniteQueryKey(query, params);
+    const result = await invokeWithMiddleware(query, params, this.context);
+    await this.queryClient.prefetchInfiniteQuery(queryKey, () => result);
     return result;
   }
 

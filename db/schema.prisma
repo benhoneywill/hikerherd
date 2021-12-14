@@ -18,7 +18,7 @@ enum UserRole {
 }
 
 model User {
-  id             Int      @id @default(autoincrement())
+  id             String   @id @default(cuid())
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   email          String   @unique
@@ -27,16 +27,18 @@ model User {
   hashedPassword String?
   role           UserRole @default(USER)
 
-  tokens   Token[]
-  sessions Session[]
-  posts    Post[]
-  comments Comment[]
+  tokens    Token[]
+  sessions  Session[]
+  posts     Post[]
+  comments  Comment[]
+  blogPosts BlogPost[]
+  blogs     BlogUser[]
 }
 
 // --------------------------------------
 
 model Session {
-  id                 Int       @id @default(autoincrement())
+  id                 String    @id @default(cuid())
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
   expiresAt          DateTime?
@@ -46,8 +48,8 @@ model Session {
   publicData         String?
   privateData        String?
 
-  user   User? @relation(fields: [userId], references: [id])
-  userId Int?
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
 }
 
 // --------------------------------------
@@ -57,7 +59,7 @@ enum TokenType {
 }
 
 model Token {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   hashedToken String
@@ -65,8 +67,8 @@ model Token {
   expiresAt   DateTime
   sentTo      String
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
   @@unique([hashedToken, type])
 }
@@ -74,7 +76,36 @@ model Token {
 // --------------------------------------
 
 model Post {
-  id          Int       @id @default(autoincrement())
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+}
+
+// --------------------------------------
+
+enum BlogUserRole {
+  ADMIN
+  MEMEBER
+}
+
+model Blog {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users BlogUser[]
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
   title       String
   slug        String    @unique
   createdAt   DateTime  @default(now())
@@ -82,28 +113,43 @@ model Post {
   content     String
   publishedAt DateTime?
 
-  author   User @relation(fields: [authorId], references: [id])
-  authorId Int
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+}
 
-  comments Comment[]
+model BlogUser {
+  blog   Blog         @relation(fields: [blogId], references: [id])
+  blogId String
+  user   User         @relation(fields: [userId], references: [id])
+  userId String
+  role   BlogUserRole
+
+  @@id([blogId, userId])
 }
 
 // --------------------------------------
 
+enum CommentRootType {
+  POST
+  BLOG_POST
+}
+
 model Comment {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  parentComment Comment? @relation("CommentToComment", fields: [parentCommentId], references: [id])
-  parentPost    Post?    @relation(fields: [parentPostId], references: [id])
+  parent   Comment? @relation("CommentToComment", fields: [parentId], references: [id])
+  parentId String?
 
-  author   User @relation(fields: [authorId], references: [id])
-  authorId Int
+  rootId   String
+  rootType CommentRootType
 
-  parentCommentId Int?
-  parentPostId    Int?
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
 
   replies Comment[] @relation("CommentToComment")
+
+  @@index([rootId, rootType, parentId])
 }

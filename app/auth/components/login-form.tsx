@@ -1,6 +1,5 @@
 import type { FC } from "react";
 import type { LoginValues } from "app/auth/schemas/login-schema";
-
 import type { LoginResult } from "app/auth/mutations/login-mutation";
 
 import { AuthenticationError, useMutation } from "blitz";

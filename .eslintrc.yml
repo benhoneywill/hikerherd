@@ -12,12 +12,13 @@ rules:
 
   # Typescript type import should use "import type"
   "@typescript-eslint/consistent-type-imports": error
+  "@typescript-eslint/no-unused-vars": error
 
   # Define import order rules
   import/order:
     - error
     - groups: [type, builtin, external, internal, parent, sibling, index, object]
-      newlines-between: always-and-inside-groups
+      newlines-between: always
       pathGroupsExcludedImportTypes:
         - type
       pathGroups:

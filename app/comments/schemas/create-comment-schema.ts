@@ -1,11 +1,14 @@
 import { z } from "zod";
 
-import JsonSchema from "app/core/schemas/json-schema";
+import editorContentSchema from "app/editor/schemas/editor-content-schema";
+
+import { CommentRootType } from "db";
 
 const createCommentSchema = z.object({
-  parentPostId: z.number().positive(),
-  parentCommentId: z.number().positive().optional(),
-  content: JsonSchema,
+  rootId: z.string(),
+  rootType: z.nativeEnum(CommentRootType),
+  parentId: z.string().optional(),
+  content: editorContentSchema,
 });
 
 export type CreateCommentValues = z.infer<typeof createCommentSchema>;

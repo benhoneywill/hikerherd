@@ -1,7 +1,5 @@
 import type { FC } from "react";
-
 import type { ForgotPasswordResult } from "app/auth/mutations/forgot-password-mutation";
-
 import type { ForgotPasswordValues } from "app/auth/schemas/forgot-password-schema";
 
 import { useMutation } from "blitz";

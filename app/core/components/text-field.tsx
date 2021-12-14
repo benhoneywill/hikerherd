@@ -29,11 +29,8 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 
     return (
       <FormControl {...controlProps} isInvalid={touched && normalizedError}>
-        <FormLabel {...labelProps}>
-          {label}
-          <Input {...input} disabled={submitting} {...props} ref={ref} />
-        </FormLabel>
-
+        <FormLabel {...labelProps}>{label}</FormLabel>
+        <Input {...input} disabled={submitting} {...props} ref={ref} />
         <FormErrorMessage>{normalizedError}</FormErrorMessage>
       </FormControl>
     );

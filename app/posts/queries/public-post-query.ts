@@ -14,7 +14,7 @@ const publicPostQuery = resolver.pipe(
       where: { slug },
     });
 
-    if (!post || !post.publishedAt) {
+    if (!post) {
       throw new NotFoundError();
     }
 

@@ -2,7 +2,7 @@ import type { BlitzPage } from "blitz";
 
 import { Routes } from "blitz";
 
-import Layout from "app/core/layouts/layout";
+import SingleColumnLayout from "app/core/layouts/single-column-layout";
 
 const MyProfilePage: BlitzPage = () => {
   return <p>My profile</p>;
@@ -10,6 +10,8 @@ const MyProfilePage: BlitzPage = () => {
 
 MyProfilePage.authenticate = { redirectTo: Routes.LoginPage() };
 
-MyProfilePage.getLayout = (page) => <Layout title="My profile">{page}</Layout>;
+MyProfilePage.getLayout = (page) => (
+  <SingleColumnLayout title="My profile">{page}</SingleColumnLayout>
+);
 
 export default MyProfilePage;

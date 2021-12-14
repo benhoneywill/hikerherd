@@ -4,8 +4,8 @@ import { Prisma } from "db";
 
 class UserCreateError extends Error {
   name = "UserCreateError";
-  emailTaken: boolean = false;
-  usernameTaken: boolean = false;
+  emailTaken = false;
+  usernameTaken = false;
 
   constructor(error: unknown) {
     super(error instanceof Error ? error.message : "There was an error signing up");

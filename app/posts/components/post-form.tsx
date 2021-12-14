@@ -6,16 +6,18 @@ import type { UpdatePostResult } from "../mutations/update-post-mutation";
 
 import { useMutation } from "blitz";
 
+import { Stack } from "@chakra-ui/layout";
+
 import TextField from "app/core/components/text-field";
 import Form, { FORM_ERROR } from "app/core/components/form";
-import EditorField from "app/core/components/editor-field";
+import EditorField from "app/editor/components/editor-field";
 
 import createPostMutation from "../mutations/create-post-mutation";
 import createPostSchema from "../schemas/create-post-schema";
 import updatePostMutation from "../mutations/update-post-mutation";
 
 type PostFormProps = {
-  post?: Pick<Post, "id" | "title" | "content" | "publishedAt">;
+  post?: Pick<Post, "id" | "title" | "content">;
   onSuccess?: (post: CreatePostResult | UpdatePostResult) => void;
 };
 
@@ -31,6 +33,8 @@ const PostForm: FC<PostFormProps> = ({ post, onSuccess }) => {
   const handleSubmit = async (values: CreatePostValues) => {
     try {
       let result;
+
+      console.log(values);
 
       if (post) {
         result = await updatePost({ id: post.id, ...values });
@@ -53,12 +57,18 @@ const PostForm: FC<PostFormProps> = ({ post, onSuccess }) => {
       initialValues={initialValues}
       onSubmit={handleSubmit}
     >
-      <TextField name="title" label="Title" placeholder="Title" />
-      <EditorField
-        name="content"
-        fontSize="xl"
-        features={{ image: true, blockquote: true, heading: true, horizontalRule: true }}
-      />
+      <Stack>
+        <TextField name="title" label="Title" placeholder="Title" />
+        <EditorField
+          name="content"
+          fontSize="md"
+          label="content"
+          features={{ image: true, blockquote: true, heading: true, horizontalRule: true }}
+          barMenu
+          bubbleMenu
+          floatingMenu
+        />
+      </Stack>
     </Form>
   );
 };

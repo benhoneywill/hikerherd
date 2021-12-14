@@ -36,7 +36,7 @@
     "@tiptap/html": "2.0.0-beta.139",
     "@tiptap/react": "2.0.0-beta.95",
     "@tiptap/starter-kit": "2.0.0-beta.142",
-    "blitz": "0.42.4",
+    "blitz": "0.44.4",
     "final-form": "4.20.4",
     "framer-motion": "5.3.1",
     "postmark": "2.7.8",

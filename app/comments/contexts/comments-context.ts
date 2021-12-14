@@ -1,34 +1,32 @@
-import type { Comment } from "db";
-
-import type { CommentRepliesResult } from "../queries/comment-replies-query";
-import type { PostCommentsResult } from "../queries/post-comments-query";
+import type { CommentsResultItem } from "../queries/comments-query";
+import type { CreateCommentResult } from "../mutations/create-comment-mutation";
+import type { UpdateCommentResult } from "../mutations/update-comment-mutation";
+import type { CommentRootType } from "db";
 
 import { createContext } from "react";
 
 type CommentsContext = {
-  parentPostId?: number;
-  parentCommentId?: number;
-  isFetching: boolean;
-  isFetchingNextPage: boolean;
-  fetchNextPage: () => void;
-  hasNextPage?: boolean;
-  paginatedComments: Array<PostCommentsResult | CommentRepliesResult>;
-  depth: number;
-  addComment: (comment: Comment) => void;
-  addedComments: Comment[];
+  rootId: string;
+  rootType: CommentRootType;
+  parentId?: string;
+
+  comments: CommentsResultItem[];
+
+  pagination: {
+    isFetching: boolean;
+    isFetchingNextPage: boolean;
+    fetchNextPage: () => void;
+    hasNextPage?: boolean;
+  };
+
+  addedComments: CreateCommentResult[];
+  addComment: (comment: CreateCommentResult) => void;
+  updateComment: (comment: UpdateCommentResult) => void;
+
+  canStartPagination: boolean;
+  startPagination: () => void;
 };
 
-const commentsContext = createContext<CommentsContext>({
-  parentPostId: undefined,
-  parentCommentId: undefined,
-  isFetching: false,
-  isFetchingNextPage: false,
-  fetchNextPage: () => null,
-  hasNextPage: false,
-  paginatedComments: [],
-  depth: 0,
-  addComment: () => null,
-  addedComments: [],
-});
+const commentsContext = createContext<CommentsContext>({} as CommentsContext);
 
 export default commentsContext;

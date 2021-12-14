@@ -2,7 +2,9 @@ import type { BlitzPage } from "blitz";
 
 import { useRouter, Link, Routes } from "blitz";
 
-import Layout from "app/core/layouts/layout";
+import { Divider, HStack } from "@chakra-ui/layout";
+
+import BoxLayout from "app/core/layouts/box-layout";
 import LoginForm from "app/auth/components/login-form";
 
 const LoginPage: BlitzPage = () => {
@@ -13,18 +15,23 @@ const LoginPage: BlitzPage = () => {
     <div>
       <LoginForm onSuccess={() => router.push(redirectTo)} />
 
-      <div>
+      <Divider my={6} />
+
+      <HStack>
         <Link href={Routes.ForgotPasswordPage()}>
           <a>Forgot your password?</a>
         </Link>
-        Or
         <Link href={Routes.SignupPage()}>Sign Up</Link>
-      </div>
+      </HStack>
     </div>
   );
 };
 
 LoginPage.redirectAuthenticatedTo = Routes.HomePage();
-LoginPage.getLayout = (page) => <Layout title="Login">{page}</Layout>;
+LoginPage.getLayout = (page) => (
+  <BoxLayout title="Login" description="Enter your details below to log in.">
+    {page}
+  </BoxLayout>
+);
 
 export default LoginPage;

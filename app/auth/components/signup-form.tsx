@@ -1,7 +1,5 @@
 import type { FC } from "react";
-
 import type { SignupValues } from "app/auth/schemas/signup-schema";
-
 import type { SignupResult } from "app/auth/mutations/signup-mutation";
 
 import { useMutation } from "blitz";

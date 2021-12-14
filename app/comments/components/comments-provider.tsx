@@ -1,81 +1,102 @@
-import type { Comment } from "db";
+import type { CommentsResultItem } from "../queries/comments-query";
+import type { CreateCommentResult } from "../mutations/create-comment-mutation";
+import type { UpdateCommentResult } from "../mutations/update-comment-mutation";
+import type { FC } from "react";
+import type { CommentRootType } from "db";
 
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useInfiniteQuery } from "next/data-client";
 
 import commentsContext from "../contexts/comments-context";
-import commentRepliesQuery from "../queries/comment-replies-query";
-import postCommentsQuery from "../queries/post-comments-query";
+import commentsQuery from "../queries/comments-query";
 
 const { Provider } = commentsContext;
 
 type CommentsProviderProps = {
-  parentPostId?: number;
-  parentCommentId?: number;
-  depth: number;
+  rootId: string;
+  rootType: CommentRootType;
+  parentId?: string;
+  initialComments?: CommentsResultItem[];
+  commentCount?: number;
 };
 
-const CommentsProvider: React.FC<CommentsProviderProps> = ({
+const CommentsProvider: FC<CommentsProviderProps> = ({
   children,
-  parentPostId,
-  parentCommentId,
-  depth,
+  rootId,
+  rootType,
+  parentId,
+  initialComments = [],
+  commentCount = 0,
 }) => {
-  const [addedComments, setAddedComments] = useState<Comment[]>([]);
+  const isCommentReplies = !!parentId;
+  const isRootComments = !isCommentReplies;
 
-  const isCommentReplies = !!parentCommentId;
-  const isPostComments = !isCommentReplies && !!parentPostId;
+  const [addedComments, setAddedComments] = useState<CreateCommentResult[]>([]);
+  const [updatedComments, setUpdatedComments] = useState<{ [id in string]: UpdateCommentResult }>(
+    {}
+  );
+  const [paginationStarted, setPaginationStarted] = useState(isRootComments);
 
-  const [postComments, post] = useInfiniteQuery(
-    postCommentsQuery,
-    (page = { take: 20, skip: 0 }) => ({ ...page, id: parentPostId }),
+  const canPaginate = isCommentReplies && initialComments.length < commentCount;
+
+  const [commentPages, pagination] = useInfiniteQuery(
+    commentsQuery,
+    (page = { skip: initialComments.length }) => ({
+      ...page,
+      rootId,
+      rootType,
+      parentId,
+      depth: isCommentReplies ? 2 : 4,
+    }),
     {
-      enabled: isPostComments,
+      suspense: isRootComments,
+      enabled: paginationStarted,
       getNextPageParam: (lastPage) => lastPage.nextPage,
     }
   );
 
-  const initialRepliesPagination = depth < 1 ? { take: 5, skip: 0 } : { take: 0, skip: 0 };
+  const comments = useMemo(() => {
+    let commentArray: CommentsResultItem[] = initialComments;
 
-  const [commentReplies, comment] = useInfiniteQuery(
-    commentRepliesQuery,
-    (page = initialRepliesPagination) => ({ ...page, id: parentCommentId as number }),
-    {
-      enabled: isCommentReplies,
-      getNextPageParam: (lastPage) => {
-        if (lastPage.nextPage?.take === 0) {
-          return { ...lastPage.nextPage, take: 5 };
-        } else {
-          return lastPage.nextPage;
-        }
-      },
+    commentPages?.forEach(({ items }) => {
+      commentArray = commentArray.concat(items);
+    });
+
+    commentArray = commentArray.filter(
+      (comment) => !addedComments.find((added) => added.id === comment.id)
+    );
+
+    if (Object.keys(updatedComments).length) {
+      commentArray = commentArray.map((comment) => {
+        const updated = updatedComments[comment.id];
+        return updated || comment;
+      });
     }
-  );
 
-  const addComment = (comment: Comment) => {
-    setAddedComments((items) => [comment, ...items]);
-  };
+    return commentArray;
+  }, [initialComments, commentPages, addedComments, updatedComments]);
 
   return (
     <Provider
       value={{
-        parentPostId,
-        parentCommentId,
-        depth,
+        rootId,
+        rootType,
+        parentId,
 
-        addComment,
         addedComments,
+        addComment: (comment: CreateCommentResult) => {
+          setAddedComments((items) => [comment, ...items]);
+        },
+        updateComment: (comment: UpdateCommentResult) => {
+          setUpdatedComments((items) => ({ ...items, [comment.id]: comment }));
+        },
 
-        paginatedComments: (isCommentReplies ? commentReplies : postComments) || [],
+        canStartPagination: canPaginate && !paginationStarted,
+        startPagination: () => setPaginationStarted(canPaginate),
 
-        isFetching: isCommentReplies ? comment.isFetching : post.isFetching,
-
-        isFetchingNextPage: isCommentReplies ? comment.isFetchingNextPage : post.isFetchingNextPage,
-
-        fetchNextPage: isCommentReplies ? comment.fetchNextPage : post.fetchNextPage,
-
-        hasNextPage: isCommentReplies ? comment.hasNextPage : post.hasNextPage,
+        comments,
+        pagination,
       }}
     >
       {children}

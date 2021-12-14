@@ -1,18 +1,41 @@
-import React from "react";
+import type { CommentRootType } from "db";
+
+import React, { useState } from "react";
+
+import { Button } from "@chakra-ui/button";
+
+import useComments from "../hooks/use-comments";
 
 import CommentsProvider from "./comments-provider";
 import CommentForm from "./comment-form";
 import CommentList from "./comment-list";
 
 type CommentsProps = {
-  parentPostId: number;
+  rootId: string;
+  rootType: CommentRootType;
 };
 
-const Comments: React.FC<CommentsProps> = ({ parentPostId }) => {
+const CommentsRoot: React.FC = () => {
+  const [showForm, setShowForm] = useState(false);
+  const { addComment } = useComments();
+
   return (
-    <CommentsProvider parentPostId={parentPostId} depth={0}>
-      <CommentForm />
+    <div>
+      {showForm ? (
+        <CommentForm onClose={() => setShowForm(false)} onSuccess={addComment} />
+      ) : (
+        <Button onClick={() => setShowForm(true)}>Leave a comment</Button>
+      )}
+
       <CommentList />
+    </div>
+  );
+};
+
+const Comments: React.FC<CommentsProps> = ({ rootId, rootType }) => {
+  return (
+    <CommentsProvider rootId={rootId} rootType={rootType}>
+      <CommentsRoot />
     </CommentsProvider>
   );
 };

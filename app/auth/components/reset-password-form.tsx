@@ -1,7 +1,5 @@
 import type { ResetPasswordResult } from "app/auth/mutations/reset-password-mutation";
-
 import type { FC } from "react";
-
 import type { ResetPasswordValues } from "app/auth/schemas/reset-password-schema";
 
 import { useRouterQuery, useMutation } from "blitz";

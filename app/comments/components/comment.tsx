@@ -1,57 +1,46 @@
-import type { Comment as PrismaComment } from "db";
+import type { CommentsResultItem } from "../queries/comments-query";
 
-import React, { useMemo, useState } from "react";
+import { useSession } from "blitz";
+import React, { useState } from "react";
 
 import { Box } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 
-import { generateHTML } from "@tiptap/react";
-
-import getEditorExtensions from "app/core/helpers/get-editor-extensions";
-
-import EditorHtml from "app/core/components/editor-html";
+import EditorHtml from "app/editor/components/editor-html";
+import useEditorHtml from "app/editor/hooks/use-editor-html";
 
 import useComments from "../hooks/use-comments";
 
-import CommentsProvider from "./comments-provider";
+import CommentReplies from "./comment-replies";
 import CommentForm from "./comment-form";
-import CommentList from "./comment-list";
 
 type CommentProps = {
-  comment: PrismaComment;
+  comment: CommentsResultItem;
   added?: boolean;
 };
 
 const Comment: React.FC<CommentProps> = ({ comment, added }) => {
-  const [showForm, setShowForm] = useState(false);
-  const { parentPostId, depth } = useComments();
+  const [edit, setEdit] = useState(false);
+  const { userId } = useSession();
+  const { updateComment } = useComments();
+  const html = useEditorHtml(comment.content);
 
-  const html = useMemo(() => {
-    try {
-      return generateHTML(JSON.parse(comment.content), getEditorExtensions());
-    } catch (error) {
-      return "<p>There was an error rendering this comment</p>";
-    }
-  }, [comment.content]);
+  const canEdit = userId === comment.authorId;
 
   return (
-    <Box key={comment.id} bg={added ? "yellow" : ""}>
-      <EditorHtml dangerouslySetInnerHTML={{ __html: html }} />
+    <div>
+      <Box key={comment.id} bg={added ? "yellow" : ""}>
+        {edit ? (
+          <CommentForm comment={comment} onClose={() => setEdit(false)} onSuccess={updateComment} />
+        ) : (
+          <EditorHtml dangerouslySetInnerHTML={{ __html: html }} />
+        )}
 
-      {!showForm && <Button onClick={() => setShowForm(true)}>Reply</Button>}
-
-      <Box ml={4}>
-        <CommentsProvider
-          parentPostId={parentPostId}
-          parentCommentId={comment.id}
-          depth={depth + 1}
-        >
-          {showForm && <CommentForm onSuccess={() => setShowForm(false)} />}
-
-          <CommentList />
-        </CommentsProvider>
+        {canEdit && !edit && <Button onClick={() => setEdit(true)}>Edit</Button>}
       </Box>
-    </Box>
+
+      <CommentReplies comment={comment} />
+    </div>
   );
 };
 
