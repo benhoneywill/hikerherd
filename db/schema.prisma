@@ -91,17 +91,18 @@ model Post {
 
 enum BlogUserRole {
   ADMIN
-  MEMEBER
+  MEMBER
 }
 
 model Blog {
   id        String   @id @default(cuid())
-  name      String
+  name      String   @unique
   slug      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   users BlogUser[]
+  posts BlogPost[]
 }
 
 model BlogPost {
@@ -115,6 +116,9 @@ model BlogPost {
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
+
+  blog   Blog   @relation(fields: [blogId], references: [id])
+  blogId String
 }
 
 model BlogUser {

@@ -9,8 +9,6 @@ import Comments from "app/comments/components/comments";
 import useEditorHtml from "app/common/modules/editor/hooks/use-editor-html";
 import commentsQuery from "app/comments/queries/comments-query";
 
-import { CommentRootType } from "db";
-
 import publicPostQuery from "../../../queries/public-post-query";
 
 const PostPage: BlitzPage = () => {
@@ -28,7 +26,7 @@ const PostPage: BlitzPage = () => {
     <div>
       <h1>{post.title}</h1>
       <EditorHtml fontSize="lg" dangerouslySetInnerHTML={{ __html: html }} />
-      <Comments rootId={post.id} rootType={CommentRootType.POST} />
+      <Comments rootId={post.id} rootType={"POST"} />
     </div>
   );
 };
@@ -41,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const post = await client.prefetchQuery(publicPostQuery, { slug });
     await client.prefetchInfiniteQuery(commentsQuery, {
       rootId: post.id,
-      rootType: CommentRootType.POST,
+      rootType: "POST",
       depth: 4,
     });
   } catch (error) {

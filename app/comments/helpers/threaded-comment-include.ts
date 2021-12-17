@@ -1,5 +1,5 @@
 type ThreadedCommentInclude = {
-  author: true;
+  author: { select: { username: true; avatar: true } };
   replies?: {
     include: ThreadedCommentInclude;
     take: number;
@@ -22,7 +22,7 @@ const threadedCommentInclude = ({
   take = 10,
 }: ThreadedCommentsIncludeOptions): ThreadedCommentInclude => {
   const base: ThreadedCommentInclude = {
-    author: true,
+    author: { select: { username: true, avatar: true } },
     _count: {
       select: { replies: true },
     },

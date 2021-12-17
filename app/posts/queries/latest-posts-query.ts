@@ -19,7 +19,12 @@ const latestPostsQuery = resolver.pipe(
           ...paginateArgs,
           orderBy: { createdAt: "desc" },
           include: {
-            author: true,
+            author: {
+              select: {
+                username: true,
+                avatar: true,
+              },
+            },
           },
         });
 

@@ -4,7 +4,7 @@ import { resolver, SecurePassword } from "blitz";
 
 import signupSchema from "app/auth/schemas/signup-schema";
 
-import db, { UserRole } from "db";
+import db from "db";
 
 import UserCreateError from "../errors/user-create-error";
 
@@ -23,7 +23,7 @@ const signupMutation = resolver.pipe(
           email: sanitizedEmail,
           username: sanitizedUsername,
           hashedPassword,
-          role: UserRole.USER,
+          role: "USER",
         },
       });
 

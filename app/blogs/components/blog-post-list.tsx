@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { LatestPostsResultItem } from "../queries/latest-posts-query";
+import type { LatestBlogPostsResultItem } from "../queries/latest-blog-posts-query";
 
 import { Link, Routes } from "blitz";
 
@@ -19,11 +19,11 @@ import pluralize from "app/common/helpers/pluralize";
 import useEditorHtml from "app/common/modules/editor/hooks/use-editor-html";
 import EditorSnippetHtml from "app/common/modules/editor/components/editor-snippet-html";
 
-type PostListProps = {
-  posts: LatestPostsResultItem[];
+type BlogPostListProps = {
+  posts: LatestBlogPostsResultItem[];
 };
 
-const Post: FC<{ post: LatestPostsResultItem }> = ({ post }) => {
+const Post: FC<{ post: LatestBlogPostsResultItem }> = ({ post }) => {
   const html = useEditorHtml(
     post.content,
     {
@@ -40,7 +40,9 @@ const Post: FC<{ post: LatestPostsResultItem }> = ({ post }) => {
       <HStack spacing={4}>
         <Avatar size="sm" src={post.author.avatar || ""} />
         <div>
-          <Text mb={-1}>{post.author.username}</Text>
+          <Text mb={-1}>
+            by {post.author.username} in {post.blog.name}
+          </Text>
           <Text fontSize="xs" color="gray.500">
             {timeSince(post.createdAt)}
           </Text>
@@ -85,7 +87,7 @@ const Post: FC<{ post: LatestPostsResultItem }> = ({ post }) => {
   );
 };
 
-const PostList: FC<PostListProps> = ({ posts }) => {
+const BlogPostList: FC<BlogPostListProps> = ({ posts }) => {
   return (
     <Stack as="ul" listStyleType="none" spacing={4}>
       {posts.map((post) => (
@@ -95,4 +97,4 @@ const PostList: FC<PostListProps> = ({ posts }) => {
   );
 };
 
-export default PostList;
+export default BlogPostList;

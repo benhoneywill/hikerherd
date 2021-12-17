@@ -4,7 +4,7 @@ import { resolver } from "blitz";
 
 import sendPasswordReset from "app/auth/mailers/send-password-reset";
 
-import db, { TokenType } from "db";
+import db from "db";
 
 import forgotPasswordSchema from "../schemas/forgot-password-schema";
 import generatePasswordResetToken from "../helpers/generate-password-reset-token";
@@ -25,7 +25,7 @@ const forgotPasswordMutation = resolver.pipe(
       // Delete any old password reset tokens
       await db.token.deleteMany({
         where: {
-          type: TokenType.RESET_PASSWORD,
+          type: "RESET_PASSWORD",
           userId: user.id,
         },
       });
@@ -35,7 +35,7 @@ const forgotPasswordMutation = resolver.pipe(
       await db.token.create({
         data: {
           user: { connect: { id: user.id } },
-          type: TokenType.RESET_PASSWORD,
+          type: "RESET_PASSWORD",
           expiresAt,
           hashedToken,
           sentTo: user.email,

@@ -2,7 +2,7 @@ import type { PromiseReturnType } from "blitz";
 
 import { resolver, SecurePassword, hash256 } from "blitz";
 
-import db, { TokenType } from "db";
+import db from "db";
 
 import ResetPasswordError from "../errors/reset-password-error";
 import resetPasswordSchema from "../schemas/reset-password-schema";
@@ -16,7 +16,7 @@ const resetPasswordMutation = resolver.pipe(
     // Try to find this token in the database
     const hashedToken = hash256(token);
     const matchedToken = await db.token.findFirst({
-      where: { hashedToken, type: TokenType.RESET_PASSWORD },
+      where: { hashedToken, type: "RESET_PASSWORD" },
       include: { user: true },
     });
 
