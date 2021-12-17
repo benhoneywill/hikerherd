@@ -53,20 +53,31 @@ describe("resetPasswordMutation", () => {
 
     // Non-existent token
     await expect(
-      resetPasswordMutation({ token: "no-token", password: "", passwordConfirmation: "" }, mockCtx)
+      resetPasswordMutation(
+        { token: "no-token", password: "", passwordConfirmation: "" },
+        mockCtx
+      )
     ).rejects.toThrowError();
 
     // Expired token
     await expect(
       resetPasswordMutation(
-        { token: expiredToken, password: newPassword, passwordConfirmation: newPassword },
+        {
+          token: expiredToken,
+          password: newPassword,
+          passwordConfirmation: newPassword,
+        },
         mockCtx
       )
     ).rejects.toThrowError();
 
     // Good token
     await resetPasswordMutation(
-      { token: goodToken, password: newPassword, passwordConfirmation: newPassword },
+      {
+        token: goodToken,
+        password: newPassword,
+        passwordConfirmation: newPassword,
+      },
       mockCtx
     );
 
@@ -76,8 +87,8 @@ describe("resetPasswordMutation", () => {
 
     // Updates user's password
     const updatedUser = await db.user.findFirst({ where: { id: user.id } });
-    expect(await SecurePassword.verify(updatedUser?.hashedPassword, newPassword)).toBe(
-      SecurePassword.VALID
-    );
+    expect(
+      await SecurePassword.verify(updatedUser?.hashedPassword, newPassword)
+    ).toBe(SecurePassword.VALID);
   });
 });

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import paginationSchema from "app/core/schemas/pagination-schema";
+import paginationSchema from "app/common/schemas/pagination-schema";
 
 import { CommentRootType } from "db";
 

@@ -4,7 +4,7 @@ import { useRouter, Link, Routes } from "blitz";
 
 import { Divider, HStack } from "@chakra-ui/layout";
 
-import BoxLayout from "app/core/layouts/box-layout";
+import BoxLayout from "app/common/layouts/box-layout";
 import LoginForm from "app/auth/components/login-form";
 
 const LoginPage: BlitzPage = () => {

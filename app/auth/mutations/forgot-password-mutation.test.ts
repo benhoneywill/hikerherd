@@ -4,13 +4,13 @@ import { hash256 } from "blitz";
 
 import db from "db";
 
-import passwordMailer from "../mailers/password-mailer";
+import * as sendPasswordResetMailer from "../mailers/send-password-reset";
 
 import forgotPasswordMutation from "./forgot-password-mutation";
 
 const generatedToken = "plain-token";
 
-const sendPasswordReset = jest.spyOn(passwordMailer, "sendPasswordReset");
+const sendPasswordReset = jest.spyOn(sendPasswordResetMailer, "default");
 
 jest.mock("blitz", () => ({
   ...jest.requireActual<Record<string, unknown>>("blitz"),

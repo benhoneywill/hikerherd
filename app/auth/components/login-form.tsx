@@ -4,8 +4,8 @@ import type { LoginResult } from "app/auth/mutations/login-mutation";
 
 import { AuthenticationError, useMutation } from "blitz";
 
-import TextField from "app/core/components/text-field";
-import Form, { FORM_ERROR } from "app/core/components/form";
+import TextField from "app/common/components/text-field";
+import Form, { FORM_ERROR } from "app/common/components/form";
 import loginMutation from "app/auth/mutations/login-mutation";
 import loginSchema from "app/auth/schemas/login-schema";
 
@@ -43,7 +43,12 @@ const LoginForm: FC<LoginFormProps> = ({ onSuccess }) => {
       onSubmit={handleSubmit}
     >
       <TextField name="email" label="Email" placeholder="Email" />
-      <TextField name="password" label="Password" placeholder="Password" type="password" />
+      <TextField
+        name="password"
+        label="Password"
+        placeholder="Password"
+        type="password"
+      />
     </Form>
   );
 };

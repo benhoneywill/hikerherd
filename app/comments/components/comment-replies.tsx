@@ -1,6 +1,7 @@
 import type { CommentsResultItem } from "../queries/comments-query";
+import type { FC } from "react";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { Box } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
@@ -20,7 +21,7 @@ const CommentReplyForm = ({ onClose }: { onClose: () => void }) => {
   return <CommentForm onClose={onClose} onSuccess={addComment} />;
 };
 
-const CommentReplies: React.FC<CommentProps> = ({ comment }) => {
+const CommentReplies: FC<CommentProps> = ({ comment }) => {
   const [showForm, setShowForm] = useState(false);
   const { rootId, rootType } = useComments();
 

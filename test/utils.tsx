@@ -58,7 +58,9 @@ export const DefaultTestWrapper: FC<DefaultTestWrapperProps> = ({
   router,
 }) => (
   <BlitzProvider dehydratedState={dehydratedState}>
-    <RouterContext.Provider value={{ ...mockRouter, ...router }}>{children}</RouterContext.Provider>
+    <RouterContext.Provider value={{ ...mockRouter, ...router }}>
+      {children}
+    </RouterContext.Provider>
   </BlitzProvider>
 );
 
@@ -74,7 +76,10 @@ export function render(
 ) {
   if (!wrapper) {
     wrapper = ({ children }) => (
-      <DefaultTestWrapper dehydratedState={dehydratedState} router={{ ...mockRouter, ...router }}>
+      <DefaultTestWrapper
+        dehydratedState={dehydratedState}
+        router={{ ...mockRouter, ...router }}
+      >
         {children}
       </DefaultTestWrapper>
     );
@@ -98,7 +103,10 @@ export function renderHook(
 ) {
   if (!wrapper) {
     wrapper = ({ children }) => (
-      <DefaultTestWrapper dehydratedState={dehydratedState} router={{ ...mockRouter, ...router }}>
+      <DefaultTestWrapper
+        dehydratedState={dehydratedState}
+        router={{ ...mockRouter, ...router }}
+      >
         {children}
       </DefaultTestWrapper>
     );

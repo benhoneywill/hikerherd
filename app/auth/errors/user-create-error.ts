@@ -8,7 +8,9 @@ class UserCreateError extends Error {
   usernameTaken = false;
 
   constructor(error: unknown) {
-    super(error instanceof Error ? error.message : "There was an error signing up");
+    super(
+      error instanceof Error ? error.message : "There was an error signing up"
+    );
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {

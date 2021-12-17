@@ -33,9 +33,9 @@ const CommentsProvider: FC<CommentsProviderProps> = ({
   const isRootComments = !isCommentReplies;
 
   const [addedComments, setAddedComments] = useState<CreateCommentResult[]>([]);
-  const [updatedComments, setUpdatedComments] = useState<{ [id in string]: UpdateCommentResult }>(
-    {}
-  );
+  const [updatedComments, setUpdatedComments] = useState<{
+    [id in string]: UpdateCommentResult;
+  }>({});
   const [paginationStarted, setPaginationStarted] = useState(isRootComments);
 
   const canPaginate = isCommentReplies && initialComments.length < commentCount;

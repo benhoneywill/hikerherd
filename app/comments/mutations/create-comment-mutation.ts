@@ -25,6 +25,8 @@ const createCommentMutation = resolver.pipe(
   }
 );
 
-export type CreateCommentResult = PromiseReturnType<typeof createCommentMutation>;
+export type CreateCommentResult = PromiseReturnType<
+  typeof createCommentMutation
+>;
 
 export default createCommentMutation;

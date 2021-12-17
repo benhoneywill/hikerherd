@@ -1,23 +1,22 @@
-# Extend the recommended Blitz config
 extends:
-  - "eslint:recommended"
-  - "plugin:@typescript-eslint/recommended"
   - "blitz"
+  - "plugin:prettier/recommended"
 
 plugins:
   - "@typescript-eslint"
 
 rules:
-  import/prefer-default-export: error
-
-  # Typescript type import should use "import type"
+  # Typescript rules
   "@typescript-eslint/consistent-type-imports": error
   "@typescript-eslint/no-unused-vars": error
 
-  # Define import order rules
+  # import rules
+  import/prefer-default-export: error
+  import/no-duplicates: error
   import/order:
     - error
-    - groups: [type, builtin, external, internal, parent, sibling, index, object]
+    - groups:
+        [type, builtin, external, internal, parent, sibling, index, object]
       newlines-between: always
       pathGroupsExcludedImportTypes:
         - type
@@ -25,11 +24,12 @@ rules:
         - pattern: "+(react|blitz)"
           group: builtin
           position: before
-        - pattern: "+(app|db|public|test)/**"
+        - pattern: "+(app|db|public|test|integrations)/**"
           group: internal
           position: before
 
 overrides:
+  # In tests you can be more loose with types
   - files: "**/*.test.ts"
     rules:
       "@typescript-eslint/no-explicit-any": "off"

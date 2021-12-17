@@ -3,7 +3,7 @@ import type { BlitzPage } from "blitz";
 import { usePaginatedQuery } from "blitz";
 import { useState } from "react";
 
-import ThreeColumnLayout from "app/core/layouts/three-column-layout";
+import ThreeColumnLayout from "app/common/layouts/three-column-layout";
 import latestPostsQuery from "app/posts/queries/latest-posts-query";
 import PostList from "app/posts/components/post-list";
 
@@ -18,6 +18,8 @@ const PostsPage: BlitzPage = () => {
   return <PostList posts={posts.items} />;
 };
 
-PostsPage.getLayout = (page) => <ThreeColumnLayout title="Community">{page}</ThreeColumnLayout>;
+PostsPage.getLayout = (page) => (
+  <ThreeColumnLayout title="Community">{page}</ThreeColumnLayout>
+);
 
 export default PostsPage;

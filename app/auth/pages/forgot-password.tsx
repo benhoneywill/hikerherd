@@ -3,7 +3,7 @@ import type { BlitzPage } from "blitz";
 import { Routes } from "blitz";
 import { useState } from "react";
 
-import BoxLayout from "app/core/layouts/box-layout";
+import BoxLayout from "app/common/layouts/box-layout";
 
 import ForgotPasswordForm from "../components/forgot-password-form";
 
@@ -15,8 +15,8 @@ const ForgotPasswordPage: BlitzPage = () => {
       <div>
         <h2>Request Submitted</h2>
         <p>
-          If your email is in our system, you will receive instructions to reset your password
-          shortly.
+          If your email is in our system, you will receive instructions to reset
+          your password shortly.
         </p>
       </div>
     );

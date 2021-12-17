@@ -1,4 +1,4 @@
-import React from "react";
+import type { FC } from "react";
 
 import { Stack } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
@@ -7,11 +7,17 @@ import useComments from "../hooks/use-comments";
 
 import Comment from "./comment";
 
-const CommentList: React.FC = () => {
-  const { comments, pagination, addedComments, canStartPagination, startPagination } =
-    useComments();
+const CommentList: FC = () => {
+  const {
+    comments,
+    pagination,
+    addedComments,
+    canStartPagination,
+    startPagination,
+  } = useComments();
 
-  const { hasNextPage, isFetching, fetchNextPage, isFetchingNextPage } = pagination;
+  const { hasNextPage, isFetching, fetchNextPage, isFetchingNextPage } =
+    pagination;
 
   return (
     <>

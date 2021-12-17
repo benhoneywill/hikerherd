@@ -2,7 +2,7 @@ import type { BlitzPage } from "blitz";
 
 import { Routes } from "blitz";
 
-import SingleColumnLayout from "app/core/layouts/single-column-layout";
+import SingleColumnLayout from "app/common/layouts/single-column-layout";
 
 const MyProfilePage: BlitzPage = () => {
   return <p>My profile</p>;

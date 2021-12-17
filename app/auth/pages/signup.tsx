@@ -2,7 +2,7 @@ import type { BlitzPage } from "blitz";
 
 import { useRouter, Routes } from "blitz";
 
-import BoxLayout from "app/core/layouts/box-layout";
+import BoxLayout from "app/common/layouts/box-layout";
 import SignupForm from "app/auth/components/signup-form";
 
 const SignupPage: BlitzPage = () => {

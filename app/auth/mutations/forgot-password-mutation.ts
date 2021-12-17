@@ -2,7 +2,7 @@ import type { PromiseReturnType } from "blitz";
 
 import { resolver } from "blitz";
 
-import passwordMailer from "app/auth/mailers/password-mailer";
+import sendPasswordReset from "app/auth/mailers/send-password-reset";
 
 import db, { TokenType } from "db";
 
@@ -14,7 +14,9 @@ const forgotPasswordMutation = resolver.pipe(
 
   async ({ email }) => {
     // See if a user exists for the provided email address
-    const user = await db.user.findFirst({ where: { email: email.toLowerCase() } });
+    const user = await db.user.findFirst({
+      where: { email: email.toLowerCase() },
+    });
 
     if (!user) {
       // If no user was found wait a bit so hackers can't tell the difference
@@ -41,7 +43,7 @@ const forgotPasswordMutation = resolver.pipe(
       });
 
       // Send the password reset email
-      passwordMailer.sendPasswordReset(user, { token });
+      sendPasswordReset(user, { token });
     }
 
     // Whether or not the email was sent, return the same response
@@ -49,6 +51,8 @@ const forgotPasswordMutation = resolver.pipe(
   }
 );
 
-export type ForgotPasswordResult = PromiseReturnType<typeof forgotPasswordMutation>;
+export type ForgotPasswordResult = PromiseReturnType<
+  typeof forgotPasswordMutation
+>;
 
 export default forgotPasswordMutation;

@@ -1,7 +1,6 @@
 import type { PromiseReturnType } from "blitz";
 
-import { AuthorizationError, NotFoundError } from "blitz";
-import { resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
@@ -33,6 +32,8 @@ const updateCommentMutation = resolver.pipe(
   }
 );
 
-export type UpdateCommentResult = PromiseReturnType<typeof updateCommentMutation>;
+export type UpdateCommentResult = PromiseReturnType<
+  typeof updateCommentMutation
+>;
 
 export default updateCommentMutation;

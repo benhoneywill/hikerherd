@@ -4,8 +4,8 @@ import type { ForgotPasswordValues } from "app/auth/schemas/forgot-password-sche
 
 import { useMutation } from "blitz";
 
-import TextField from "app/core/components/text-field";
-import Form, { FORM_ERROR } from "app/core/components/form";
+import TextField from "app/common/components/text-field";
+import Form, { FORM_ERROR } from "app/common/components/form";
 import forgotPasswordSchema from "app/auth/schemas/forgot-password-schema";
 import forgotPasswordMutation from "app/auth/mutations/forgot-password-mutation";
 

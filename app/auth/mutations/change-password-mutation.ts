@@ -32,6 +32,8 @@ const changePasswordMutation = resolver.pipe(
   }
 );
 
-export type ChangePasswordResult = PromiseReturnType<typeof changePasswordMutation>;
+export type ChangePasswordResult = PromiseReturnType<
+  typeof changePasswordMutation
+>;
 
 export default changePasswordMutation;

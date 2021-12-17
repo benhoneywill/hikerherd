@@ -4,8 +4,8 @@ import type { SignupResult } from "app/auth/mutations/signup-mutation";
 
 import { useMutation } from "blitz";
 
-import TextField from "app/core/components/text-field";
-import Form, { FORM_ERROR } from "app/core/components/form";
+import TextField from "app/common/components/text-field";
+import Form, { FORM_ERROR } from "app/common/components/form";
 import signupMutation from "app/auth/mutations/signup-mutation";
 import signupSchema from "app/auth/schemas/signup-schema";
 
@@ -54,7 +54,12 @@ const SignupForm: FC<SignupFormProps> = ({ onSuccess }) => {
     >
       <TextField name="email" label="Email" placeholder="Email" />
       <TextField name="username" label="Username" placeholder="Username" />
-      <TextField name="password" label="Password" placeholder="Password" type="password" />
+      <TextField
+        name="password"
+        label="Password"
+        placeholder="Password"
+        type="password"
+      />
     </Form>
   );
 };

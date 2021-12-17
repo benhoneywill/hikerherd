@@ -1,16 +1,16 @@
 import type { CommentsResultItem } from "../queries/comments-query";
-import type { editorContentValues } from "app/editor/schemas/editor-content-schema";
+import type { editorContentValues } from "app/common/modules/editor/schemas/editor-content-schema";
 import type { CreateCommentResult } from "../mutations/create-comment-mutation";
 import type { UpdateCommentResult } from "../mutations/update-comment-mutation";
+import type { FC } from "react";
 
-import React from "react";
 import { useSession, useMutation, Routes } from "blitz";
 
 import Link from "next/link";
 import { Button } from "@chakra-ui/button";
 
-import EditorField from "app/editor/components/editor-field";
-import Form from "app/core/components/form";
+import EditorField from "app/common/modules/editor/components/editor-field";
+import Form from "app/common/components/form";
 
 import createCommentMutation from "../mutations/create-comment-mutation";
 import createCommentSchema from "../schemas/create-comment-schema";
@@ -23,7 +23,7 @@ type CommentFormProps = {
   onClose: () => void;
 };
 
-const CommentForm: React.FC<CommentFormProps> = ({ comment, onSuccess, onClose }) => {
+const CommentForm: FC<CommentFormProps> = ({ comment, onSuccess, onClose }) => {
   const { userId } = useSession();
   const { rootId, rootType, parentId } = useComments();
 
@@ -56,7 +56,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ comment, onSuccess, onClose }
       schema={createCommentSchema.pick({ content: true })}
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      aditionalActions={() => (
+      renderButtons={() => (
         <Button type="button" onClick={onClose}>
           Cancel
         </Button>

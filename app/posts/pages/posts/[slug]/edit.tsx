@@ -10,7 +10,7 @@ import {
   useRouter,
 } from "blitz";
 
-import SingleColumnLayout from "app/core/layouts/single-column-layout";
+import SingleColumnLayout from "app/common/layouts/single-column-layout";
 import PostForm from "app/posts/components/post-form";
 
 import postBySlugQuery from "../../../queries/public-post-query";
@@ -32,7 +32,11 @@ const EditPostPage: BlitzPage<EditPostPage> = ({ post }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+  res,
+}) => {
   try {
     const post = await invokeWithMiddleware(
       postBySlugQuery,

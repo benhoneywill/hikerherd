@@ -1,6 +1,6 @@
 import type { BlitzPage } from "blitz";
 
-import ThreeColumnLayout from "app/core/layouts/three-column-layout";
+import ThreeColumnLayout from "app/common/layouts/three-column-layout";
 
 const BlogsPage: BlitzPage = () => {
   return <p>Blogs and blog posts go here</p>;

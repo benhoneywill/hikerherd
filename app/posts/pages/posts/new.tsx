@@ -2,7 +2,7 @@ import type { BlitzPage } from "blitz";
 
 import { useRouter, Routes } from "blitz";
 
-import SingleColumnLayout from "app/core/layouts/single-column-layout";
+import SingleColumnLayout from "app/common/layouts/single-column-layout";
 
 import PostForm from "../../components/post-form";
 
@@ -19,6 +19,8 @@ const NewPostPage: BlitzPage = () => {
 };
 
 NewPostPage.authenticate = { redirectTo: Routes.LoginPage() };
-NewPostPage.getLayout = (page) => <SingleColumnLayout title="New post">{page}</SingleColumnLayout>;
+NewPostPage.getLayout = (page) => (
+  <SingleColumnLayout title="New post">{page}</SingleColumnLayout>
+);
 
 export default NewPostPage;

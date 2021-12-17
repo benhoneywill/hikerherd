@@ -1,14 +1,12 @@
 import type { BlitzPage, GetServerSideProps } from "blitz";
 
-import { NotFoundError } from "blitz";
-import { useParam } from "blitz";
-import { useQuery } from "blitz";
+import { NotFoundError, useParam, useQuery } from "blitz";
 
-import SingleColumnLayout from "app/core/layouts/single-column-layout";
-import EditorHtml from "app/editor/components/editor-html";
-import PrefetchQueryClient from "app/core/helpers/prefetch-query-client";
+import SingleColumnLayout from "app/common/layouts/single-column-layout";
+import EditorHtml from "app/common/modules/editor/components/editor-html";
+import PrefetchQueryClient from "app/common/helpers/prefetch-query-client";
 import Comments from "app/comments/components/comments";
-import useEditorHtml from "app/editor/hooks/use-editor-html";
+import useEditorHtml from "app/common/modules/editor/hooks/use-editor-html";
 import commentsQuery from "app/comments/queries/comments-query";
 
 import { CommentRootType } from "db";
@@ -61,6 +59,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-PostPage.getLayout = (page) => <SingleColumnLayout title="Post">{page}</SingleColumnLayout>;
+PostPage.getLayout = (page) => (
+  <SingleColumnLayout title="Post">{page}</SingleColumnLayout>
+);
 
 export default PostPage;

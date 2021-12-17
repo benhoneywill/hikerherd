@@ -1,13 +1,14 @@
 import type { CommentsResultItem } from "../queries/comments-query";
+import type { FC } from "react";
 
 import { useSession } from "blitz";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { Box } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 
-import EditorHtml from "app/editor/components/editor-html";
-import useEditorHtml from "app/editor/hooks/use-editor-html";
+import EditorHtml from "app/common/modules/editor/components/editor-html";
+import useEditorHtml from "app/common/modules/editor/hooks/use-editor-html";
 
 import useComments from "../hooks/use-comments";
 
@@ -19,7 +20,7 @@ type CommentProps = {
   added?: boolean;
 };
 
-const Comment: React.FC<CommentProps> = ({ comment, added }) => {
+const Comment: FC<CommentProps> = ({ comment, added }) => {
   const [edit, setEdit] = useState(false);
   const { userId } = useSession();
   const { updateComment } = useComments();
@@ -31,12 +32,18 @@ const Comment: React.FC<CommentProps> = ({ comment, added }) => {
     <div>
       <Box key={comment.id} bg={added ? "yellow" : ""}>
         {edit ? (
-          <CommentForm comment={comment} onClose={() => setEdit(false)} onSuccess={updateComment} />
+          <CommentForm
+            comment={comment}
+            onClose={() => setEdit(false)}
+            onSuccess={updateComment}
+          />
         ) : (
           <EditorHtml dangerouslySetInnerHTML={{ __html: html }} />
         )}
 
-        {canEdit && !edit && <Button onClick={() => setEdit(true)}>Edit</Button>}
+        {canEdit && !edit && (
+          <Button onClick={() => setEdit(true)}>Edit</Button>
+        )}
       </Box>
 
       <CommentReplies comment={comment} />

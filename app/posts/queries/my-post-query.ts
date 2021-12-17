@@ -1,7 +1,6 @@
 import type { PromiseReturnType } from "blitz";
 
-import { NotFoundError, AuthorizationError } from "blitz";
-import { resolver } from "blitz";
+import { NotFoundError, AuthorizationError, resolver } from "blitz";
 
 import db from "db";
 

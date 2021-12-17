@@ -1,6 +1,7 @@
 import type { CommentRootType } from "db";
+import type { FC } from "react";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@chakra-ui/button";
 
@@ -15,14 +16,17 @@ type CommentsProps = {
   rootType: CommentRootType;
 };
 
-const CommentsRoot: React.FC = () => {
+const CommentsRoot: FC = () => {
   const [showForm, setShowForm] = useState(false);
   const { addComment } = useComments();
 
   return (
     <div>
       {showForm ? (
-        <CommentForm onClose={() => setShowForm(false)} onSuccess={addComment} />
+        <CommentForm
+          onClose={() => setShowForm(false)}
+          onSuccess={addComment}
+        />
       ) : (
         <Button onClick={() => setShowForm(true)}>Leave a comment</Button>
       )}
@@ -32,7 +36,7 @@ const CommentsRoot: React.FC = () => {
   );
 };
 
-const Comments: React.FC<CommentsProps> = ({ rootId, rootType }) => {
+const Comments: FC<CommentsProps> = ({ rootId, rootType }) => {
   return (
     <CommentsProvider rootId={rootId} rootType={rootType}>
       <CommentsRoot />

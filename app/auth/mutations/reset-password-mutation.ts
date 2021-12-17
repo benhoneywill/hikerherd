@@ -50,6 +50,8 @@ const resetPasswordMutation = resolver.pipe(
   }
 );
 
-export type ResetPasswordResult = PromiseReturnType<typeof resetPasswordMutation>;
+export type ResetPasswordResult = PromiseReturnType<
+  typeof resetPasswordMutation
+>;
 
 export default resetPasswordMutation;

@@ -2,7 +2,7 @@ import type { PromiseReturnType } from "blitz";
 
 import { paginate, resolver } from "blitz";
 
-import paginationSchema from "app/core/schemas/pagination-schema";
+import paginationSchema from "app/common/schemas/pagination-schema";
 
 import db from "db";
 
@@ -14,14 +14,23 @@ const latestPostsQuery = resolver.pipe(
       skip,
       take,
       count: () => db.post.count(),
-      query: (paginateArgs) => {
-        return db.post.findMany({
+      query: async (paginateArgs) => {
+        const posts = await db.post.findMany({
           ...paginateArgs,
           orderBy: { createdAt: "desc" },
           include: {
             author: true,
           },
         });
+
+        return Promise.all(
+          posts.map(async (post) => ({
+            ...post,
+            commentCount: await db.comment.count({
+              where: { rootId: post.id, rootType: "POST" },
+            }),
+          }))
+        );
       },
     });
 

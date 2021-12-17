@@ -4,8 +4,8 @@ import type { ResetPasswordValues } from "app/auth/schemas/reset-password-schema
 
 import { useRouterQuery, useMutation } from "blitz";
 
-import TextField from "app/core/components/text-field";
-import Form, { FORM_ERROR } from "app/core/components/form";
+import TextField from "app/common/components/text-field";
+import Form, { FORM_ERROR } from "app/common/components/form";
 import resetPasswordSchema from "app/auth/schemas/reset-password-schema";
 import resetPasswordMutation from "app/auth/mutations/reset-password-mutation";
 
@@ -47,7 +47,11 @@ const ResetPasswordForm: FC<ResetPasswordFormProps> = () => {
       onSubmit={handleSubmit}
     >
       <TextField name="password" label="New Password" type="password" />
-      <TextField name="passwordConfirmation" label="Confirm New Password" type="password" />
+      <TextField
+        name="passwordConfirmation"
+        label="Confirm New Password"
+        type="password"
+      />
     </Form>
   );
 };

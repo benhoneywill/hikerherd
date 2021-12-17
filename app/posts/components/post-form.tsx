@@ -8,9 +8,9 @@ import { useMutation } from "blitz";
 
 import { Stack } from "@chakra-ui/layout";
 
-import TextField from "app/core/components/text-field";
-import Form, { FORM_ERROR } from "app/core/components/form";
-import EditorField from "app/editor/components/editor-field";
+import TextField from "app/common/components/text-field";
+import Form, { FORM_ERROR } from "app/common/components/form";
+import EditorField from "app/common/modules/editor/components/editor-field";
 
 import createPostMutation from "../mutations/create-post-mutation";
 import createPostSchema from "../schemas/create-post-schema";
@@ -63,7 +63,12 @@ const PostForm: FC<PostFormProps> = ({ post, onSuccess }) => {
           name="content"
           fontSize="md"
           label="content"
-          features={{ image: true, blockquote: true, heading: true, horizontalRule: true }}
+          features={{
+            image: true,
+            blockquote: true,
+            heading: true,
+            horizontalRule: true,
+          }}
           barMenu
           bubbleMenu
           floatingMenu
