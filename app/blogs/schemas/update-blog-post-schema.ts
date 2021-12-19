@@ -2,12 +2,12 @@ import { z } from "zod";
 
 import editorContentSchema from "app/common/modules/editor/schemas/editor-content-schema";
 
-const createBlogPostSchema = z.object({
-  blogSlug: z.string(),
+const updateBlogPostSchema = z.object({
+  id: z.string(),
   title: z.string().min(3),
   content: editorContentSchema,
 });
 
-export type CreateBlogPostValues = z.infer<typeof createBlogPostSchema>;
+export type UpdateBlogPostValues = z.infer<typeof updateBlogPostSchema>;
 
-export default createBlogPostSchema;
+export default updateBlogPostSchema;

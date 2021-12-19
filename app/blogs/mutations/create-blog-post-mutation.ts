@@ -12,9 +12,9 @@ const createBlogPostMutation = resolver.pipe(
   resolver.zod(createBlogPostSchema),
   resolver.authorize(),
 
-  async ({ blogId, ...values }, ctx) => {
+  async ({ blogSlug, ...values }, ctx) => {
     const blog = await db.blog.findUnique({
-      where: { id: blogId },
+      where: { slug: blogSlug },
       include: { users: true },
     });
 
@@ -30,7 +30,7 @@ const createBlogPostMutation = resolver.pipe(
       throw new AuthorizationError();
     }
 
-    return { blogId, ...values };
+    return { blogId: blog.id, ...values };
   },
 
   async ({ blogId, title, content }, ctx) => {

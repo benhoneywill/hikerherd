@@ -10,9 +10,9 @@ const myPostQuery = resolver.pipe(
   resolver.zod(getMyPostSchema),
   resolver.authorize(),
 
-  async ({ id }, ctx) => {
+  async ({ slug }, ctx) => {
     const post = await db.post.findUnique({
-      where: { id },
+      where: { slug },
     });
 
     if (!post) {

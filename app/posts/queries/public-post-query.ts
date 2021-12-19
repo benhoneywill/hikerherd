@@ -10,7 +10,7 @@ const publicPostQuery = resolver.pipe(
   resolver.zod(getPublicPostSchema),
 
   async ({ slug }) => {
-    const post = await db.post.findFirst({
+    const post = await db.post.findUnique({
       where: { slug },
     });
 

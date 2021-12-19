@@ -57,6 +57,11 @@ const HeaderUserMenu: FC = () => {
               My profile
             </MenuItem>
           </Link>
+          <Link href={Routes.MyBlogsPage()} passHref>
+            <MenuItem as="a" icon={<FaUserAlt />}>
+              My blogs
+            </MenuItem>
+          </Link>
           <MenuItem
             as="button"
             onClick={() => logout()}

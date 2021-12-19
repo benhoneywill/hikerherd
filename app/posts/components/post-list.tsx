@@ -58,7 +58,7 @@ const Post: FC<{ post: LatestPostsResultItem }> = ({ post }) => {
           position="relative"
           maxHeight="140px"
           overflow="hidden"
-          bg="gray.700"
+          bg="gray.100"
           borderRadius="sm"
           p={3}
         >
@@ -73,7 +73,7 @@ const Post: FC<{ post: LatestPostsResultItem }> = ({ post }) => {
             zIndex={2}
             bottom="0"
             width="100%"
-            bgGradient="linear(to-b, transparent 40px, gray.700 130px)"
+            bgGradient="linear(to-b, transparent 40px, gray.100 130px)"
           />
         </Box>
 

@@ -1,7 +1,9 @@
 import type { BlitzPage } from "blitz";
 
-import { usePaginatedQuery } from "blitz";
+import { Link, Routes, usePaginatedQuery } from "blitz";
 import { useState } from "react";
+
+import { Button } from "@chakra-ui/button";
 
 import ThreeColumnLayout from "app/common/layouts/three-column-layout";
 import latestPostsQuery from "app/posts/queries/latest-posts-query";
@@ -15,7 +17,14 @@ const PostsPage: BlitzPage = () => {
     take: 10,
   });
 
-  return <PostList posts={posts.items} />;
+  return (
+    <>
+      <Link href={Routes.NewPostPage()} passHref>
+        <Button as="a">Make a post</Button>
+      </Link>
+      <PostList posts={posts.items} />
+    </>
+  );
 };
 
 PostsPage.getLayout = (page) => (
