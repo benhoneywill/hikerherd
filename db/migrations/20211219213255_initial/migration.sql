@@ -5,7 +5,7 @@ CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'USER');
 CREATE TYPE "TokenType" AS ENUM ('RESET_PASSWORD');
 
 -- CreateEnum
-CREATE TYPE "BlogUserRole" AS ENUM ('ADMIN', 'MEMEBER');
+CREATE TYPE "BlogUserRole" AS ENUM ('ADMIN', 'MEMBER');
 
 -- CreateEnum
 CREATE TYPE "CommentRootType" AS ENUM ('POST', 'BLOG_POST');
@@ -88,6 +88,7 @@ CREATE TABLE "BlogPost" (
     "content" TEXT NOT NULL,
     "publishedAt" TIMESTAMP(3),
     "authorId" TEXT NOT NULL,
+    "blogId" TEXT NOT NULL,
 
     CONSTRAINT "BlogPost_pkey" PRIMARY KEY ("id")
 );
@@ -134,6 +135,9 @@ CREATE UNIQUE INDEX "Token_hashedToken_type_key" ON "Token"("hashedToken", "type
 CREATE UNIQUE INDEX "Post_slug_key" ON "Post"("slug");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Blog_name_key" ON "Blog"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Blog_slug_key" ON "Blog"("slug");
 
 -- CreateIndex
@@ -153,6 +157,9 @@ ALTER TABLE "Post" ADD CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") 
 
 -- AddForeignKey
 ALTER TABLE "BlogPost" ADD CONSTRAINT "BlogPost_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BlogPost" ADD CONSTRAINT "BlogPost_blogId_fkey" FOREIGN KEY ("blogId") REFERENCES "Blog"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "BlogUser" ADD CONSTRAINT "BlogUser_blogId_fkey" FOREIGN KEY ("blogId") REFERENCES "Blog"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
