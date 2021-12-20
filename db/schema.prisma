@@ -7,7 +7,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 // --------------------------------------
@@ -27,12 +28,14 @@ model User {
   hashedPassword String?
   role           UserRole @default(USER)
 
-  tokens    Token[]
-  sessions  Session[]
-  posts     Post[]
-  comments  Comment[]
-  blogPosts BlogPost[]
-  blogs     BlogUser[]
+  tokens       Token[]
+  sessions     Session[]
+  posts        Post[]
+  comments     Comment[]
+  blogPosts    BlogPost[]
+  blogs        BlogUser[]
+  gear         Gear[]
+  GearCategory GearCategory[]
 }
 
 // --------------------------------------
@@ -156,4 +159,40 @@ model Comment {
   replies Comment[] @relation("CommentToComment")
 
   @@index([rootId, rootType, parentId])
+}
+
+// --------------------------------------
+
+model GearCategory {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  gear GearCategoryGear[]
+}
+
+model Gear {
+  id        String   @id @default(cuid())
+  name      String
+  weight    Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  category GearCategoryGear?
+}
+
+model GearCategoryGear {
+  id         String        @id @default(cuid())
+  category   GearCategory? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  index      Int
+  gear       Gear          @relation(fields: [gearId], references: [id])
+  gearId     String        @unique
 }

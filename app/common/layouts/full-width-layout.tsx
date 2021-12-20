@@ -6,7 +6,7 @@ import Header from "../modules/header/components/header";
 
 import Seo from "./seo";
 
-const SingleColumnLayout: BlitzLayout<{ title?: string }> = ({
+const FullWidthLayout: BlitzLayout<{ title?: string }> = ({
   title,
   children,
 }) => {
@@ -14,13 +14,13 @@ const SingleColumnLayout: BlitzLayout<{ title?: string }> = ({
     <>
       <Seo title={title} />
 
-      <Header />
+      <Header maxWidth="100%" />
 
-      <Container as="main" maxW="container.md" py="40px">
+      <Container as="main" maxW="100%" py="40px">
         {children}
       </Container>
     </>
   );
 };
 
-export default SingleColumnLayout;
+export default FullWidthLayout;

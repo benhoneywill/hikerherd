@@ -17,7 +17,7 @@ const ThreeColumnLayout: BlitzLayout<{ title?: string }> = ({
 
       <Header />
 
-      <Container as="main" maxW="container.lg" pt="40px">
+      <Container as="main" maxW="container.lg" py="40px">
         <Grid
           templateColumns={{ base: "1fr", md: "3fr 1fr", lg: "1fr 3fr 1fr" }}
           gap={6}

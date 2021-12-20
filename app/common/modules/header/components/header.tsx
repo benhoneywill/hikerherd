@@ -12,7 +12,11 @@ import HeaderLogo from "./header-logo";
 import HeaderLoggedOut from "./header-logged-out";
 import HeaderLoggedIn from "./header-logged-in";
 
-const Header: FC = () => {
+type HeaderProps = {
+  maxWidth?: string;
+};
+
+const Header: FC<HeaderProps> = ({ maxWidth }) => {
   const session = useSession({ suspense: false });
 
   const isLoggedIn = !!session.userId;
@@ -32,7 +36,7 @@ const Header: FC = () => {
         top="0"
         zIndex={2}
       >
-        <Container maxW="container.lg">
+        <Container maxW={maxWidth || "container.lg"}>
           <Grid
             templateColumns={{ base: "auto 1fr 1fr", md: "1fr auto 1fr" }}
             alignItems="center"

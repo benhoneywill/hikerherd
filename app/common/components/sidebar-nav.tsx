@@ -25,7 +25,7 @@ const SidebarNav: FC = () => {
       <Stack as="nav">
         <Heading size="sm">Tools</Heading>
 
-        <Link href="#" passHref>
+        <Link href={Routes.GearClosetPage()} passHref>
           <Anchor>Gear Closet</Anchor>
         </Link>
         <Link href="#" passHref>
