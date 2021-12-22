@@ -168,6 +168,7 @@ model GearCategory {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  index     Int
 
   owner   User   @relation(fields: [ownerId], references: [id])
   ownerId String
@@ -189,10 +190,10 @@ model Gear {
 }
 
 model GearCategoryGear {
-  id         String        @id @default(cuid())
-  category   GearCategory? @relation(fields: [categoryId], references: [id])
-  categoryId String?
+  id         String       @id @default(cuid())
+  category   GearCategory @relation(fields: [categoryId], references: [id])
+  categoryId String
   index      Int
-  gear       Gear          @relation(fields: [gearId], references: [id])
-  gearId     String        @unique
+  gear       Gear         @relation(fields: [gearId], references: [id])
+  gearId     String       @unique
 }

@@ -6,8 +6,9 @@ import Header from "../modules/header/components/header";
 
 import Seo from "./seo";
 
-const FullWidthLayout: BlitzLayout<{ title?: string }> = ({
+const FullWidthLayout: BlitzLayout<{ title?: string; padless?: true }> = ({
   title,
+  padless,
   children,
 }) => {
   return (
@@ -16,7 +17,12 @@ const FullWidthLayout: BlitzLayout<{ title?: string }> = ({
 
       <Header maxWidth="100%" />
 
-      <Container as="main" maxW="100%" py="40px">
+      <Container
+        as="main"
+        maxW="100%"
+        py={padless ? 0 : "40px"}
+        px={padless && 0}
+      >
         {children}
       </Container>
     </>

@@ -10,9 +10,11 @@ const gearQuery = resolver.pipe(
   async (values, ctx) => {
     const categories = await db.gearCategory.findMany({
       where: { ownerId: ctx.session.userId },
+      orderBy: { index: "asc" },
       select: {
         id: true,
         name: true,
+        index: true,
         gear: {
           orderBy: { index: "asc" },
           include: {
@@ -20,20 +22,6 @@ const gearQuery = resolver.pipe(
           },
         },
       },
-    });
-
-    const ungroupedGear = await db.gearCategoryGear.findMany({
-      where: { gear: { ownerId: ctx.session.userId }, categoryId: null },
-      orderBy: { index: "asc" },
-      include: {
-        gear: true,
-      },
-    });
-
-    categories.unshift({
-      id: "ungrouped",
-      name: "ungrouped",
-      gear: ungroupedGear,
     });
 
     return categories;

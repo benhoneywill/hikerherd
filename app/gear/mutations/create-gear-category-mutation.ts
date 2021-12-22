@@ -11,11 +11,24 @@ const createGearCategoryMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ name }, ctx) => {
-    return await db.gearCategory.create({
-      data: {
-        name,
-        ownerId: ctx.session.userId,
-      },
+    return db.$transaction(async () => {
+      const highestIndexCat = await db.gearCategory.findFirst({
+        where: { ownerId: ctx.session.userId },
+        orderBy: { index: "desc" },
+      });
+
+      let index = 0;
+      if (highestIndexCat) {
+        index = highestIndexCat.index + 1;
+      }
+
+      return await db.gearCategory.create({
+        data: {
+          name,
+          index,
+          ownerId: ctx.session.userId,
+        },
+      });
     });
   }
 );

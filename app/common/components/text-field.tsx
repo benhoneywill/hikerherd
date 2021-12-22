@@ -25,7 +25,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const { input, meta } = useField(name, {
       parse:
         props.type === "number"
-          ? (v) => Number(v)
+          ? (v) => (v === "" ? null : Number(v))
           : (v) => (v === "" ? null : v),
       ...fieldProps,
     });
