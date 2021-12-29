@@ -4,11 +4,11 @@ import { resolver } from "blitz";
 
 import db from "db";
 
-const gearQuery = resolver.pipe(
+const gearClosetQuery = resolver.pipe(
   resolver.authorize(),
 
   async (values, ctx) => {
-    const categories = await db.gearCategory.findMany({
+    return db.gearCategory.findMany({
       where: { ownerId: ctx.session.userId },
       orderBy: { index: "asc" },
       select: {
@@ -17,17 +17,12 @@ const gearQuery = resolver.pipe(
         index: true,
         gear: {
           orderBy: { index: "asc" },
-          include: {
-            gear: true,
-          },
         },
       },
     });
-
-    return categories;
   }
 );
 
-export type GearResult = PromiseReturnType<typeof gearQuery>;
+export type GearClosetResult = PromiseReturnType<typeof gearClosetQuery>;
 
-export default gearQuery;
+export default gearClosetQuery;

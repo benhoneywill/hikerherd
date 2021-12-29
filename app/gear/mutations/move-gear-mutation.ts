@@ -46,12 +46,12 @@ const moveGearMutation = resolver.pipe(
 
   async ({ id, categoryId, index }) => {
     return db.$transaction(async () => {
-      const from = await db.gearCategoryGear.findFirst({
-        where: { gearId: id },
+      const from = await db.gear.findFirst({
+        where: { id: id },
       });
 
       if (from) {
-        await db.gearCategoryGear.updateMany({
+        await db.gear.updateMany({
           where: { categoryId: from.categoryId, index: { gt: from.index } },
           data: {
             index: {
@@ -61,7 +61,7 @@ const moveGearMutation = resolver.pipe(
         });
       }
 
-      await db.gearCategoryGear.updateMany({
+      await db.gear.updateMany({
         where: { categoryId: categoryId, index: { gte: index } },
         data: {
           index: {
@@ -70,8 +70,8 @@ const moveGearMutation = resolver.pipe(
         },
       });
 
-      return await db.gearCategoryGear.update({
-        where: { gearId: id },
+      return await db.gear.update({
+        where: { id },
         data: {
           categoryId,
           index,

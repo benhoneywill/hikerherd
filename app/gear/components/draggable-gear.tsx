@@ -4,31 +4,23 @@ import type { Gear } from "db";
 import { useEffect, useState } from "react";
 
 import { Draggable } from "react-beautiful-dnd";
-import { Button } from "@chakra-ui/button";
+import { IconButton } from "@chakra-ui/button";
+import { Box, Heading, HStack } from "@chakra-ui/layout";
+import { FaEdit, FaWeightHanging } from "react-icons/fa";
+import { Tag, TagLabel, TagLeftIcon } from "@chakra-ui/tag";
 
 import GearForm from "./gear-form";
-
-const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: "none",
-  padding: 8 * 2,
-  margin: `0 0 ${8}px 0`,
-
-  // change background colour if dragging
-  background: isDragging ? "lightgreen" : "grey",
-
-  // styles we need to apply on draggables
-  ...draggableStyle,
-});
 
 type DraggableGearProps = {
   gear: Gear;
   index: number;
+  itemIdPrefix?: string;
 };
 
 const DraggableGear: BlitzPage<DraggableGearProps> = ({
   gear: gearProp,
   index,
+  itemIdPrefix,
 }) => {
   const [gear, setGear] = useState(gearProp);
   const [editing, setEditing] = useState(false);
@@ -46,22 +38,45 @@ const DraggableGear: BlitzPage<DraggableGearProps> = ({
         onClose={() => setEditing(false)}
       />
 
-      <Draggable draggableId={gear.id} index={index}>
+      <Draggable
+        draggableId={itemIdPrefix ? `${itemIdPrefix}|${gear.id}` : gear.id}
+        index={index}
+      >
         {(provided, snapshot) => (
-          <div
+          <Box
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            style={getItemStyle(
-              snapshot.isDragging,
-              provided.draggableProps.style
-            )}
+            style={provided.draggableProps.style}
+            userSelect="none"
+            bg="white"
+            border="3px solid"
+            borderColor={snapshot.isDragging ? "blue.400" : "white"}
+            mb={2}
+            p={2}
+            pr={6}
+            borderRadius="md"
+            position="relative"
           >
-            <p>{gear.name}</p>
-            <Button size="xs" onClick={() => setEditing(true)}>
-              Edit
-            </Button>
-          </div>
+            <IconButton
+              position="absolute"
+              top={1}
+              right={1}
+              icon={<FaEdit />}
+              onClick={() => setEditing(true)}
+              aria-label="edit"
+              size="xs"
+            />
+            <Heading size="xs" mb={2}>
+              {gear.name}
+            </Heading>
+            <HStack>
+              <Tag size="sm" colorScheme="teal" variant="subtle">
+                <TagLeftIcon as={FaWeightHanging} />
+                <TagLabel>{gear.weight}g</TagLabel>
+              </Tag>
+            </HStack>
+          </Box>
         )}
       </Draggable>
     </>

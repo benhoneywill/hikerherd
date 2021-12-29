@@ -3,7 +3,7 @@ import { z } from "zod";
 const updateGearSchema = z.object({
   id: z.string(),
   name: z.string(),
-  categoryId: z.string().optional(),
+  categoryId: z.string(),
   weight: z.number(),
 });
 

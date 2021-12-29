@@ -1,34 +1,37 @@
 import type { BlitzPage } from "blitz";
-import type { Gear, GearCategory } from "db";
+import type { Gear } from "db";
 
 import { useLayoutEffect, useState } from "react";
 
 import { Droppable } from "react-beautiful-dnd";
 import { Button } from "@chakra-ui/button";
-import { Stack } from "@chakra-ui/layout";
+import { Stack, Box } from "@chakra-ui/layout";
 
-import GearCategoryForm from "../components/gear-category-form";
-import DraggableGearCategory from "../components/draggable-gear-category";
+import GearCategoryForm from "./gear-category-form";
+import DraggableGearCategory from "./draggable-gear-category";
 
-const getCatListStyle = (isDraggingOver: boolean) => ({
-  background: isDraggingOver ? "lightblue" : "lightgrey",
-  width: "100%",
-});
-
-type DraggableGearListProps = {
-  categories: Array<
-    Pick<GearCategory, "id" | "name"> & { gear: { gear: Gear }[] }
-  >;
+type DraggableGearOrganizerProps = {
+  categories: {
+    id: string;
+    name: string;
+    gear: Gear[];
+  }[];
   vertical?: boolean;
   categoryType: string;
   itemType: string;
+  rejectItemIdPrefix?: string;
+  itemIdPrefix?: string;
+  draggingIdPrefix?: string | null;
 };
 
-const DraggableGearList: BlitzPage<DraggableGearListProps> = ({
+const DraggableGearOrganizer: BlitzPage<DraggableGearOrganizerProps> = ({
   vertical = false,
   categories: categoriesProp,
   categoryType,
   itemType,
+  rejectItemIdPrefix,
+  itemIdPrefix,
+  draggingIdPrefix,
 }) => {
   const [categories, setCategories] = useState(categoriesProp);
   const [creatingCategory, setCreatingCategory] = useState(false);
@@ -42,21 +45,26 @@ const DraggableGearList: BlitzPage<DraggableGearListProps> = ({
       <GearCategoryForm
         isOpen={!!creatingCategory}
         onSuccess={(category) =>
-          setCategories((state) => [...state, { ...category, gear: [] }])
+          setCategories((state) => [
+            ...state,
+            { ...category, gear: [], weight: 0 },
+          ])
         }
         onClose={() => setCreatingCategory(false)}
       />
 
       <Droppable
-        droppableId="category"
+        droppableId={categoryType}
         type={categoryType}
         direction={vertical ? "vertical" : "horizontal"}
       >
         {(provided, snapshot) => (
-          <div
+          <Box
             {...provided.droppableProps}
             ref={provided.innerRef}
-            style={getCatListStyle(snapshot.isDraggingOver)}
+            bg={snapshot.isDraggingOver ? "blue.50" : "gray.50"}
+            width="100%"
+            height="100%"
           >
             <Stack
               spacing={0}
@@ -68,9 +76,13 @@ const DraggableGearList: BlitzPage<DraggableGearListProps> = ({
               {categories.map((category, index) => (
                 <div key={category.id}>
                   <DraggableGearCategory
+                    vertical={vertical}
                     category={category}
                     index={index}
                     itemType={itemType}
+                    rejectItemIdPrefix={rejectItemIdPrefix}
+                    itemIdPrefix={itemIdPrefix}
+                    draggingIdPrefix={draggingIdPrefix}
                   />
                 </div>
               ))}
@@ -78,16 +90,29 @@ const DraggableGearList: BlitzPage<DraggableGearListProps> = ({
               {provided.placeholder}
 
               <div>
-                <Button onClick={() => setCreatingCategory(true)}>
-                  New category
-                </Button>
+                <Box
+                  w="270px"
+                  padding={2}
+                  bg="gray.200"
+                  borderRadius="md"
+                  mx={vertical ? 0 : 1}
+                >
+                  <Button
+                    isFullWidth
+                    size="sm"
+                    colorScheme="blue"
+                    onClick={() => setCreatingCategory(true)}
+                  >
+                    New category
+                  </Button>
+                </Box>
               </div>
             </Stack>
-          </div>
+          </Box>
         )}
       </Droppable>
     </>
   );
 };
 
-export default DraggableGearList;
+export default DraggableGearOrganizer;

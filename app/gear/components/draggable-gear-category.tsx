@@ -1,51 +1,41 @@
 import type { BlitzPage } from "blitz";
-import type { GearCategory, Gear } from "db";
+import type { Gear } from "db";
 
-import { useLayoutEffect, useMemo, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 import { Droppable, Draggable } from "react-beautiful-dnd";
-import { Button } from "@chakra-ui/button";
-import { HStack } from "@chakra-ui/layout";
+import { Button, IconButton } from "@chakra-ui/button";
+import { HStack, Heading, Box } from "@chakra-ui/layout";
+import { FaEdit } from "react-icons/fa";
 
 import GearCategoryForm from "./gear-category-form";
 import DraggableGear from "./draggable-gear";
 import GearForm from "./gear-form";
 
-const getListStyle = (isDraggingOver: boolean) => ({
-  background: isDraggingOver ? "lightblue" : "lightgrey",
-  padding: 8,
-  width: 250,
-});
-
-const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: "none",
-  padding: 2,
-  margin: `0 ${8}px`,
-
-  // change background colour if dragging
-  background: isDragging ? "lightgreen" : "grey",
-
-  // styles we need to apply on draggables
-  ...draggableStyle,
-});
-
 type DraggableGearCategoryProps = {
-  category: Pick<GearCategory, "id" | "name"> & { gear: { gear: Gear }[] };
+  category: {
+    id: string;
+    name: string;
+    gear: Gear[];
+  };
   index: number;
   itemType: string;
+  vertical?: boolean;
+  rejectItemIdPrefix?: string;
+  itemIdPrefix?: string;
+  draggingIdPrefix?: string | null;
 };
 
 const DraggableGearCategory: BlitzPage<DraggableGearCategoryProps> = ({
   category: categoryProp,
   itemType,
   index,
+  vertical = false,
+  rejectItemIdPrefix,
+  draggingIdPrefix,
+  itemIdPrefix,
 }) => {
   const [category, setCategory] = useState(categoryProp);
-  const gear = useMemo(
-    () => category.gear.map((gearCategory) => gearCategory.gear),
-    [category.gear]
-  );
 
   const [editing, setEditing] = useState(false);
   const [adding, setAdding] = useState(false);
@@ -71,7 +61,7 @@ const DraggableGearCategory: BlitzPage<DraggableGearCategoryProps> = ({
         onSuccess={(gear) =>
           setCategory((state) => ({
             ...state,
-            gear: [...state.gear, { gear }],
+            gear: [...state.gear, gear],
           }))
         }
         onClose={() => setAdding(false)}
@@ -79,38 +69,76 @@ const DraggableGearCategory: BlitzPage<DraggableGearCategoryProps> = ({
 
       <Draggable draggableId={category.id} index={index}>
         {(provided, snapshot) => (
-          <div
+          <Box
             {...provided.draggableProps}
-            style={getItemStyle(
-              snapshot.isDragging,
-              provided.draggableProps.style
-            )}
             ref={provided.innerRef}
+            style={provided.draggableProps.style}
+            userSelect="none"
+            padding={2}
+            bg="gray.200"
+            border="3px solid"
+            borderColor={snapshot.isDragging ? "blue.400" : "gray.200"}
+            borderRadius="md"
+            mx={vertical ? 0 : 2}
+            mb={vertical ? 3 : 0}
+            width="270px"
           >
-            <HStack {...provided.dragHandleProps}>
-              <h2>{category.name}</h2>
-              <Button onClick={() => setEditing(true)} size="xs">
-                Edit
-              </Button>
+            <HStack {...provided.dragHandleProps} align="center" p={1} pb={3}>
+              <IconButton
+                icon={<FaEdit />}
+                onClick={() => setEditing(true)}
+                aria-label="edit category"
+                size="xs"
+              />
+              <Heading size="sm">{category.name}</Heading>
             </HStack>
 
-            <Droppable type={itemType} droppableId={category.id}>
+            <Droppable
+              type={itemType}
+              droppableId={
+                itemIdPrefix ? `${itemIdPrefix}|${category.id}` : category.id
+              }
+              isDropDisabled={
+                !!draggingIdPrefix &&
+                !!rejectItemIdPrefix &&
+                draggingIdPrefix === rejectItemIdPrefix
+              }
+            >
               {(provided, snapshot) => (
-                <div
+                <Box
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  style={getListStyle(snapshot.isDraggingOver)}
+                  p={1}
+                  width="100%"
+                  minHeight="50px"
+                  bg={snapshot.isDraggingOver ? "blue.100" : "gray.200"}
+                  borderRadius="md"
                 >
-                  {gear.map((gear, index) => (
-                    <DraggableGear gear={gear} index={index} key={gear.id} />
+                  {category.gear.map((gear, index) => (
+                    <DraggableGear
+                      gear={gear}
+                      index={index}
+                      key={gear.id}
+                      itemIdPrefix={itemIdPrefix}
+                    />
                   ))}
+
                   {provided.placeholder}
-                </div>
+                </Box>
               )}
             </Droppable>
 
-            <Button onClick={() => setAdding(true)}>Add</Button>
-          </div>
+            <Box p={1} mt={2}>
+              <Button
+                w="100%"
+                size="sm"
+                onClick={() => setAdding(true)}
+                colorScheme="green"
+              >
+                Add
+              </Button>
+            </Box>
+          </Box>
         )}
       </Draggable>
     </>

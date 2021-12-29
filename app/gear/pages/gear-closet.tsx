@@ -1,5 +1,5 @@
 import type { DropResult } from "react-beautiful-dnd";
-import type { GearResult } from "../queries/gear-query";
+import type { GearClosetResult } from "../queries/gear-closet-query";
 import type { BlitzPage } from "blitz";
 
 import { useMutation, useQuery } from "blitz";
@@ -9,45 +9,19 @@ import { DragDropContext } from "react-beautiful-dnd";
 
 import FullWidthLayout from "app/common/layouts/full-width-layout";
 
-import gearQuery from "../queries/gear-query";
+import gearClosetQuery from "../queries/gear-closet-query";
 import moveGearMutation from "../mutations/move-gear-mutation";
 import moveCategoryMutation from "../mutations/move-category-mutation";
-import DraggableGearList from "../components/draggable-gear-list";
-
-type ReorderOptions<T> = {
-  state: Array<T>;
-  from?: number;
-  to?: number;
-  item?: T;
-};
-
-const reorder = <T extends any>({
-  state,
-  from,
-  to,
-  item,
-}: ReorderOptions<T>) => {
-  const newState = [...state];
-  if (from || from === 0) newState.splice(from, 1);
-  if (to || to === 0) {
-    if (item) newState.splice(to, 0, item);
-    else if (from || from === 0) {
-      const element = state[from];
-      if (element) {
-        newState.splice(to, 0, element);
-      }
-    }
-  }
-  return newState;
-};
+import DraggableGearList from "../components/draggable-gear-organizer";
+import reorder from "../helpers/reorder";
 
 const GearClosetPage: BlitzPage = () => {
   const [moveGear] = useMutation(moveGearMutation);
   const [moveCategory] = useMutation(moveCategoryMutation);
 
-  const [dragState, setDragState] = useState<GearResult>([]);
+  const [dragState, setDragState] = useState<GearClosetResult>([]);
 
-  const [gear, { refetch }] = useQuery(gearQuery, {});
+  const [gear, { refetch }] = useQuery(gearClosetQuery, {});
 
   useEffect(() => {
     setDragState(gear);

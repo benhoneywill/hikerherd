@@ -28,14 +28,16 @@ model User {
   hashedPassword String?
   role           UserRole @default(USER)
 
-  tokens       Token[]
-  sessions     Session[]
-  posts        Post[]
-  comments     Comment[]
-  blogPosts    BlogPost[]
-  blogs        BlogUser[]
-  gear         Gear[]
-  GearCategory GearCategory[]
+  tokens             Token[]
+  sessions           Session[]
+  posts              Post[]
+  comments           Comment[]
+  blogPosts          BlogPost[]
+  blogs              BlogUser[]
+  gear               Gear[]
+  gearCategories     GearCategory[]
+  gearLists          GearList[]
+  gearListCategories GearListCategory[]
 }
 
 // --------------------------------------
@@ -131,6 +133,9 @@ model BlogUser {
   userId String
   role   BlogUserRole
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@id([blogId, userId])
 }
 
@@ -163,6 +168,23 @@ model Comment {
 
 // --------------------------------------
 
+model Gear {
+  id        String   @id @default(cuid())
+  name      String
+  weight    Float
+  index     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  category   GearCategory @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  listGear GearListGear[]
+}
+
 model GearCategory {
   id        String   @id @default(cuid())
   name      String
@@ -173,27 +195,48 @@ model GearCategory {
   owner   User   @relation(fields: [ownerId], references: [id])
   ownerId String
 
-  gear GearCategoryGear[]
+  gear Gear[]
 }
 
-model Gear {
+// --------------------------------------
+
+model GearList {
   id        String   @id @default(cuid())
   name      String
-  weight    Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   owner   User   @relation(fields: [ownerId], references: [id])
   ownerId String
 
-  category GearCategoryGear?
+  categories GearListCategory[]
 }
 
-model GearCategoryGear {
-  id         String       @id @default(cuid())
-  category   GearCategory @relation(fields: [categoryId], references: [id])
+model GearListCategory {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  index     Int
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  list   GearList @relation(fields: [listId], references: [id])
+  listId String
+
+  gear GearListGear[]
+}
+
+model GearListGear {
+  id         String           @id @default(cuid())
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  category   GearListCategory @relation(fields: [categoryId], references: [id])
   categoryId String
+  notes      String?
+  worn       Boolean
   index      Int
-  gear       Gear         @relation(fields: [gearId], references: [id])
-  gearId     String       @unique
+  gear       Gear             @relation(fields: [gearId], references: [id])
+  gearId     String           @unique
 }

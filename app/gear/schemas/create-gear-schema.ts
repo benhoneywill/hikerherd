@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const createGearSchema = z.object({
   name: z.string(),
-  categoryId: z.string().optional(),
+  categoryId: z.string(),
   weight: z.number(),
 });
 

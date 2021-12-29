@@ -17,9 +17,6 @@ const SidebarNav: FC = () => {
         <Link href={Routes.BlogPostsPage()} passHref>
           <Anchor>Hiker Blogs</Anchor>
         </Link>
-        <Link href={Routes.ShakedownsPage()} passHref>
-          <Anchor>Shakedowns</Anchor>
-        </Link>
       </Stack>
 
       <Stack as="nav">
@@ -28,8 +25,8 @@ const SidebarNav: FC = () => {
         <Link href={Routes.GearClosetPage()} passHref>
           <Anchor>Gear Closet</Anchor>
         </Link>
-        <Link href="#" passHref>
-          <Anchor>Gear Planner</Anchor>
+        <Link href={Routes.GearListsPage()} passHref>
+          <Anchor>Gear Lists</Anchor>
         </Link>
       </Stack>
 

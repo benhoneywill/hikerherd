@@ -27,39 +27,29 @@ const updateGearMutation = resolver.pipe(
   },
 
   async ({ categoryId, ...values }, ctx) => {
-    if (categoryId) {
-      const category = await db.gearCategory.findUnique({
-        where: { id: categoryId },
-      });
+    const category = await db.gearCategory.findUnique({
+      where: { id: categoryId },
+    });
 
-      if (!category) {
-        throw new NotFoundError("Category not found");
-      }
+    if (!category) {
+      throw new NotFoundError("Category not found");
+    }
 
-      if (category.ownerId !== ctx.session.userId) {
-        throw new AuthorizationError();
-      }
+    if (category.ownerId !== ctx.session.userId) {
+      throw new AuthorizationError();
     }
 
     return { categoryId, ...values };
   },
 
   async ({ id, name, weight, categoryId }) => {
-    const updateData = {
-      name,
-      weight,
-      category: {
-        update: {},
-      },
-    };
-
-    if (categoryId) {
-      updateData.category.update = { categoryId };
-    }
-
     return await db.gear.update({
       where: { id },
-      data: updateData,
+      data: {
+        name,
+        weight,
+        categoryId,
+      },
     });
   }
 );

@@ -11,18 +11,16 @@ const createGearMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ categoryId, ...values }, ctx) => {
-    if (categoryId) {
-      const category = await db.gearCategory.findUnique({
-        where: { id: categoryId },
-      });
+    const category = await db.gearCategory.findUnique({
+      where: { id: categoryId },
+    });
 
-      if (!category) {
-        throw new NotFoundError("Category not found");
-      }
+    if (!category) {
+      throw new NotFoundError("Category not found");
+    }
 
-      if (category.ownerId !== ctx.session.userId) {
-        throw new AuthorizationError();
-      }
+    if (category.ownerId !== ctx.session.userId) {
+      throw new AuthorizationError();
     }
 
     return { categoryId, ...values };
@@ -30,8 +28,9 @@ const createGearMutation = resolver.pipe(
 
   async ({ name, weight, categoryId }, ctx) => {
     return db.$transaction(async () => {
-      const index = await db.gearCategoryGear.count({
+      const index = await db.gear.count({
         where: {
+          ownerId: ctx.session.userId,
           categoryId,
         },
       });
@@ -41,12 +40,8 @@ const createGearMutation = resolver.pipe(
           name,
           weight,
           ownerId: ctx.session.userId,
-          category: {
-            create: {
-              categoryId,
-              index,
-            },
-          },
+          index,
+          categoryId,
         },
       });
     });
