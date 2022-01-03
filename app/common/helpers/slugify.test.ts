@@ -15,19 +15,19 @@ describe("slugify", () => {
     );
   });
 
-  it("should add a random suffix 8 alphanumeric characters long", () => {
+  it("should add a random suffix 10 alphanumeric characters long", () => {
     expect(slugify("Test 1+ strings", { withRandomSuffix: true })).toMatch(
-      /test-1-strings-[a-zA-Z0-9]{8}/
+      /test-1-strings-[a-zA-Z0-9]{10}/
     );
 
     expect(
       slugify("Test! special@ @ @ chars", {
         withRandomSuffix: true,
       })
-    ).toMatch(/test-special-chars-[a-zA-Z0-9]{8}/);
+    ).toMatch(/test-special-chars-[a-zA-Z0-9]{10}/);
 
     expect(slugify(" trailing space  ", { withRandomSuffix: true })).toMatch(
-      /trailing-space-[a-zA-Z0-9]{8}/
+      /trailing-space-[a-zA-Z0-9]{10}/
     );
   });
 });

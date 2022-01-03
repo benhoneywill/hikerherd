@@ -1,11 +1,27 @@
 import type { FC } from "react";
 import type { ErrorFallbackProps } from "blitz";
 
-import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
+import {
+  Link,
+  Routes,
+  AuthenticationError,
+  AuthorizationError,
+  NotFoundError,
+} from "blitz";
 
-import LoginForm from "app/auth/components/login-form";
+import { Button } from "@chakra-ui/button";
+
+import LoginForm from "app/features/auth/components/login-form";
 
 import BoxLayout from "../layouts/box-layout";
+
+const HomeButton = () => (
+  <Link href={Routes.HomePage()} passHref>
+    <Button as="a" size="lg" isFullWidth>
+      Go home
+    </Button>
+  </Link>
+);
 
 const AppErrorFallback: FC<ErrorFallbackProps> = ({
   error,
@@ -13,8 +29,11 @@ const AppErrorFallback: FC<ErrorFallbackProps> = ({
 }) => {
   if (error instanceof AuthenticationError) {
     return (
-      <BoxLayout title="Log in" description="You need to log in to do this.">
-        <LoginForm onSuccess={resetErrorBoundary} />;
+      <BoxLayout
+        title="Log in"
+        description="You need to be logged in to do that!"
+      >
+        <LoginForm onSuccess={resetErrorBoundary} />
       </BoxLayout>
     );
   }
@@ -24,7 +43,9 @@ const AppErrorFallback: FC<ErrorFallbackProps> = ({
       <BoxLayout
         title="Unauthorized"
         description="Sorry, you are not authorized to access this."
-      />
+      >
+        <HomeButton />
+      </BoxLayout>
     );
   }
 
@@ -32,16 +53,20 @@ const AppErrorFallback: FC<ErrorFallbackProps> = ({
     return (
       <BoxLayout
         title="Not found"
-        description="Sorry, This page could not be found."
-      />
+        description="Even the best navigators get lost sometimes."
+      >
+        <HomeButton />
+      </BoxLayout>
     );
   }
 
   return (
     <BoxLayout
-      title="There was an error."
+      title="There was an error"
       description={error.message || error.name}
-    />
+    >
+      <HomeButton />
+    </BoxLayout>
   );
 };
 

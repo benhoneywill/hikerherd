@@ -8,10 +8,10 @@ datasource db {
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["interactiveTransactions"]
+  previewFeatures = ["interactiveTransactions", "fullTextSearch"]
 }
 
-// --------------------------------------
+// ***** User *****
 
 enum UserRole {
   ADMIN
@@ -19,28 +19,25 @@ enum UserRole {
 }
 
 model User {
-  id             String   @id @default(cuid())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  email          String   @unique
-  username       String   @unique
-  avatar         String?  @unique
-  hashedPassword String?
-  role           UserRole @default(USER)
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  tokens             Token[]
-  sessions           Session[]
-  posts              Post[]
-  comments           Comment[]
-  blogPosts          BlogPost[]
-  blogs              BlogUser[]
-  gear               Gear[]
-  gearCategories     GearCategory[]
-  gearLists          GearList[]
-  gearListCategories GearListCategory[]
+  email    String  @unique
+  username String  @unique
+  avatar   String? @unique
+
+  packs Pack[]
+  gear  Gear[]
+
+  hashedPassword String?
+  role           UserRole   @default(USER)
+  tokens         Token[]
+  sessions       Session[]
+  Category       Category[]
 }
 
-// --------------------------------------
+// ***** Auth *****
 
 model Session {
   id                 String    @id @default(cuid())
@@ -56,8 +53,6 @@ model Session {
   user   User?   @relation(fields: [userId], references: [id])
   userId String?
 }
-
-// --------------------------------------
 
 enum TokenType {
   RESET_PASSWORD
@@ -78,165 +73,110 @@ model Token {
   @@unique([hashedToken, type])
 }
 
-// --------------------------------------
-
-model Post {
-  id        String   @id @default(cuid())
-  title     String
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  content   String
-
-  author   User   @relation(fields: [authorId], references: [id])
-  authorId String
-}
-
-// --------------------------------------
-
-enum BlogUserRole {
-  ADMIN
-  MEMBER
-}
-
-model Blog {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  users BlogUser[]
-  posts BlogPost[]
-}
-
-model BlogPost {
-  id          String    @id @default(cuid())
-  title       String
-  slug        String    @unique
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  content     String
-  publishedAt DateTime?
-
-  author   User   @relation(fields: [authorId], references: [id])
-  authorId String
-
-  blog   Blog   @relation(fields: [blogId], references: [id])
-  blogId String
-}
-
-model BlogUser {
-  blog   Blog         @relation(fields: [blogId], references: [id])
-  blogId String
-  user   User         @relation(fields: [userId], references: [id])
-  userId String
-  role   BlogUserRole
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@id([blogId, userId])
-}
-
-// --------------------------------------
-
-enum CommentRootType {
-  POST
-  BLOG_POST
-}
-
-model Comment {
-  id        String   @id @default(cuid())
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  parent   Comment? @relation("CommentToComment", fields: [parentId], references: [id])
-  parentId String?
-
-  rootId   String
-  rootType CommentRootType
-
-  author   User   @relation(fields: [authorId], references: [id])
-  authorId String
-
-  replies Comment[] @relation("CommentToComment")
-
-  @@index([rootId, rootType, parentId])
-}
-
-// --------------------------------------
+// ***** Gear ***** //
 
 model Gear {
   id        String   @id @default(cuid())
-  name      String
-  weight    Float
-  index     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  owner   User   @relation(fields: [ownerId], references: [id])
-  ownerId String
-
-  category   GearCategory @relation(fields: [categoryId], references: [id])
-  categoryId String
-
-  listGear GearListGear[]
-}
-
-model GearCategory {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  index     Int
-
-  owner   User   @relation(fields: [ownerId], references: [id])
-  ownerId String
-
-  gear Gear[]
-}
-
-// --------------------------------------
-
-model GearList {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  owner   User   @relation(fields: [ownerId], references: [id])
-  ownerId String
-
-  categories GearListCategory[]
-}
-
-model GearListCategory {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  index     Int
-
-  owner   User   @relation(fields: [ownerId], references: [id])
-  ownerId String
-
-  list   GearList @relation(fields: [listId], references: [id])
-  listId String
-
-  gear GearListGear[]
-}
-
-model GearListGear {
-  id         String           @id @default(cuid())
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
-  category   GearListCategory @relation(fields: [categoryId], references: [id])
-  categoryId String
+  name       String
+  imageUrl   String?
+  link       String?
   notes      String?
-  worn       Boolean
-  index      Int
-  gear       Gear             @relation(fields: [gearId], references: [id])
-  gearId     String           @unique
+  consumable Boolean
+  weight     Int
+  price      Int?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  clonedFromId String?
+  clonedFrom   Gear?   @relation("ClonedFrom", fields: [clonedFromId], references: [id])
+  clones       Gear[]  @relation("ClonedFrom")
+
+  packCategoryItems PackCategoryItem[]
+  categoryItems     CategoryItem[]
+}
+
+enum CategoryType {
+  INVENTORY
+  WISH_LIST
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name  String
+  index Int
+  type  CategoryType
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  items CategoryItem[]
+}
+
+model CategoryItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  index Int
+
+  gear   Gear   @relation(fields: [gearId], references: [id])
+  gearId String
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+}
+
+// ***** Pack *****
+
+model Pack {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name    String
+  slug    String  @unique
+  notes   String?
+  private Boolean @default(false)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  categories PackCategory[]
+}
+
+model PackCategory {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name  String
+  index Int
+
+  pack   Pack   @relation(fields: [packId], references: [id])
+  packId String
+
+  items PackCategoryItem[]
+}
+
+model PackCategoryItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  index Int
+  notes String?
+  worn  Boolean
+
+  category   PackCategory @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  gear   Gear   @relation(fields: [gearId], references: [id])
+  gearId String @unique
 }

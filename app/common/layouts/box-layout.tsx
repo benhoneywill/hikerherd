@@ -35,8 +35,8 @@ const BoxLayout: BlitzLayout<{ title: string; description: string }> = ({
           textAlign="center"
         >
           <Box as="header" mb={8}>
-            <Heading mb={2}>{title}</Heading>
-            <Text size="lg" color="gray.500">
+            <Heading mb={3}>{title}</Heading>
+            <Text fontSize="lg" color="gray.400">
               {description}
             </Text>
           </Box>

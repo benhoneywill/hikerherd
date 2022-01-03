@@ -10,7 +10,12 @@ const slugify = (string: string, options: SlugifyOptions = {}) => {
     .toLowerCase();
 
   if (options.withRandomSuffix) {
-    const randomSuffix = Math.floor(Math.random() * Date.now()).toString(36);
+    const randomSuffix = Math.floor(
+      Math.random() * Math.pow(10, 10) * Date.now()
+    )
+      .toString(36)
+      .slice(0, 10);
+
     slug = `${slug}-${randomSuffix}`;
   }
 
