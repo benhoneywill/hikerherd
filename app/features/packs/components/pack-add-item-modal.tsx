@@ -7,6 +7,9 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
 import { Icon } from "@chakra-ui/icon";
 import { FcList, FcRating } from "react-icons/fc";
 import { HStack, Text } from "@chakra-ui/layout";
+import { useToast } from "@chakra-ui/react";
+
+import useModeColors from "app/common/hooks/use-mode-colors";
 
 import addGearToPackMutation from "../mutations/add-gear-to-pack-mutation";
 
@@ -28,12 +31,18 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
   onAdd,
 }) => {
   const [addGearToPack] = useMutation(addGearToPackMutation);
+  const { gray } = useModeColors();
+  const toast = useToast();
 
   const addToPack = async (gearId: string) => {
     if (categoryId) {
       await addGearToPack({ gearId, packId, categoryId });
-      onClose();
       onAdd();
+      toast({
+        title: "Success",
+        description: "The item has been added to your pack.",
+        status: "success",
+      });
     }
   };
 
@@ -43,7 +52,14 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
       <ModalContent>
         <ModalBody p={0}>
           <Tabs isFitted>
-            <TabList position="sticky" top={0} zIndex={3} bg="white">
+            <TabList
+              position="sticky"
+              top={0}
+              zIndex={3}
+              bg={gray[100]}
+              borderTopLeftRadius="md"
+              borderTopRightRadius="md"
+            >
               <Tab py={4} flexShrink={0}>
                 <HStack>
                   <Icon as={FcList} />
@@ -62,7 +78,7 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
               </Tab>
             </TabList>
 
-            <TabPanels>
+            <TabPanels bg={gray[50]}>
               <TabPanel>
                 <PackAddInventoryItem type="INVENTORY" addToPack={addToPack} />
               </TabPanel>

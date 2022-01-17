@@ -33,9 +33,10 @@ const DraggableGear: BlitzPage<DraggableGearProps> = ({ item, index }) => {
             worn={item.worn}
             consumable={item.gear.consumable}
             link={item.gear.link}
-            notes={item.gear.notes}
+            notes={(item as any)?.notes || item.gear.notes}
             dragging={snapshot.isDragging}
             menu={itemMenu(item)}
+            imageUrl={item.gear.imageUrl}
           />
         </Box>
       )}

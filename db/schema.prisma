@@ -84,7 +84,7 @@ model Gear {
   imageUrl   String?
   link       String?
   notes      String?
-  consumable Boolean
+  consumable Boolean @default(false)
   weight     Int
   price      Int?
 
@@ -178,5 +178,5 @@ model PackCategoryItem {
   categoryId String
 
   gear   Gear   @relation(fields: [gearId], references: [id])
-  gearId String @unique
+  gearId String
 }

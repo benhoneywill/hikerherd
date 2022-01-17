@@ -1,16 +1,7 @@
 import type { AddLinkValues } from "../schemas/add-link-schema";
 
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-} from "@chakra-ui/modal";
-
-import Form from "app/common/components/form";
 import TextField from "app/common/components/text-field";
+import ModalForm from "app/common/components/modal-form";
 
 import useEditorContext from "../hooks/use-editor-context";
 import addLinkSchema from "../schemas/add-link-schema";
@@ -35,23 +26,17 @@ const EditorAddLink = () => {
   };
 
   return (
-    <Modal isOpen={addingLink} onClose={toggleAddingLink}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Add a link</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Form
-            submitText="Add link"
-            schema={addLinkSchema}
-            initialValues={{ link: editor.getAttributes("link").href || "" }}
-            onSubmit={addLink}
-          >
-            <TextField name="link" label="Link" placeholder="Enter a URL" />
-          </Form>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <ModalForm
+      isOpen={addingLink}
+      onClose={toggleAddingLink}
+      title="Add a link"
+      schema={addLinkSchema}
+      initialValues={{ link: editor.getAttributes("link").href || "" }}
+      onSubmit={addLink}
+      render={() => (
+        <TextField name="link" label="Link" placeholder="Enter a URL" />
+      )}
+    />
   );
 };
 

@@ -11,7 +11,7 @@ const NewPackPage: BlitzPage = () => {
 
   return (
     <PackForm
-      onSuccess={(pack) => router.push(Routes.PackPage({ id: pack.id }))}
+      onSuccess={(pack) => router.push(Routes.PackPage({ packId: pack.id }))}
     />
   );
 };

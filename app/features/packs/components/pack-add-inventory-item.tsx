@@ -5,23 +5,15 @@ import { useMemo, useState } from "react";
 import { useQuery } from "blitz";
 
 import Fuse from "fuse.js";
-import {
-  Button,
-  Icon,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  SimpleGrid,
-  Stack,
-} from "@chakra-ui/react";
-import { FaSearch } from "react-icons/fa";
+import { Button, Center, SimpleGrid, Spinner, Stack } from "@chakra-ui/react";
 
 import inventoryItemsQuery from "app/features/inventory/queries/inventory-items-query";
 import GearCard from "app/common/components/gear-card";
+import SearchInput from "app/common/components/search-input";
 
 type PackAddInventoryItemProps = {
   type: CategoryType;
-  addToPack: (gearId: string) => void;
+  addToPack: (gearId: string) => Promise<void>;
 };
 
 const PackAddInventoryItem: FC<PackAddInventoryItemProps> = ({
@@ -29,8 +21,13 @@ const PackAddInventoryItem: FC<PackAddInventoryItemProps> = ({
   addToPack,
 }) => {
   const [query, setQuery] = useState("");
+  const [isAddingTo, setIsAddingTo] = useState<string | null>(null);
 
-  const [items] = useQuery(inventoryItemsQuery, { type }, { suspense: false });
+  const [items, { isLoading }] = useQuery(
+    inventoryItemsQuery,
+    { type },
+    { suspense: false }
+  );
 
   const filteredItems = useMemo(() => {
     if (!items) return [];
@@ -52,16 +49,13 @@ const PackAddInventoryItem: FC<PackAddInventoryItemProps> = ({
 
   return (
     <Stack spacing={3}>
-      <InputGroup>
-        <InputLeftElement pointerEvents="none">
-          <Icon as={FaSearch} />
-        </InputLeftElement>
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search your gear..."
-        />
-      </InputGroup>
+      <SearchInput setQuery={setQuery} />
+
+      {isLoading && (
+        <Center>
+          <Spinner />
+        </Center>
+      )}
 
       <SimpleGrid columns={2} spacing={3}>
         {filteredItems.map(({ item }) => (
@@ -78,7 +72,13 @@ const PackAddInventoryItem: FC<PackAddInventoryItemProps> = ({
               size="sm"
               colorScheme="green"
               isFullWidth
-              onClick={() => addToPack(item.gear.id)}
+              isLoading={isAddingTo === item.id}
+              onClick={() => {
+                setIsAddingTo(item.id);
+                addToPack(item.gear.id).then(() => {
+                  setIsAddingTo(null);
+                });
+              }}
             >
               Add to pack
             </Button>

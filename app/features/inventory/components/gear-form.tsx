@@ -6,22 +6,12 @@ import type { UpdateGearValues } from "../schemas/update-gear-schema";
 
 import { useMutation, useQuery } from "blitz";
 
-import { Stack, HStack, Center } from "@chakra-ui/layout";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-} from "@chakra-ui/modal";
-import { Button } from "@chakra-ui/button";
-import { Spinner } from "@chakra-ui/spinner";
+import { Stack, HStack } from "@chakra-ui/layout";
 
 import TextField from "app/common/components/text-field";
 import TextAreaField from "app/common/components/text-area-field";
-import Form, { FORM_ERROR } from "app/common/components/form";
+import { FORM_ERROR } from "app/common/components/form";
+import ModalForm from "app/common/components/modal-form";
 import CheckboxField from "app/common/components/checkbox-field";
 
 import createGearMutation from "../mutations/create-gear-mutation";
@@ -89,76 +79,46 @@ const GearForm: FC<GearFormProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          {gearItem ? gearItem.gear.name : "Add some gear"}
-        </ModalHeader>
-        <ModalCloseButton />
-        {isLoading ? (
-          <Center>
-            <Spinner />
-          </Center>
-        ) : (
-          <Form
-            schema={updateGearSchema}
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            render={(form) => (
-              <>
-                <ModalBody>
-                  <Stack spacing={3}>
-                    <TextField name="name" label="Name" placeholder="Name" />
-                    <HStack>
-                      <TextField
-                        type="number"
-                        name="weight"
-                        label="Weight"
-                        placeholder="Weight"
-                      />
-                      <TextField
-                        type="number"
-                        name="price"
-                        label="Price"
-                        placeholder="Price"
-                      />
-                    </HStack>
-                    <TextField name="link" label="Link" placeholder="Link" />
-                    <TextField
-                      name="imageUrl"
-                      label="Image"
-                      placeholder="Enter an image url"
-                    />
-                    <TextAreaField
-                      name="notes"
-                      label="Notes"
-                      placeholder="Enter some gear notes"
-                    />
-                    <CheckboxField
-                      name="consumable"
-                      label="This is a consumable?"
-                    />
-                  </Stack>
-                </ModalBody>
-                <ModalFooter>
-                  <HStack spacing={3}>
-                    <Button
-                      colorScheme="green"
-                      type="submit"
-                      isLoading={form.submitting}
-                    >
-                      Save
-                    </Button>
-                    <Button onClick={onClose}>Cancel</Button>
-                  </HStack>
-                </ModalFooter>
-              </>
-            )}
+    <ModalForm
+      isOpen={isOpen}
+      onClose={onClose}
+      isLoading={isLoading}
+      title={gearItem ? gearItem.gear.name : "Add some gear"}
+      schema={updateGearSchema}
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      render={() => (
+        <Stack spacing={3}>
+          <TextField name="name" label="Name" placeholder="Name" />
+          <HStack>
+            <TextField
+              type="number"
+              name="weight"
+              label="Weight"
+              placeholder="Weight"
+            />
+            <TextField
+              type="number"
+              name="price"
+              label="Price"
+              placeholder="Price"
+            />
+          </HStack>
+          <TextField name="link" label="Link" placeholder="Link" />
+          <TextField
+            name="imageUrl"
+            label="Image"
+            placeholder="Enter an image url"
           />
-        )}
-      </ModalContent>
-    </Modal>
+          <TextAreaField
+            name="notes"
+            label="Notes"
+            placeholder="Enter some gear notes"
+          />
+          <CheckboxField name="consumable" label="This is a consumable?" />
+        </Stack>
+      )}
+    />
   );
 };
 

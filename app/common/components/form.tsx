@@ -12,7 +12,7 @@ import { Alert, AlertIcon } from "@chakra-ui/alert";
 
 export { FORM_ERROR } from "final-form";
 
-type FormProps<S extends ZodType<any>> = PropsWithoutRef<
+export type FormProps<S extends ZodType<any>> = PropsWithoutRef<
   Omit<JSX.IntrinsicElements["form"], "onSubmit">
 > & {
   schema: S;

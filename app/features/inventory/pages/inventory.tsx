@@ -3,9 +3,9 @@ import type { BlitzPage } from "blitz";
 import { Routes } from "blitz";
 
 import FixedLayout from "app/common/layouts/fixed-layout";
+import Subheader from "app/common/components/subheader";
 
 import GearOrganizer from "../components/gear-organizer";
-import InventorySubheader from "../components/inventory-subheader";
 
 const InventoryPage: BlitzPage = () => {
   return <GearOrganizer type="INVENTORY" />;
@@ -13,7 +13,7 @@ const InventoryPage: BlitzPage = () => {
 
 InventoryPage.authenticate = { redirectTo: Routes.LoginPage() };
 InventoryPage.getLayout = (page) => (
-  <FixedLayout subheader={<InventorySubheader />}>{page}</FixedLayout>
+  <FixedLayout subheader={<Subheader inventory />}>{page}</FixedLayout>
 );
 
 export default InventoryPage;

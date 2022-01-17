@@ -18,10 +18,22 @@ type TextFieldProps = ComponentPropsWithoutRef<typeof Input> & {
   controlProps?: ComponentPropsWithoutRef<typeof FormControl>;
   labelProps?: ComponentPropsWithoutRef<typeof FormLabel>;
   fieldProps?: UseFieldConfig<string>;
+  hideError?: boolean;
 };
 
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
-  ({ name, label, controlProps, fieldProps, labelProps, ...props }, ref) => {
+  (
+    {
+      name,
+      label,
+      controlProps,
+      fieldProps,
+      labelProps,
+      hideError = false,
+      ...props
+    },
+    ref
+  ) => {
     const { input, meta } = useField(name, {
       parse:
         props.type === "number"
@@ -38,9 +50,9 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 
     return (
       <FormControl {...controlProps} isInvalid={touched && normalizedError}>
-        <FormLabel {...labelProps}>{label}</FormLabel>
+        {label && <FormLabel {...labelProps}>{label}</FormLabel>}
         <Input {...input} disabled={submitting} {...props} ref={ref} />
-        <FormErrorMessage>{normalizedError}</FormErrorMessage>
+        {!hideError && <FormErrorMessage>{normalizedError}</FormErrorMessage>}
       </FormControl>
     );
   }

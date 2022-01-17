@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { Box, Heading, HStack, Link, Stack, Flex } from "@chakra-ui/layout";
+import { Box, Heading, HStack, Link, Wrap, Flex } from "@chakra-ui/layout";
 import { Avatar } from "@chakra-ui/avatar";
 import { Tag, TagLabel, TagLeftIcon } from "@chakra-ui/tag";
 import { Icon } from "@chakra-ui/icon";
@@ -13,16 +13,15 @@ import {
   FaWeightHanging,
   FaImage,
 } from "react-icons/fa";
-import {
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
-  PopoverArrow,
-} from "@chakra-ui/popover";
 import { Tooltip } from "@chakra-ui/tooltip";
-import { Menu, MenuButton, IconButton, Portal } from "@chakra-ui/react";
+import { Menu, MenuButton } from "@chakra-ui/menu";
+import { Portal } from "@chakra-ui/portal";
+import { IconButton } from "@chakra-ui/button";
 import { BsThreeDotsVertical } from "react-icons/bs";
+
+import useModeColors from "../hooks/use-mode-colors";
+
+import Popover from "./popover";
 
 type GearCardProps = {
   name: string;
@@ -33,8 +32,120 @@ type GearCardProps = {
   consumable?: boolean;
   link?: string | null;
   notes?: string | null;
-  menu?: JSX.Element;
+  menu?: JSX.Element | null;
   dragging?: boolean;
+};
+
+const GearCardHeader: FC<Pick<GearCardProps, "menu" | "name" | "imageUrl">> = ({
+  menu,
+  name,
+  imageUrl,
+}) => {
+  const { gray } = useModeColors();
+
+  return (
+    <HStack justify="space-between" p={2}>
+      <HStack width={menu ? "calc(100% - 35px)" : "100%"}>
+        <Popover
+          hideContent={!imageUrl}
+          trigger={
+            <Avatar
+              src={imageUrl || ""}
+              size="xs"
+              icon={<Icon as={FaImage} color={gray[300]} />}
+              bg={gray[100]}
+            />
+          }
+        >
+          <img src={imageUrl || ""} alt={name} />
+        </Popover>
+        <Heading size="xs" isTruncated>
+          {name}
+        </Heading>
+      </HStack>
+
+      {menu && (
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            borderRadius="full"
+            icon={<BsThreeDotsVertical />}
+            size="xs"
+            aria-label="actions"
+          />
+          <Portal>{menu}</Portal>
+        </Menu>
+      )}
+    </HStack>
+  );
+};
+
+const GearCardValues: FC<Pick<GearCardProps, "weight" | "price">> = ({
+  weight,
+  price,
+}) => {
+  return (
+    <HStack>
+      <Tag colorScheme="teal" size="sm">
+        <TagLeftIcon as={FaWeightHanging} />
+        <TagLabel>{weight}g</TagLabel>
+      </Tag>
+      {price && (
+        <Tag colorScheme="purple" size="sm">
+          <TagLeftIcon as={FaTag} />
+          <TagLabel>£{price / 100}</TagLabel>
+        </Tag>
+      )}
+    </HStack>
+  );
+};
+
+const GearCardTags: FC<
+  Pick<GearCardProps, "link" | "worn" | "consumable" | "notes">
+> = ({ link, worn, consumable, notes }) => {
+  const { gray } = useModeColors();
+
+  return (
+    <HStack>
+      {link && (
+        <Tooltip label="link">
+          <Link href={link} isExternal display="inline-flex">
+            <Tag size="sm" borderRadius="full" bg={gray[50]}>
+              <Icon as={FaLink} />
+            </Tag>
+          </Link>
+        </Tooltip>
+      )}
+
+      {worn && (
+        <Tooltip label="worn">
+          <Tag colorScheme="blue" size="sm" borderRadius="full">
+            <Icon as={FaTshirt} />
+          </Tag>
+        </Tooltip>
+      )}
+
+      {consumable && (
+        <Tooltip label="consumable">
+          <Tag colorScheme="pink" size="sm" borderRadius="full">
+            <Icon as={FaUtensilSpoon} />
+          </Tag>
+        </Tooltip>
+      )}
+
+      {notes && (
+        <Popover
+          trigger={
+            <Tag colorScheme="yellow" size="sm" borderRadius="full">
+              <Icon as={FaRegStickyNote} />
+            </Tag>
+          }
+        >
+          {notes}
+        </Popover>
+      )}
+    </HStack>
+  );
 };
 
 const GearCard: FC<GearCardProps> = ({
@@ -50,139 +161,40 @@ const GearCard: FC<GearCardProps> = ({
   dragging = false,
   children,
 }) => {
-  const hasBar = worn || consumable || link || notes;
+  const { gray } = useModeColors();
+  const hasTags = worn || consumable || link || notes;
 
   return (
     <Flex
       direction="column"
       borderRadius="md"
-      bg="gray.200"
+      bg={gray[200]}
       position="relative"
       border="3px solid"
-      borderColor={dragging ? "blue.400" : "gray.200"}
+      borderColor={dragging ? "blue.400" : gray[200]}
     >
-      <HStack justify="space-between" p={2}>
-        <HStack width={menu ? "calc(100% - 35px)" : "100%"}>
-          <Popover trigger="hover">
-            <PopoverTrigger>
-              <Avatar
-                src={imageUrl || ""}
-                size="xs"
-                icon={<FaImage />}
-                bg="gray.100"
-                cursor={imageUrl ? "zoom-in" : "default"}
-              />
-            </PopoverTrigger>
-            {imageUrl && (
-              <Portal>
-                <PopoverContent zIndex={5} w="200px">
-                  <PopoverArrow />
-                  <PopoverBody>
-                    <img src={imageUrl} alt={name} />
-                  </PopoverBody>
-                </PopoverContent>
-              </Portal>
-            )}
-          </Popover>
-          <Heading size="xs" isTruncated>
-            {name}
-          </Heading>
-        </HStack>
+      <GearCardHeader name={name} imageUrl={imageUrl} menu={menu} />
 
-        {menu && (
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              borderRadius="full"
-              icon={<BsThreeDotsVertical />}
-              size="xs"
-              aria-label="actions"
-            />
-            <Portal>{menu}</Portal>
-          </Menu>
-        )}
-      </HStack>
-
-      <Stack
-        spacing={3}
+      <Wrap
+        spacing={2}
         p={2}
-        bg="gray.100"
+        bg={gray[100]}
         mx={1}
         mb={1}
         borderRadius="md"
         flexGrow={1}
       >
-        <HStack>
-          <Tag colorScheme="teal" size="sm">
-            <TagLeftIcon as={FaWeightHanging} />
-            <TagLabel>{weight}g</TagLabel>
-          </Tag>
-          {price && (
-            <Tag colorScheme="purple" size="sm">
-              <TagLeftIcon as={FaTag} />
-              <TagLabel>£{price / 100}</TagLabel>
-            </Tag>
-          )}
-        </HStack>
+        <GearCardValues weight={weight} price={price} />
 
-        {hasBar && (
-          <HStack>
-            {link && (
-              <Tooltip label="link">
-                <Link href={link} isExternal display="inline-flex">
-                  <Tag size="sm" borderRadius="full" bg="gray.50">
-                    <Icon as={FaLink} />
-                  </Tag>
-                </Link>
-              </Tooltip>
-            )}
-            {worn && (
-              <Tooltip label="worn">
-                <Tag
-                  colorScheme="blue"
-                  size="sm"
-                  borderRadius="full"
-                  cursor="default"
-                >
-                  <Icon as={FaTshirt} />
-                </Tag>
-              </Tooltip>
-            )}
-            {consumable && (
-              <Tooltip label="consumable">
-                <Tag
-                  colorScheme="pink"
-                  size="sm"
-                  borderRadius="full"
-                  cursor="default"
-                >
-                  <Icon as={FaUtensilSpoon} />
-                </Tag>
-              </Tooltip>
-            )}
-            {notes && (
-              <Popover trigger="hover">
-                <PopoverTrigger>
-                  <Tag
-                    colorScheme="yellow"
-                    size="sm"
-                    borderRadius="full"
-                    cursor="help"
-                  >
-                    <Icon as={FaRegStickyNote} />
-                  </Tag>
-                </PopoverTrigger>
-                <Portal>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverBody>{notes}</PopoverBody>
-                  </PopoverContent>
-                </Portal>
-              </Popover>
-            )}
-          </HStack>
+        {hasTags && (
+          <GearCardTags
+            worn={worn}
+            link={link}
+            consumable={consumable}
+            notes={notes}
+          />
         )}
-      </Stack>
+      </Wrap>
 
       {children && (
         <Box p={2} mt="auto">

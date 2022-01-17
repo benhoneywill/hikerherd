@@ -4,12 +4,15 @@ import { Box, Stack } from "@chakra-ui/layout";
 import { Droppable } from "react-beautiful-dnd";
 import { Button } from "@chakra-ui/button";
 
+import useModeColors from "app/common/hooks/use-mode-colors";
+
 import useGearDnd from "../hooks/use-gear-dnd";
 
 import DraggableCategory from "./draggable-category";
 
 const CategoryDropZone: FC = () => {
   const { vertical, addCategory, state } = useGearDnd();
+  const { gray, blue } = useModeColors();
 
   return (
     <Droppable
@@ -21,7 +24,7 @@ const CategoryDropZone: FC = () => {
         <Box
           {...provided.droppableProps}
           ref={provided.innerRef}
-          bg={snapshot.isDraggingOver ? "blue.100" : "gray.200"}
+          bg={snapshot.isDraggingOver ? blue[100] : gray[100]}
           width="100%"
           height="100%"
         >
@@ -51,7 +54,7 @@ const CategoryDropZone: FC = () => {
               <Box
                 width={vertical ? "100%" : "270px"}
                 padding={2}
-                bg="white"
+                bg={gray[50]}
                 borderRadius="md"
                 mx={vertical ? 0 : 1}
               >

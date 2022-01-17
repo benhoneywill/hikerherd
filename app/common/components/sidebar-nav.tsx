@@ -96,7 +96,7 @@ const SidebarNav: FC = () => {
           <SidebarNavItem route={Routes.MyProfilePage()} icon={FcPortraitMode}>
             My Profile
           </SidebarNavItem>
-          <SidebarNavItem route={Routes.InventoryPage()} icon={FcSettings}>
+          <SidebarNavItem route={Routes.MyProfilePage()} icon={FcSettings}>
             My Settings
           </SidebarNavItem>
         </SidebarNavSection>

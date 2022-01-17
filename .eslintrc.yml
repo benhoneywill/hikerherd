@@ -6,6 +6,9 @@ plugins:
   - "@typescript-eslint"
 
 rules:
+  # Nextjs rule
+  "@next/next/no-img-element": off
+
   # Typescript rules
   "@typescript-eslint/consistent-type-imports": error
   "@typescript-eslint/no-unused-vars": error

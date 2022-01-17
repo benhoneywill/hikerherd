@@ -7,6 +7,8 @@ import { HStack, Heading, Box, Flex, Stack } from "@chakra-ui/layout";
 import { Menu, MenuButton } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
+import useModeColors from "app/common/hooks/use-mode-colors";
+
 import useGearDnd from "../hooks/use-gear-dnd";
 
 import DraggableGear from "./draggable-gear";
@@ -21,6 +23,7 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
   index,
 }) => {
   const { vertical, categoryMenu, addItemToCategory } = useGearDnd();
+  const { gray, blue } = useModeColors();
 
   return (
     <Draggable draggableId={category.id} index={index}>
@@ -31,9 +34,9 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
           style={provided.draggableProps.style}
           userSelect="none"
           px={2}
-          bg="white"
+          bg={gray[50]}
           border="3px solid"
-          borderColor={snapshot.isDragging ? "blue.400" : "white"}
+          borderColor={snapshot.isDragging ? "blue.400" : gray[50]}
           borderRadius="md"
           mx={vertical ? 0 : 2}
           mb={vertical ? 3 : 0}
@@ -69,7 +72,7 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
                   ref={provided.innerRef}
                   p={1}
                   width="100%"
-                  bg={snapshot.isDraggingOver ? "blue.100" : "gray.50"}
+                  bg={snapshot.isDraggingOver ? blue[100] : gray[50]}
                   borderRadius="md"
                 >
                   <Stack>
@@ -84,7 +87,7 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
             </Droppable>
           </Box>
 
-          <Box p={1} mt={2}>
+          <Box p={1}>
             <Button
               isFullWidth
               size="sm"

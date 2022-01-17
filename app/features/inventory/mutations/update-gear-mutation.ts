@@ -27,7 +27,6 @@ const updateGearMutation = resolver.pipe(
         imageUrl: values.imageUrl,
         link: values.link,
         notes: values.notes,
-        consumable: values.consumable,
         price: values.price,
       },
     });

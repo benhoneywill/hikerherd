@@ -29,10 +29,7 @@ const AppErrorFallback: FC<ErrorFallbackProps> = ({
 }) => {
   if (error instanceof AuthenticationError) {
     return (
-      <BoxLayout
-        title="Log in"
-        description="You need to be logged in to do that!"
-      >
+      <BoxLayout title="Log in" description="Please log in to continue">
         <LoginForm onSuccess={resetErrorBoundary} />
       </BoxLayout>
     );
@@ -42,7 +39,7 @@ const AppErrorFallback: FC<ErrorFallbackProps> = ({
     return (
       <BoxLayout
         title="Unauthorized"
-        description="Sorry, you are not authorized to access this."
+        description="Sorry, you are not allowed to do that."
       >
         <HomeButton />
       </BoxLayout>
@@ -51,10 +48,7 @@ const AppErrorFallback: FC<ErrorFallbackProps> = ({
 
   if (error instanceof NotFoundError) {
     return (
-      <BoxLayout
-        title="Not found"
-        description="Even the best navigators get lost sometimes."
-      >
+      <BoxLayout title="Not found" description="Are you lost?">
         <HomeButton />
       </BoxLayout>
     );

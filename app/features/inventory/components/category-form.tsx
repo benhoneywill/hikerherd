@@ -6,21 +6,11 @@ import type { UpdateCategoryResult } from "../mutations/update-category-mutation
 
 import { useMutation, useQuery } from "blitz";
 
-import { HStack, Stack, Center } from "@chakra-ui/layout";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-} from "@chakra-ui/modal";
-import { Button } from "@chakra-ui/button";
-import { Spinner } from "@chakra-ui/spinner";
+import { Stack } from "@chakra-ui/layout";
 
 import TextField from "app/common/components/text-field";
-import Form, { FORM_ERROR } from "app/common/components/form";
+import { FORM_ERROR } from "app/common/components/form";
+import ModalForm from "app/common/components/modal-form";
 
 import createCategoryMutation from "../mutations/create-category-mutation";
 import createCategorySchema from "../schemas/create-category-schema";
@@ -79,47 +69,20 @@ const CategoryForm: FC<CategoryFormProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          {category ? category.name : "Create a category"}
-        </ModalHeader>
-        <ModalCloseButton />
-        {isLoading ? (
-          <Center>
-            <Spinner />
-          </Center>
-        ) : (
-          <Form
-            schema={createCategorySchema}
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            render={(form) => (
-              <>
-                <ModalBody>
-                  <Stack spacing={3}>
-                    <TextField name="name" label="Name" placeholder="Name" />
-                  </Stack>
-                </ModalBody>
-                <ModalFooter>
-                  <HStack spacing={3}>
-                    <Button
-                      colorScheme="green"
-                      type="submit"
-                      isLoading={form.submitting}
-                    >
-                      Save
-                    </Button>
-                    <Button onClick={onClose}>Cancel</Button>
-                  </HStack>
-                </ModalFooter>
-              </>
-            )}
-          />
-        )}
-      </ModalContent>
-    </Modal>
+    <ModalForm
+      isOpen={isOpen}
+      onClose={onClose}
+      title={category ? category.name : "Create a category"}
+      isLoading={isLoading}
+      schema={createCategorySchema}
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      render={() => (
+        <Stack spacing={3}>
+          <TextField name="name" label="Name" placeholder="Name" />
+        </Stack>
+      )}
+    />
   );
 };
 
