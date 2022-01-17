@@ -33,7 +33,7 @@ const PackAnalytics: FC<PackAnalyticsProps> = ({ pack }) => {
     return pack.categories.map((category) => ({
       ...category,
       weight: category.items.reduce(
-        (total, item) => total + item.gear.weight,
+        (total, item) => total + item.gear.weight * item.quantity,
         0
       ),
     }));

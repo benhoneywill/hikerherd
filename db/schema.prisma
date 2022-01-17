@@ -170,9 +170,10 @@ model PackCategoryItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  index Int
-  notes String?
-  worn  Boolean
+  index    Int
+  notes    String?
+  worn     Boolean
+  quantity Int     @default(1)
 
   category   PackCategory @relation(fields: [categoryId], references: [id])
   categoryId String

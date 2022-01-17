@@ -5,8 +5,22 @@ import type { PackCategory } from "db";
 import { useMutation, useQuery, useRouter, Routes } from "blitz";
 import { useEffect, useState } from "react";
 
-import { MenuItem, MenuList } from "@chakra-ui/react";
-import { FaEdit, FaTrash, FaTshirt } from "react-icons/fa";
+import {
+  IconButton,
+  MenuItem,
+  MenuList,
+  HStack,
+  Icon,
+  Text,
+} from "@chakra-ui/react";
+import {
+  FaClone,
+  FaEdit,
+  FaMinus,
+  FaPlus,
+  FaTrash,
+  FaTshirt,
+} from "react-icons/fa";
 
 import FixedLayout from "app/common/layouts/fixed-layout";
 import GearDnd from "app/modules/gear-dnd/components/gear-dnd";
@@ -24,6 +38,7 @@ import movePackGearMutation from "../../mutations/move-pack-gear-mutation";
 import toggleWornMutation from "../../mutations/toggle-worn-mutation";
 import deletePackCategoryMutation from "../../mutations/delete-pack-category-mutation";
 import deletePackGearMutation from "../../mutations/delete-pack-gear-mutation";
+import updateItemQuantityMutation from "../../mutations/update-item-quantity-mutation";
 
 const PackPage: BlitzPage = () => {
   const router = useRouter();
@@ -47,6 +62,7 @@ const PackPage: BlitzPage = () => {
   const [movePackGear] = useMutation(movePackGearMutation);
 
   const [toggleWorn] = useMutation(toggleWornMutation);
+  const [updateQuantity] = useMutation(updateItemQuantityMutation);
 
   const [deleteCategory] = useMutation(deletePackCategoryMutation);
   const [deleteGear] = useMutation(deletePackGearMutation);
@@ -203,6 +219,33 @@ const PackPage: BlitzPage = () => {
             >
               {item.worn ? "Unmark as worn" : "Mark as worn"}
             </MenuItem>
+            <HStack py={1} px={3} justify="space-between">
+              <HStack spacing={3}>
+                <Icon w={3} h={3} as={FaClone} />
+                <Text>Quantity</Text>
+              </HStack>
+              <HStack>
+                <IconButton
+                  size="xs"
+                  icon={<FaMinus />}
+                  aria-label="decrement quantity"
+                  onClick={async () => {
+                    await updateQuantity({ id: item.id, type: "decrement" });
+                    refetch();
+                  }}
+                />
+                <span>{item.quantity}</span>
+                <IconButton
+                  size="xs"
+                  icon={<FaPlus />}
+                  aria-label="increment quantity"
+                  onClick={async () => {
+                    await updateQuantity({ id: item.id, type: "increment" });
+                    refetch();
+                  }}
+                />
+              </HStack>
+            </HStack>
           </MenuList>
         )}
       />

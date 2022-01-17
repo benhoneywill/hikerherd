@@ -12,6 +12,7 @@ import {
   FaUtensilSpoon,
   FaWeightHanging,
   FaImage,
+  FaClone,
 } from "react-icons/fa";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { Menu, MenuButton } from "@chakra-ui/menu";
@@ -34,6 +35,7 @@ type GearCardProps = {
   notes?: string | null;
   menu?: JSX.Element | null;
   dragging?: boolean;
+  quantity?: number;
 };
 
 const GearCardHeader: FC<Pick<GearCardProps, "menu" | "name" | "imageUrl">> = ({
@@ -80,25 +82,35 @@ const GearCardHeader: FC<Pick<GearCardProps, "menu" | "name" | "imageUrl">> = ({
   );
 };
 
-const GearCardValues: FC<Pick<GearCardProps, "weight" | "price">> = ({
-  weight,
-  price,
-}) => {
-  return (
-    <HStack>
-      <Tag colorScheme="teal" size="sm">
-        <TagLeftIcon as={FaWeightHanging} />
-        <TagLabel>{weight}g</TagLabel>
-      </Tag>
-      {price && (
-        <Tag colorScheme="purple" size="sm">
-          <TagLeftIcon as={FaTag} />
-          <TagLabel>£{price / 100}</TagLabel>
-        </Tag>
-      )}
-    </HStack>
-  );
-};
+const GearCardValues: FC<Pick<GearCardProps, "weight" | "price" | "quantity">> =
+  ({ weight, price, quantity }) => {
+    return (
+      <HStack>
+        <Tooltip label="weight">
+          <Tag colorScheme="teal" size="sm">
+            <TagLeftIcon as={FaWeightHanging} />
+            <TagLabel>{weight}g</TagLabel>
+          </Tag>
+        </Tooltip>
+        {price && (
+          <Tooltip label="price">
+            <Tag colorScheme="purple" size="sm">
+              <TagLeftIcon as={FaTag} />
+              <TagLabel>£{price / 100}</TagLabel>
+            </Tag>
+          </Tooltip>
+        )}
+        {quantity && quantity > 1 && (
+          <Tooltip label="quantity">
+            <Tag colorScheme="orange" size="sm">
+              <TagLeftIcon as={FaClone} />
+              <TagLabel>{quantity}</TagLabel>
+            </Tag>
+          </Tooltip>
+        )}
+      </HStack>
+    );
+  };
 
 const GearCardTags: FC<
   Pick<GearCardProps, "link" | "worn" | "consumable" | "notes">
@@ -159,6 +171,7 @@ const GearCard: FC<GearCardProps> = ({
   notes,
   menu = null,
   dragging = false,
+  quantity = 1,
   children,
 }) => {
   const { gray } = useModeColors();
@@ -184,7 +197,7 @@ const GearCard: FC<GearCardProps> = ({
         borderRadius="md"
         flexGrow={1}
       >
-        <GearCardValues weight={weight} price={price} />
+        <GearCardValues weight={weight} price={price} quantity={quantity} />
 
         {hasTags && (
           <GearCardTags

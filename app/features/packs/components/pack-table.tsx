@@ -4,7 +4,7 @@ import type { PackResult } from "../queries/pack-query";
 import { IconButton } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/layout";
 import { Table, Thead, Tr, Th, Tbody, Td } from "@chakra-ui/table";
-import { FaQuestion } from "react-icons/fa";
+import { FaInfo } from "react-icons/fa";
 
 import Popover from "app/common/components/popover";
 
@@ -33,7 +33,7 @@ const TotalRow: FC<TotalRowProps> = ({ description, name, value }) => {
               h={3}
               variant="ghost"
               aria-label="What is this?"
-              icon={<FaQuestion />}
+              icon={<FaInfo />}
               color="gray.400"
             />
           }

@@ -9,7 +9,7 @@ import type {
 import { createContext } from "react";
 
 type GearDndCategory<C, I> = C & {
-  items: Array<I & { gear: Gear; worn?: boolean }>;
+  items: Array<I & { gear: Gear; worn?: boolean; quantity?: number }>;
 };
 
 export type GearDndState = Array<

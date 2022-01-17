@@ -37,6 +37,7 @@ const PackPieChart: FC<PackPieChartProps> = ({
               constrainToVisibleArea
               flyoutStyle={{ stroke: "black", strokeWidth: 2, fill: "black" }}
               style={{ fill: "white" }}
+              text={({ datum }) => `${datum.name} (${datum.weight}g)`}
             />
           }
           padAngle={2}
@@ -54,7 +55,12 @@ const PackPieChart: FC<PackPieChartProps> = ({
 
         <g transform="translate(57, 57) scale(0.93)">
           <VictoryPie
-            data={categories[active]?.items}
+            data={categories[active]?.items
+              .filter((item) => item.gear.weight > 0)
+              .map((item) => ({
+                ...item,
+                weight: item.gear.weight * item.quantity,
+              }))}
             animate={{ duration: 200 }}
             colorScale={Object.values(colors[active] || {}).slice(1)}
             standalone={false}
@@ -62,7 +68,7 @@ const PackPieChart: FC<PackPieChartProps> = ({
             height={200}
             innerRadius={75}
             x="gear.name"
-            y={["gear", "weight"]}
+            y="weight"
             labelComponent={
               <VictoryTooltip
                 constrainToVisibleArea
@@ -72,6 +78,7 @@ const PackPieChart: FC<PackPieChartProps> = ({
                   fill: "black",
                 }}
                 style={{ fill: "white" }}
+                text={({ datum }) => `${datum.gear.name} (${datum.weight}g)`}
               />
             }
             padAngle={3}
