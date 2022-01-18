@@ -22,12 +22,6 @@ const signupMutation = resolver.pipe(
           email: sanitizedEmail,
           username: sanitizedUsername,
           hashedPassword,
-          inventory: {
-            create: {},
-          },
-          wishList: {
-            create: {},
-          },
         },
       });
 

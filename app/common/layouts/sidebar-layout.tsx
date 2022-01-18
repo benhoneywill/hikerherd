@@ -24,7 +24,7 @@ const SidebarLayout: BlitzLayout<SidebarLayoutProps> = ({
 
       <Header />
 
-      <Container as="main" maxW="container.lg" py="40px">
+      <Container as="main" maxW="container.lg" py={{ base: 5, md: 10 }}>
         <Grid
           templateColumns={{ base: "1fr", md: "1fr 3fr", lg: "1fr 4fr" }}
           gap={12}

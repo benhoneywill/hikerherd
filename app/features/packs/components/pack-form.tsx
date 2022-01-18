@@ -6,7 +6,7 @@ import type { UpdatePackResult } from "../mutations/update-pack-mutation";
 
 import { useMutation } from "blitz";
 
-import { Stack } from "@chakra-ui/layout";
+import { Stack, HStack } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 
 import TextField from "app/common/components/text-field";
@@ -74,9 +74,15 @@ const PackForm: FC<PackFormProps> = ({ pack, onSuccess }) => {
             />
           </Stack>
 
-          <Button isLoading={form.submitting} colorScheme="green" type="submit">
-            Save pack
-          </Button>
+          <HStack justify="flex-end">
+            <Button
+              isLoading={form.submitting}
+              colorScheme="green"
+              type="submit"
+            >
+              {pack ? "Update pack" : "Create pack"}
+            </Button>
+          </HStack>
         </Stack>
       )}
     />

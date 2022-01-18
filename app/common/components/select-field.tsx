@@ -26,7 +26,6 @@ const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
     ref
   ) => {
     const { input, meta } = useField(name, {
-      type: "select",
       ...fieldProps,
     });
 
@@ -41,7 +40,7 @@ const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
         {label && <FormLabel {...labelProps}>{label}</FormLabel>}
         <Select
           {...input}
-          isChecked={input.checked}
+          value={input.value}
           disabled={submitting}
           {...props}
           ref={ref}

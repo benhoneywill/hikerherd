@@ -19,13 +19,14 @@ export type GearDndState = Array<
 
 export type GearDndContext = {
   vertical: boolean;
+  readonly?: boolean;
   state: GearDndState;
 
-  addCategory: () => void;
-  categoryMenu: (item: GearDndState[number]) => JSX.Element;
+  addCategory?: () => void;
+  categoryMenu?: (item: GearDndState[number]) => JSX.Element;
 
-  addItemToCategory: (categoryId: string) => void;
-  itemMenu: (item: GearDndState[number]["items"][number]) => JSX.Element;
+  addItemToCategory?: (categoryId: string) => void;
+  itemMenu?: (item: GearDndState[number]["items"][number]) => JSX.Element;
 };
 
 const gearDndContext = createContext<GearDndContext>({} as GearDndContext);

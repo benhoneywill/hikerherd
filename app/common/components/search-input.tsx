@@ -38,11 +38,7 @@ const SearchInput: FC<SearchInputProps> = ({ setQuery }) => {
       <InputLeftElement pointerEvents="none">
         <Icon as={FaSearch} color={gray[400]} />
       </InputLeftElement>
-      <Input
-        onChange={debouncedChangeHandler}
-        placeholder="Search..."
-        variant="flushed"
-      />
+      <Input onChange={debouncedChangeHandler} placeholder="Search..." />
     </InputGroup>
   );
 };

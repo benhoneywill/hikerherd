@@ -92,11 +92,8 @@ const SidebarNav: FC = () => {
           </SidebarNavItem>
         </SidebarNavSection>
 
-        <SidebarNavSection title="User settings">
-          <SidebarNavItem route={Routes.MyProfilePage()} icon={FcPortraitMode}>
-            My Profile
-          </SidebarNavItem>
-          <SidebarNavItem route={Routes.MyProfilePage()} icon={FcSettings}>
+        <SidebarNavSection title="Other">
+          <SidebarNavItem route={Routes.MySettingsPage()} icon={FcSettings}>
             My Settings
           </SidebarNavItem>
         </SidebarNavSection>

@@ -31,7 +31,6 @@ const moveGearMutation = resolver.pipe(
         where: {
           id: categoryId,
           userId: ctx.session.userId,
-          type: categoryItem.category.type,
         },
       });
 

@@ -9,7 +9,15 @@ const currentUserQuery = resolver.pipe(async (_, ctx) => {
 
   const user = await db.user.findFirst({
     where: { id: ctx.session.userId },
-    select: { id: true, username: true, email: true, role: true, avatar: true },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      role: true,
+      avatar: true,
+      weightUnit: true,
+      currency: true,
+    },
   });
 
   return user;

@@ -1,11 +1,12 @@
 import type { FC } from "react";
-import type { CategoryType } from "db";
+import type { CategoryType, Gear } from "db";
 import type { AddToInventoryResult } from "../mutations/add-to-inventory-mutation";
 import type { AddToInventoryValues } from "../schemas/add-to-inventory-schema";
 
-import { useMutation, useQuery } from "blitz";
+import { Link, Routes, useMutation, useQuery } from "blitz";
 
-import { Stack } from "@chakra-ui/layout";
+import { Stack, Link as Anchor } from "@chakra-ui/layout";
+import { Text } from "@chakra-ui/react";
 
 import SelectField from "app/common/components/select-field";
 import { FORM_ERROR } from "app/common/components/form";
@@ -17,14 +18,14 @@ import addToInventorySchema from "../schemas/add-to-inventory-schema";
 
 type AddToInventoryFormProps = {
   type?: CategoryType;
-  gearId?: string;
+  gear?: Gear;
   onSuccess?: (result: AddToInventoryResult) => void;
   isOpen: boolean;
   onClose: () => void;
 };
 
 const AddToInventoryForm: FC<AddToInventoryFormProps> = ({
-  gearId,
+  gear,
   onSuccess,
   isOpen,
   type,
@@ -40,7 +41,7 @@ const AddToInventoryForm: FC<AddToInventoryFormProps> = ({
 
   const initialValues = {
     type,
-    id: gearId,
+    id: gear?.id,
     categoryId: categories?.[0]?.id,
   };
 
@@ -60,24 +61,46 @@ const AddToInventoryForm: FC<AddToInventoryFormProps> = ({
     }
   };
 
+  const typeName = type?.toLowerCase().replace("_", " ");
+
   return (
     <ModalForm
       isOpen={isOpen}
       onClose={onClose}
-      title={`Add to your ${type?.toLowerCase()}`}
+      title={`Add ${gear?.name} to your ${typeName}`}
       isLoading={isLoading}
       schema={addToInventorySchema}
       initialValues={initialValues}
       onSubmit={handleSubmit}
+      disabled={!categories?.length}
       render={() => (
         <Stack spacing={3}>
-          <SelectField name="categoryId" label="CategoryId">
-            {categories?.map((category) => (
-              <option value={category.id} key={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </SelectField>
+          {!categories?.length && (
+            <Text>
+              Before you can start adding gear you need to create a category in{" "}
+              <Link
+                href={
+                  type === "INVENTORY"
+                    ? Routes.InventoryPage()
+                    : Routes.WishListPage()
+                }
+              >
+                <Anchor color="blue.400" textDecoration="underline">
+                  your {typeName}
+                </Anchor>
+              </Link>
+            </Text>
+          )}
+
+          {categories?.length && (
+            <SelectField name="categoryId" label="Choose a category">
+              {categories?.map((category) => (
+                <option value={category.id} key={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </SelectField>
+          )}
         </Stack>
       )}
     />

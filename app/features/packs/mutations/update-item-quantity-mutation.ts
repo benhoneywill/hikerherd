@@ -20,6 +20,10 @@ const updateItemQuantityMutation = resolver.pipe(
         throw new NotFoundError();
       }
 
+      if (type === "decrement" && item.quantity === 0) {
+        throw new Error("Can not decrement below 0");
+      }
+
       return db.packCategoryItem.update({
         where: { id },
         data: { quantity: { [type]: 1 } },

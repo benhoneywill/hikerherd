@@ -9,12 +9,12 @@ import gearDndContext from "../contexts/gear-dnd-context";
 import CategoryDropZone from "./category-drop-zone";
 
 type GearDndProps = GearDndContext & {
-  handleDrop: (drop: DropResult) => void;
+  handleDrop?: (drop: DropResult) => void;
 };
 
 const GearDnd: FC<GearDndProps> = ({ handleDrop, ...props }) => {
   return (
-    <DragDropContext onDragEnd={handleDrop}>
+    <DragDropContext onDragEnd={handleDrop || (() => null)}>
       <gearDndContext.Provider value={props}>
         <CategoryDropZone />
       </gearDndContext.Provider>

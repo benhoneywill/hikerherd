@@ -18,14 +18,21 @@ enum UserRole {
   USER
 }
 
+enum WeightUnit {
+  METRIC
+  IMPERIAL
+}
+
 model User {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email    String  @unique
-  username String  @unique
-  avatar   String? @unique
+  email      String     @unique
+  username   String     @unique
+  avatar     String?    @unique
+  weightUnit WeightUnit @default(METRIC)
+  currency   Currency   @default(USD)
 
   packs Pack[]
   gear  Gear[]
@@ -74,6 +81,26 @@ model Token {
 }
 
 // ***** Gear ***** //
+enum Currency {
+  USD
+  GBP
+  EUR
+}
+
+enum GearType {
+  PACK
+  SHELTER
+  SLEEP
+  WATER
+  COOKWARE
+  TOILETRIES
+  ELECTRONICS
+  CLOTHING
+  FOOTWARE
+  CONSUMABLES
+  MISCELLANEOUS
+  OTHER
+}
 
 model Gear {
   id        String   @id @default(cuid())
@@ -84,9 +111,11 @@ model Gear {
   imageUrl   String?
   link       String?
   notes      String?
-  consumable Boolean @default(false)
-  weight     Int
+  consumable Boolean   @default(false)
+  weight     Float
   price      Int?
+  currency   Currency  @default(USD)
+  type       GearType?
 
   user   User   @relation(fields: [userId], references: [id])
   userId String

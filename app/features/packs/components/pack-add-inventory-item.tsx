@@ -5,7 +5,14 @@ import { useMemo, useState } from "react";
 import { useQuery } from "blitz";
 
 import Fuse from "fuse.js";
-import { Button, Center, SimpleGrid, Spinner, Stack } from "@chakra-ui/react";
+import {
+  Button,
+  Center,
+  SimpleGrid,
+  Spinner,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 
 import inventoryItemsQuery from "app/features/inventory/queries/inventory-items-query";
 import GearCard from "app/common/components/gear-card";
@@ -47,6 +54,8 @@ const PackAddInventoryItem: FC<PackAddInventoryItemProps> = ({
     return fuse.search(query);
   }, [items, query]);
 
+  const typeName = type.toLowerCase().replace("_", " ");
+
   return (
     <Stack spacing={3}>
       <SearchInput setQuery={setQuery} />
@@ -57,34 +66,46 @@ const PackAddInventoryItem: FC<PackAddInventoryItemProps> = ({
         </Center>
       )}
 
-      <SimpleGrid columns={2} spacing={3}>
-        {filteredItems.map(({ item }) => (
-          <GearCard
-            key={item.id}
-            name={item.gear.name}
-            weight={item.gear.weight}
-            price={item.gear.price}
-            consumable={item.gear.consumable}
-            link={item.gear.link}
-            notes={item.gear.notes}
-          >
-            <Button
-              size="sm"
-              colorScheme="green"
-              isFullWidth
-              isLoading={isAddingTo === item.id}
-              onClick={() => {
-                setIsAddingTo(item.id);
-                addToPack(item.gear.id).then(() => {
-                  setIsAddingTo(null);
-                });
-              }}
+      {items && items.length === 0 && (
+        <Text>You don't have any items in your {typeName} yet.</Text>
+      )}
+
+      {items && items.length > 0 && filteredItems.length === 0 && (
+        <Text>No results found for '{query}'</Text>
+      )}
+
+      {filteredItems.length >= 1 && (
+        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
+          {filteredItems.map(({ item }) => (
+            <GearCard
+              key={item.id}
+              name={item.gear.name}
+              weight={item.gear.weight}
+              price={item.gear.price}
+              currency={item.gear.currency}
+              consumable={item.gear.consumable}
+              link={item.gear.link}
+              notes={item.gear.notes}
+              type={item.gear.type}
             >
-              Add to pack
-            </Button>
-          </GearCard>
-        ))}
-      </SimpleGrid>
+              <Button
+                size="sm"
+                colorScheme="green"
+                isFullWidth
+                isLoading={isAddingTo === item.id}
+                onClick={() => {
+                  setIsAddingTo(item.id);
+                  addToPack(item.gear.id).then(() => {
+                    setIsAddingTo(null);
+                  });
+                }}
+              >
+                Add to pack
+              </Button>
+            </GearCard>
+          ))}
+        </SimpleGrid>
+      )}
     </Stack>
   );
 };

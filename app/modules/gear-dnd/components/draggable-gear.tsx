@@ -14,10 +14,10 @@ type DraggableGearProps = {
 };
 
 const DraggableGear: BlitzPage<DraggableGearProps> = ({ item, index }) => {
-  const { itemMenu } = useGearDnd();
+  const { itemMenu, readonly } = useGearDnd();
 
   return (
-    <Draggable draggableId={item.id} index={index}>
+    <Draggable draggableId={item.id} index={index} isDragDisabled={readonly}>
       {(provided, snapshot) => (
         <Box
           ref={provided.innerRef}
@@ -30,14 +30,16 @@ const DraggableGear: BlitzPage<DraggableGearProps> = ({ item, index }) => {
             name={item.gear.name}
             weight={item.gear.weight}
             price={item.gear.price}
+            currency={item.gear.currency}
             worn={item.worn}
             consumable={item.gear.consumable}
             link={item.gear.link}
             notes={(item as any)?.notes || item.gear.notes}
             dragging={snapshot.isDragging}
             quantity={item.quantity}
-            menu={itemMenu(item)}
+            menu={itemMenu && itemMenu(item)}
             imageUrl={item.gear.imageUrl}
+            type={item.gear.type}
           />
         </Box>
       )}

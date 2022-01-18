@@ -7,6 +7,9 @@ import { useState } from "react";
 import { Box } from "@chakra-ui/layout";
 import { VictoryPie, VictoryTooltip } from "victory";
 
+import displayWeight from "app/common/helpers/display-weight";
+import useUserPreferences from "app/features/users/hooks/use-user-preferences";
+
 type PackPieChartProps = {
   categories: Array<PackResult["categories"][number] & { weight: number }>;
   rootColors: string[];
@@ -19,6 +22,7 @@ const PackPieChart: FC<PackPieChartProps> = ({
   colors,
 }) => {
   const [active, setActive] = useState<number>(0);
+  const { weightUnit } = useUserPreferences();
 
   return (
     <Box w={300}>
@@ -37,7 +41,13 @@ const PackPieChart: FC<PackPieChartProps> = ({
               constrainToVisibleArea
               flyoutStyle={{ stroke: "black", strokeWidth: 2, fill: "black" }}
               style={{ fill: "white" }}
-              text={({ datum }) => `${datum.name} (${datum.weight}g)`}
+              text={({ datum }) =>
+                `${datum.name} (${displayWeight(
+                  datum.weight,
+                  weightUnit,
+                  true
+                )})`
+              }
             />
           }
           padAngle={2}
@@ -56,7 +66,7 @@ const PackPieChart: FC<PackPieChartProps> = ({
         <g transform="translate(57, 57) scale(0.93)">
           <VictoryPie
             data={categories[active]?.items
-              .filter((item) => item.gear.weight > 0)
+              .filter((item) => item.gear.weight > 0 && item.quantity > 0)
               .map((item) => ({
                 ...item,
                 weight: item.gear.weight * item.quantity,
@@ -78,7 +88,12 @@ const PackPieChart: FC<PackPieChartProps> = ({
                   fill: "black",
                 }}
                 style={{ fill: "white" }}
-                text={({ datum }) => `${datum.gear.name} (${datum.weight}g)`}
+                text={({ datum }) =>
+                  `${datum.gear.name} (${displayWeight(
+                    datum.weight,
+                    weightUnit
+                  )})`
+                }
               />
             }
             padAngle={3}

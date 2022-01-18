@@ -11,7 +11,7 @@ import useGearDnd from "../hooks/use-gear-dnd";
 import DraggableCategory from "./draggable-category";
 
 const CategoryDropZone: FC = () => {
-  const { vertical, addCategory, state } = useGearDnd();
+  const { vertical, addCategory, state, readonly } = useGearDnd();
   const { gray, blue } = useModeColors();
 
   return (
@@ -19,6 +19,7 @@ const CategoryDropZone: FC = () => {
       droppableId="category"
       type="category"
       direction={vertical ? "vertical" : "horizontal"}
+      isDropDisabled={readonly}
     >
       {(provided, snapshot) => (
         <Box
@@ -50,24 +51,26 @@ const CategoryDropZone: FC = () => {
 
             {provided.placeholder}
 
-            <div>
-              <Box
-                width={vertical ? "100%" : "270px"}
-                padding={2}
-                bg={gray[50]}
-                borderRadius="md"
-                mx={vertical ? 0 : 1}
-              >
-                <Button
-                  isFullWidth
-                  size="sm"
-                  colorScheme="blue"
-                  onClick={addCategory}
+            {addCategory && (
+              <div>
+                <Box
+                  width={vertical ? "100%" : "270px"}
+                  padding={2}
+                  bg={gray[50]}
+                  borderRadius="md"
+                  mx={vertical ? 0 : 1}
                 >
-                  New category
-                </Button>
-              </Box>
-            </div>
+                  <Button
+                    isFullWidth
+                    size="sm"
+                    colorScheme="blue"
+                    onClick={addCategory}
+                  >
+                    New category
+                  </Button>
+                </Box>
+              </div>
+            )}
           </Stack>
         </Box>
       )}

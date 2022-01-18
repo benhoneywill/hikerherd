@@ -72,14 +72,18 @@ const CategoryForm: FC<CategoryFormProps> = ({
     <ModalForm
       isOpen={isOpen}
       onClose={onClose}
-      title={category ? category.name : "Create a category"}
+      title={categoryId ? `Editing ${category?.name}` : "Create a new category"}
       isLoading={isLoading}
       schema={createCategorySchema}
       initialValues={initialValues}
       onSubmit={handleSubmit}
       render={() => (
         <Stack spacing={3}>
-          <TextField name="name" label="Name" placeholder="Name" />
+          <TextField
+            name="name"
+            label="Name this category"
+            placeholder="Name"
+          />
         </Stack>
       )}
     />

@@ -1,4 +1,4 @@
-import { CategoryType } from "@prisma/client";
+import { CategoryType } from "db";
 import { z } from "zod";
 
 const addToInventorySchema = z.object({

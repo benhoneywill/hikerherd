@@ -1,11 +1,12 @@
 import type { UseFieldConfig } from "react-final-form";
 import type { ComponentPropsWithoutRef } from "react";
+import type { Checkbox } from "@chakra-ui/checkbox";
 
 import { forwardRef } from "react";
 
 import { useField } from "react-final-form";
-import { Checkbox } from "@chakra-ui/checkbox";
 import { FormControl, FormErrorMessage } from "@chakra-ui/form-control";
+import { FormLabel, HStack, Switch } from "@chakra-ui/react";
 
 type CheckboxFieldProps = ComponentPropsWithoutRef<typeof Checkbox> & {
   name: string;
@@ -29,15 +30,20 @@ const CheckboxField = forwardRef<HTMLInputElement, CheckboxFieldProps>(
 
     return (
       <FormControl {...controlProps} isInvalid={touched && normalizedError}>
-        <Checkbox
-          {...input}
-          isChecked={input.checked}
-          disabled={submitting}
-          {...props}
-          ref={ref}
-        >
-          {label}
-        </Checkbox>
+        <HStack>
+          <Switch
+            {...input}
+            isChecked={input.checked}
+            disabled={submitting}
+            {...props}
+            ref={ref}
+          />
+          {label && (
+            <FormLabel mb="0" htmlFor={input.id}>
+              {label}
+            </FormLabel>
+          )}
+        </HStack>
         <FormErrorMessage>{normalizedError}</FormErrorMessage>
       </FormControl>
     );

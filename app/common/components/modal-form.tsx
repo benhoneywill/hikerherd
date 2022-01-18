@@ -1,15 +1,16 @@
 import type { ZodType } from "zod";
 import type { FormProps } from "./form";
+import type { ModalProps } from "@chakra-ui/modal";
 
 import { HStack, Center } from "@chakra-ui/layout";
 import {
   Modal,
   ModalOverlay,
-  ModalContent,
   ModalHeader,
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  ModalContent,
 } from "@chakra-ui/modal";
 import { Button } from "@chakra-ui/button";
 import { Spinner } from "@chakra-ui/spinner";
@@ -21,6 +22,8 @@ type ModalFormProps<S extends ZodType<any>> = FormProps<S> & {
   onClose: () => void;
   title: string;
   isLoading?: boolean;
+  disabled?: boolean;
+  size?: ModalProps["size"];
 };
 
 const ModalForm = <S extends ZodType<any>>({
@@ -28,23 +31,31 @@ const ModalForm = <S extends ZodType<any>>({
   onClose,
   title,
   isLoading = false,
+  disabled = false,
   render,
+  size,
   ...props
 }: ModalFormProps<S>) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size={size}
+      scrollBehavior="inside"
+    >
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{title}</ModalHeader>
-        <ModalCloseButton />
-        {isLoading ? (
-          <Center p={12}>
-            <Spinner />
-          </Center>
-        ) : (
-          <Form
-            {...props}
-            render={(form) => (
+      <Form
+        {...props}
+        render={(form) => (
+          <ModalContent>
+            <ModalHeader>{title}</ModalHeader>
+            <ModalCloseButton />
+
+            {isLoading ? (
+              <Center p={12}>
+                <Spinner />
+              </Center>
+            ) : (
               <>
                 <ModalBody>{render(form)}</ModalBody>
                 <ModalFooter>
@@ -53,6 +64,7 @@ const ModalForm = <S extends ZodType<any>>({
                       colorScheme="green"
                       type="submit"
                       isLoading={form.submitting}
+                      isDisabled={disabled}
                     >
                       Save
                     </Button>
@@ -61,9 +73,9 @@ const ModalForm = <S extends ZodType<any>>({
                 </ModalFooter>
               </>
             )}
-          />
+          </ModalContent>
         )}
-      </ModalContent>
+      />
     </Modal>
   );
 };

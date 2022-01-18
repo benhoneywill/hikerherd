@@ -5,7 +5,7 @@ import { useMutation } from "blitz";
 import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/modal";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
 import { Icon } from "@chakra-ui/icon";
-import { FcList, FcRating } from "react-icons/fc";
+import { FcPlus, FcList, FcRating, FcSearch } from "react-icons/fc";
 import { HStack, Text } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/react";
 
@@ -14,6 +14,7 @@ import useModeColors from "app/common/hooks/use-mode-colors";
 import addGearToPackMutation from "../mutations/add-gear-to-pack-mutation";
 
 import PackAddInventoryItem from "./pack-add-inventory-item";
+import PackSearchAdd from "./pack-search-add";
 
 type PackAddItemModalProps = {
   packId: string;
@@ -59,6 +60,8 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
               bg={gray[100]}
               borderTopLeftRadius="md"
               borderTopRightRadius="md"
+              overflowX="auto"
+              overflowY="hidden"
             >
               <Tab py={4} flexShrink={0}>
                 <HStack>
@@ -76,6 +79,22 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
                   </Text>
                 </HStack>
               </Tab>
+              <Tab py={4} flexShrink={0}>
+                <HStack>
+                  <Icon as={FcPlus} />
+                  <Text whiteSpace="nowrap" overflow="hidden">
+                    New
+                  </Text>
+                </HStack>
+              </Tab>
+              <Tab py={4} flexShrink={0}>
+                <HStack>
+                  <Icon as={FcSearch} />
+                  <Text whiteSpace="nowrap" overflow="hidden">
+                    Discover
+                  </Text>
+                </HStack>
+              </Tab>
             </TabList>
 
             <TabPanels bg={gray[50]}>
@@ -84,6 +103,10 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
               </TabPanel>
               <TabPanel>
                 <PackAddInventoryItem type="WISH_LIST" addToPack={addToPack} />
+              </TabPanel>
+              <TabPanel></TabPanel>
+              <TabPanel>
+                <PackSearchAdd addToPack={addToPack} />
               </TabPanel>
             </TabPanels>
           </Tabs>

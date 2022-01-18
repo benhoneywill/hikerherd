@@ -4,7 +4,14 @@ import type { ComponentPropsWithoutRef } from "react";
 import { forwardRef } from "react";
 
 import { useField } from "react-final-form";
-import { Input } from "@chakra-ui/input";
+import {
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  InputRightAddon,
+  InputLeftElement,
+  InputRightElement,
+} from "@chakra-ui/input";
 import {
   FormControl,
   FormLabel,
@@ -19,6 +26,10 @@ type TextFieldProps = ComponentPropsWithoutRef<typeof Input> & {
   labelProps?: ComponentPropsWithoutRef<typeof FormLabel>;
   fieldProps?: UseFieldConfig<string>;
   hideError?: boolean;
+  inputLeftAddon?: JSX.Element;
+  inputRightAddon?: JSX.Element;
+  inputLeftElement?: JSX.Element;
+  inputRightElement?: JSX.Element;
 };
 
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -30,6 +41,10 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       fieldProps,
       labelProps,
       hideError = false,
+      inputLeftAddon,
+      inputRightAddon,
+      inputLeftElement,
+      inputRightElement,
       ...props
     },
     ref
@@ -51,7 +66,19 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     return (
       <FormControl {...controlProps} isInvalid={touched && normalizedError}>
         {label && <FormLabel {...labelProps}>{label}</FormLabel>}
-        <Input {...input} disabled={submitting} {...props} ref={ref} />
+        <InputGroup>
+          {inputLeftAddon && <InputLeftAddon>{inputLeftAddon}</InputLeftAddon>}
+          {inputLeftElement && (
+            <InputLeftElement>{inputLeftElement}</InputLeftElement>
+          )}
+          <Input {...input} disabled={submitting} {...props} ref={ref} />
+          {inputRightElement && (
+            <InputRightElement>{inputRightElement}</InputRightElement>
+          )}
+          {inputRightAddon && (
+            <InputRightAddon>{inputRightAddon}</InputRightAddon>
+          )}
+        </InputGroup>
         {!hideError && <FormErrorMessage>{normalizedError}</FormErrorMessage>}
       </FormControl>
     );

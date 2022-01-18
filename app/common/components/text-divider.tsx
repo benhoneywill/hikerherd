@@ -1,9 +1,10 @@
 import type { FC } from "react";
+import type { StackProps } from "@chakra-ui/layout";
 
 import { Divider, HStack, Text } from "@chakra-ui/layout";
 
-const TextDivider: FC = ({ children }) => (
-  <HStack align="center">
+const TextDivider: FC<StackProps> = ({ children, ...props }) => (
+  <HStack align="center" {...props}>
     <Divider />
     <Text
       fontSize="small"

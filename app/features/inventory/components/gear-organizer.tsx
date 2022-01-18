@@ -1,12 +1,12 @@
 import type { BlitzPage } from "blitz";
-import type { CategoryType, Category } from "db";
+import type { CategoryType, Category, CategoryItem } from "db";
 import type { DropResult } from "react-beautiful-dnd";
 
 import { useMutation, useQuery } from "blitz";
 import { useEffect, useState } from "react";
 
 import { MenuItem, MenuList } from "@chakra-ui/react";
-import { FaEdit, FaTrash, FaUtensilSpoon } from "react-icons/fa";
+import { FaEdit, FaList, FaStar, FaTrash, FaHamburger } from "react-icons/fa";
 
 import GearDnd from "app/modules/gear-dnd/components/gear-dnd";
 import reorder from "app/modules/gear-dnd/helpers/reorder";
@@ -22,6 +22,7 @@ import deleteGearMutation from "../mutations/delete-gear-mutation";
 
 import CategoryForm from "./category-form";
 import GearForm from "./gear-form";
+import MoveBetweenWishListForm from "./move-between-wish-list-form";
 
 type GearOrganizerProps = {
   type: CategoryType;
@@ -46,6 +47,10 @@ const GearOrganizer: BlitzPage<GearOrganizerProps> = ({ type }) => {
     name: string;
     id: string;
   } | null>(null);
+
+  const [movingItemBetween, setMovingItemBetween] = useState<
+    (CategoryItem & { gear: { name: string } }) | null
+  >(null);
 
   const [moveCategory] = useMutation(moveCategoryMutation);
   const [moveGear] = useMutation(moveGearMutation);
@@ -122,7 +127,6 @@ const GearOrganizer: BlitzPage<GearOrganizerProps> = ({ type }) => {
       />
 
       <GearForm
-        type={type}
         categoryId={addingItemToCategory}
         gearId={editItem}
         onSuccess={() => refetch()}
@@ -136,8 +140,8 @@ const GearOrganizer: BlitzPage<GearOrganizerProps> = ({ type }) => {
       <ConfirmModal
         isOpen={!!deletingCategory}
         onClose={() => setDeletingCategory(null)}
-        title={`You are about to delete "${deletingCategory?.name}"`}
-        description="Are you sure?"
+        title="Delete this category"
+        description={`You are about to delete '${deletingCategory?.name}'. Are you sure?`}
         onConfirm={async () => {
           if (deletingCategory) {
             await deleteCategory({ id: deletingCategory.id });
@@ -149,14 +153,22 @@ const GearOrganizer: BlitzPage<GearOrganizerProps> = ({ type }) => {
       <ConfirmModal
         isOpen={!!deletingItem}
         onClose={() => setDeletingItem(null)}
-        title={`You are about to delete "${deletingItem?.name}"`}
-        description="Are you sure? This item will remain in any pack lists where it is used."
+        title="Delete this gear"
+        description={`You are about to delete '${deletingItem?.name}'. Are your sure? The gear will remain in any packs which use it but it will otherwise be lost.`}
         onConfirm={async () => {
           if (deletingItem) {
             await deleteGear({ id: deletingItem.id });
             refetch();
           }
         }}
+      />
+
+      <MoveBetweenWishListForm
+        type={type === "INVENTORY" ? "WISH_LIST" : "INVENTORY"}
+        item={movingItemBetween}
+        onSuccess={() => refetch()}
+        isOpen={!!movingItemBetween}
+        onClose={() => setMovingItemBetween(null)}
       />
 
       <GearDnd
@@ -196,7 +208,7 @@ const GearOrganizer: BlitzPage<GearOrganizerProps> = ({ type }) => {
               Delete item
             </MenuItem>
             <MenuItem
-              icon={<FaUtensilSpoon />}
+              icon={<FaHamburger />}
               onClick={async () => {
                 await toggleConsumable({ id: item.id });
                 refetch();
@@ -204,6 +216,22 @@ const GearOrganizer: BlitzPage<GearOrganizerProps> = ({ type }) => {
             >
               {item.gear.consumable ? "Not consumable" : "Consumable"}
             </MenuItem>
+            {type === "WISH_LIST" && (
+              <MenuItem
+                icon={<FaList />}
+                onClick={() => setMovingItemBetween(item)}
+              >
+                Move to inventory
+              </MenuItem>
+            )}
+            {type === "INVENTORY" && (
+              <MenuItem
+                icon={<FaStar />}
+                onClick={() => setMovingItemBetween(item)}
+              >
+                Move to wish list
+              </MenuItem>
+            )}
           </MenuList>
         )}
       />

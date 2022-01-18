@@ -13,7 +13,7 @@ type LinkCardProps = {
   href: RouteUrlObject;
   icon: IconType;
   title: string;
-  text: string;
+  text?: string;
 };
 
 const LinkCard: FC<LinkCardProps> = ({ href, title, text, icon }) => {
@@ -30,13 +30,14 @@ const LinkCard: FC<LinkCardProps> = ({ href, title, text, icon }) => {
         borderRadius="md"
         align="center"
         textAlign="center"
-        border="2px solid"
-        borderColor={gray[50]}
+        border="1px solid"
+        borderColor={gray[200]}
+        transition="border 50ms ease"
         _hover={{ borderColor: "blue.400" }}
       >
         <Icon mt={1} as={icon} w={8} h={8} />
         <Heading size="md">{title}</Heading>
-        <Text opacity="0.6">{text}</Text>
+        {text && <Text opacity="0.6">{text}</Text>}
       </Stack>
     </Link>
   );

@@ -7,12 +7,11 @@ import db from "db";
 import getPackSchema from "../schemas/get-pack-schema";
 
 const packQuery = resolver.pipe(
-  resolver.authorize(),
   resolver.zod(getPackSchema),
 
-  async ({ id }, ctx) => {
+  async ({ id }) => {
     const pack = await db.pack.findFirst({
-      where: { userId: ctx.session.userId, id },
+      where: { id },
       include: {
         categories: {
           orderBy: { index: "asc" },

@@ -6,6 +6,8 @@ import { ErrorBoundary, useQueryErrorResetBoundary } from "blitz";
 
 import { ChakraProvider } from "@chakra-ui/react";
 
+import UserPreferencesProvider from "app/features/users/components/user-preferences-provider";
+
 import AppErrorFallback from "../components/app-error-fallback";
 import PageLoader from "../components/page-loader";
 
@@ -16,11 +18,13 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <ChakraProvider portalZIndex={999}>
       <ErrorBoundary FallbackComponent={AppErrorFallback} onReset={reset}>
-        {getLayout(
-          <Suspense fallback={<PageLoader />}>
-            <Component {...pageProps} />
-          </Suspense>
-        )}
+        <UserPreferencesProvider>
+          {getLayout(
+            <Suspense fallback={<PageLoader />}>
+              <Component {...pageProps} />
+            </Suspense>
+          )}
+        </UserPreferencesProvider>
       </ErrorBoundary>
     </ChakraProvider>
   );

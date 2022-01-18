@@ -12,11 +12,11 @@ const useCalculateTotals = (categories: Categories) => {
 
     categories.forEach((category) => {
       category.items.forEach((item) => {
-        total += item.gear.weight;
+        total += item.gear.weight * item.quantity;
         if (!item.worn) {
-          packWeight += item.gear.weight;
+          packWeight += item.gear.weight * item.quantity;
           if (!item.gear.consumable) {
-            baseWeight += item.gear.weight;
+            baseWeight += item.gear.weight * item.quantity;
           }
         }
       });

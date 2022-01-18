@@ -22,11 +22,15 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
   category,
   index,
 }) => {
-  const { vertical, categoryMenu, addItemToCategory } = useGearDnd();
+  const { vertical, categoryMenu, addItemToCategory, readonly } = useGearDnd();
   const { gray, blue } = useModeColors();
 
   return (
-    <Draggable draggableId={category.id} index={index}>
+    <Draggable
+      draggableId={category.id}
+      index={index}
+      isDragDisabled={readonly}
+    >
       {(provided, snapshot) => (
         <Flex
           {...provided.draggableProps}
@@ -52,20 +56,26 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
             py={3}
           >
             <Heading size="sm">{category.name}</Heading>
-            <Menu>
-              <MenuButton
-                as={IconButton}
-                borderRadius="full"
-                icon={<BsThreeDotsVertical />}
-                size="xs"
-                aria-label="actions"
-              />
-              {categoryMenu(category)}
-            </Menu>
+            {categoryMenu && (
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  borderRadius="full"
+                  icon={<BsThreeDotsVertical />}
+                  size="xs"
+                  aria-label="actions"
+                />
+                {categoryMenu(category)}
+              </Menu>
+            )}
           </HStack>
 
           <Box overflowY="auto" mr="-8px" pr="8px">
-            <Droppable type="item" droppableId={category.id}>
+            <Droppable
+              type="item"
+              droppableId={category.id}
+              isDropDisabled={readonly}
+            >
               {(provided, snapshot) => (
                 <Box
                   {...provided.droppableProps}
@@ -86,17 +96,18 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
               )}
             </Droppable>
           </Box>
-
-          <Box p={1}>
-            <Button
-              isFullWidth
-              size="sm"
-              onClick={() => addItemToCategory(category.id)}
-              colorScheme="blue"
-            >
-              Add
-            </Button>
-          </Box>
+          {addItemToCategory && (
+            <Box p={1}>
+              <Button
+                isFullWidth
+                size="sm"
+                onClick={() => addItemToCategory(category.id)}
+                colorScheme="blue"
+              >
+                Add
+              </Button>
+            </Box>
+          )}
         </Flex>
       )}
     </Draggable>

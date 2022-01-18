@@ -48,6 +48,8 @@ const createGearMutation = resolver.pipe(
               notes: values.notes,
               consumable: values.consumable,
               price: values.price,
+              currency: values.currency,
+              type: values.type,
               userId: ctx.session.userId,
             },
           },

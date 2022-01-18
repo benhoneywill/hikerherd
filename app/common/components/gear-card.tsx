@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import type { Currency, GearType } from "db";
 
 import { Box, Heading, HStack, Link, Wrap, Flex } from "@chakra-ui/layout";
 import { Avatar } from "@chakra-ui/avatar";
@@ -9,7 +10,7 @@ import {
   FaLink,
   FaRegStickyNote,
   FaTshirt,
-  FaUtensilSpoon,
+  FaHamburger,
   FaWeightHanging,
   FaImage,
   FaClone,
@@ -20,7 +21,12 @@ import { Portal } from "@chakra-ui/portal";
 import { IconButton } from "@chakra-ui/button";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
+import useUserPreferences from "app/features/users/hooks/use-user-preferences";
+
 import useModeColors from "../hooks/use-mode-colors";
+import displayWeight from "../helpers/display-weight";
+import displayCurrency from "../helpers/display-currency";
+import gearTypeIcon from "../helpers/gear-type-icon";
 
 import Popover from "./popover";
 
@@ -29,6 +35,7 @@ type GearCardProps = {
   weight: number;
   imageUrl?: string | null;
   price?: number | null;
+  currency?: Currency;
   worn?: boolean;
   consumable?: boolean;
   link?: string | null;
@@ -36,6 +43,7 @@ type GearCardProps = {
   menu?: JSX.Element | null;
   dragging?: boolean;
   quantity?: number;
+  type?: GearType | null;
 };
 
 const GearCardHeader: FC<Pick<GearCardProps, "menu" | "name" | "imageUrl">> = ({
@@ -82,43 +90,57 @@ const GearCardHeader: FC<Pick<GearCardProps, "menu" | "name" | "imageUrl">> = ({
   );
 };
 
-const GearCardValues: FC<Pick<GearCardProps, "weight" | "price" | "quantity">> =
-  ({ weight, price, quantity }) => {
-    return (
-      <HStack>
-        <Tooltip label="weight">
-          <Tag colorScheme="teal" size="sm">
-            <TagLeftIcon as={FaWeightHanging} />
-            <TagLabel>{weight}g</TagLabel>
+const GearCardValues: FC<
+  Pick<GearCardProps, "weight" | "price" | "quantity" | "currency">
+> = ({ weight, price, currency, quantity }) => {
+  const { weightUnit } = useUserPreferences();
+
+  return (
+    <Wrap>
+      <Tooltip label="weight">
+        <Tag colorScheme="teal" size="sm">
+          <TagLeftIcon as={FaWeightHanging} />
+          <TagLabel>{displayWeight(weight, weightUnit)}</TagLabel>
+        </Tag>
+      </Tooltip>
+      {Number.isInteger(price) && (
+        <Tooltip label="price">
+          <Tag colorScheme="purple" size="sm">
+            <TagLeftIcon as={FaTag} />
+            <TagLabel>
+              {displayCurrency(currency)}
+              {Number(price) / 100}
+            </TagLabel>
           </Tag>
         </Tooltip>
-        {price && (
-          <Tooltip label="price">
-            <Tag colorScheme="purple" size="sm">
-              <TagLeftIcon as={FaTag} />
-              <TagLabel>£{price / 100}</TagLabel>
-            </Tag>
-          </Tooltip>
-        )}
-        {quantity && quantity > 1 && (
-          <Tooltip label="quantity">
-            <Tag colorScheme="orange" size="sm">
-              <TagLeftIcon as={FaClone} />
-              <TagLabel>{quantity}</TagLabel>
-            </Tag>
-          </Tooltip>
-        )}
-      </HStack>
-    );
-  };
+      )}
+      {quantity !== 1 && (
+        <Tooltip label="quantity">
+          <Tag colorScheme="orange" size="sm">
+            <TagLeftIcon as={FaClone} />
+            <TagLabel>{quantity}</TagLabel>
+          </Tag>
+        </Tooltip>
+      )}
+    </Wrap>
+  );
+};
 
 const GearCardTags: FC<
-  Pick<GearCardProps, "link" | "worn" | "consumable" | "notes">
-> = ({ link, worn, consumable, notes }) => {
+  Pick<GearCardProps, "link" | "worn" | "consumable" | "notes" | "type">
+> = ({ link, worn, consumable, notes, type }) => {
   const { gray } = useModeColors();
 
   return (
-    <HStack>
+    <Wrap>
+      {type && (
+        <Tooltip label={type.toLowerCase()}>
+          <Tag size="sm" bg={gray[200]} borderRadius="full">
+            <Icon as={gearTypeIcon(type)} />
+          </Tag>
+        </Tooltip>
+      )}
+
       {link && (
         <Tooltip label="link">
           <Link href={link} isExternal display="inline-flex">
@@ -140,7 +162,7 @@ const GearCardTags: FC<
       {consumable && (
         <Tooltip label="consumable">
           <Tag colorScheme="pink" size="sm" borderRadius="full">
-            <Icon as={FaUtensilSpoon} />
+            <Icon as={FaHamburger} />
           </Tag>
         </Tooltip>
       )}
@@ -156,7 +178,7 @@ const GearCardTags: FC<
           {notes}
         </Popover>
       )}
-    </HStack>
+    </Wrap>
   );
 };
 
@@ -172,10 +194,12 @@ const GearCard: FC<GearCardProps> = ({
   menu = null,
   dragging = false,
   quantity = 1,
+  currency,
+  type,
   children,
 }) => {
   const { gray } = useModeColors();
-  const hasTags = worn || consumable || link || notes;
+  const hasTags = worn || consumable || link || notes || type;
 
   return (
     <Flex
@@ -197,7 +221,12 @@ const GearCard: FC<GearCardProps> = ({
         borderRadius="md"
         flexGrow={1}
       >
-        <GearCardValues weight={weight} price={price} quantity={quantity} />
+        <GearCardValues
+          weight={weight}
+          price={price}
+          quantity={quantity}
+          currency={currency}
+        />
 
         {hasTags && (
           <GearCardTags
@@ -205,6 +234,7 @@ const GearCard: FC<GearCardProps> = ({
             link={link}
             consumable={consumable}
             notes={notes}
+            type={type}
           />
         )}
       </Wrap>

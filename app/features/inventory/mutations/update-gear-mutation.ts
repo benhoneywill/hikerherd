@@ -26,8 +26,11 @@ const updateGearMutation = resolver.pipe(
         weight: values.weight,
         imageUrl: values.imageUrl,
         link: values.link,
+        consumable: values.consumable,
         notes: values.notes,
         price: values.price,
+        type: values.type,
+        currency: values.currency,
       },
     });
   }
