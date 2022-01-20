@@ -1,49 +1,45 @@
 import type { FC } from "react";
-import type { CreateGearResult } from "../mutations/create-gear-mutation";
-import type { UpdateGearResult } from "../mutations/update-gear-mutation";
-import type { UpdateGearValues } from "../schemas/update-gear-schema";
+import type { UpdatePackGearResult } from "../mutations/update-pack-gear-mutations";
+import type { UpdatePackGearValues } from "../schemas/update-pack-gear-schema";
 
 import { useMutation, useQuery } from "blitz";
+
+import { Text } from "@chakra-ui/react";
 
 import { FORM_ERROR } from "app/common/components/form";
 import ModalForm from "app/common/components/modal-form";
 import useUserPreferences from "app/features/users/hooks/use-user-preferences";
 import { gToOz, ozTog } from "app/common/helpers/display-weight";
+import GearFormFields from "app/features/inventory/components/gear-fields";
 
-import createGearMutation from "../mutations/create-gear-mutation";
-import updateGearMutation from "../mutations/update-gear-mutation";
-import updateGearSchema from "../schemas/update-gear-schema";
-import categoryItemQuery from "../queries/category-item-query";
+import updatePackGearMutation from "../mutations/update-pack-gear-mutations";
+import packGearQuery from "../queries/pack-gear-query";
+import updatePackGearSchema from "../schemas/update-pack-gear-schema";
 
-import GearFormFields from "./gear-fields";
-
-type GearFormProps = {
-  gearId?: string | null;
-  categoryId?: string | null;
-  onSuccess?: (gear: CreateGearResult | UpdateGearResult) => void;
+type PackGearFormProps = {
+  id?: string | null;
+  onSuccess?: (gear: UpdatePackGearResult) => void;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const GearForm: FC<GearFormProps> = ({
-  gearId,
-  categoryId,
+const PackGearForm: FC<PackGearFormProps> = ({
+  id,
   onSuccess,
   isOpen,
   onClose,
 }) => {
-  const [createGear] = useMutation(createGearMutation);
-  const [updateGear] = useMutation(updateGearMutation);
+  const [updateGear] = useMutation(updatePackGearMutation);
   const { weightUnit, currency } = useUserPreferences();
 
   const [gearItem, { isLoading }] = useQuery(
-    categoryItemQuery,
-    { id: gearId },
-    { suspense: false, enabled: !!gearId }
+    packGearQuery,
+    { id },
+    { suspense: false, enabled: !!id }
   );
 
   const initialValues = {
-    id: gearItem ? gearItem.gear.id : "",
+    id: gearItem ? gearItem.id : "",
     name: gearItem ? gearItem.gear.name : "",
     weight: gearItem
       ? weightUnit === "IMPERIAL"
@@ -56,22 +52,16 @@ const GearForm: FC<GearFormProps> = ({
     imageUrl: gearItem ? gearItem.gear.imageUrl : null,
     notes: gearItem ? gearItem.gear.notes : null,
     consumable: gearItem ? gearItem.gear.consumable : false,
+    worn: gearItem?.worn || false,
   };
 
-  const handleSubmit = async (values: Omit<UpdateGearValues, "id">) => {
+  const handleSubmit = async (values: UpdatePackGearValues) => {
     try {
-      let result;
-
       if (weightUnit === "IMPERIAL") {
         values.weight = ozTog(values.weight);
       }
 
-      if (gearItem) {
-        result = await updateGear({ id: gearItem.gear.id, ...values });
-      } else {
-        if (!categoryId) throw new Error();
-        result = await createGear({ categoryId, ...values });
-      }
+      const result = await updateGear(values);
 
       onClose();
       if (onSuccess) {
@@ -89,14 +79,18 @@ const GearForm: FC<GearFormProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       isLoading={isLoading}
-      title={gearId ? `Editing ${gearItem?.gear.name}` : "Add some new gear"}
-      schema={updateGearSchema}
+      title={`Editing ${gearItem?.gear.name}`}
+      schema={updatePackGearSchema}
       initialValues={initialValues}
       onSubmit={handleSubmit}
       size="lg"
-      render={() => <GearFormFields />}
+      render={() => (
+        <>
+          <GearFormFields includeWorn />
+        </>
+      )}
     />
   );
 };
 
-export default GearForm;
+export default PackGearForm;

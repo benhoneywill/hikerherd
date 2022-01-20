@@ -1,38 +1,33 @@
 import type { FC } from "react";
-
-import { useMutation } from "blitz";
+import type { CategoryType } from "@prisma/client";
 
 import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/modal";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
 import { Icon } from "@chakra-ui/icon";
-import { FcPlus, FcList, FcRating, FcSearch } from "react-icons/fc";
+import { FcPlus, FcSearch } from "react-icons/fc";
 import { HStack, Text } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/react";
 
 import useModeColors from "app/common/hooks/use-mode-colors";
 
-import addGearToPackMutation from "../mutations/add-gear-to-pack-mutation";
+import ManualAddTab from "./manual-add-tab";
+import SearchAddTab from "./search-add-tab";
 
-import PackAddInventoryItem from "./pack-add-inventory-item";
-import PackSearchAdd from "./pack-search-add";
-import PackAddNewItem from "./pack-add-new-item";
-
-type PackAddItemModalProps = {
-  packId: string;
+type AddItemToCategoryProps = {
   categoryId: string | null;
   isOpen: boolean;
   onClose: () => void;
+  type: CategoryType;
   onAdd: () => void;
 };
 
-const PackAddItemModal: FC<PackAddItemModalProps> = ({
+const AddItemToCategory: FC<AddItemToCategoryProps> = ({
   categoryId,
-  packId,
   isOpen,
   onClose,
+  type,
   onAdd,
 }) => {
-  const [addGearToPack] = useMutation(addGearToPackMutation);
   const { gray } = useModeColors();
   const toast = useToast();
 
@@ -40,17 +35,10 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
     onAdd();
     toast({
       title: "Success",
-      description: "The item has been added to your pack.",
+      description: "The item has been added.",
       status: "success",
     });
     onClose();
-  };
-
-  const addToPack = async (gearId: string) => {
-    if (categoryId) {
-      await addGearToPack({ gearId, packId, categoryId });
-      onSuccess();
-    }
   };
 
   return (
@@ -71,22 +59,6 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
             >
               <Tab py={4} flexShrink={0}>
                 <HStack>
-                  <Icon as={FcList} />
-                  <Text whiteSpace="nowrap" overflow="hidden">
-                    Inventory
-                  </Text>
-                </HStack>
-              </Tab>
-              <Tab py={4} flexShrink={0}>
-                <HStack>
-                  <Icon as={FcRating} />
-                  <Text whiteSpace="nowrap" overflow="hidden">
-                    Wish list
-                  </Text>
-                </HStack>
-              </Tab>
-              <Tab py={4} flexShrink={0}>
-                <HStack>
                   <Icon as={FcPlus} />
                   <Text whiteSpace="nowrap" overflow="hidden">
                     New
@@ -105,21 +77,18 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
 
             <TabPanels bg={gray[50]}>
               <TabPanel>
-                <PackAddInventoryItem type="INVENTORY" addToPack={addToPack} />
-              </TabPanel>
-              <TabPanel>
-                <PackAddInventoryItem type="WISH_LIST" addToPack={addToPack} />
-              </TabPanel>
-              <TabPanel>
-                <PackAddNewItem
+                <ManualAddTab
                   categoryId={categoryId}
-                  packId={packId}
                   onClose={onClose}
                   onSuccess={onSuccess}
                 />
               </TabPanel>
               <TabPanel>
-                <PackSearchAdd addToPack={addToPack} />
+                <SearchAddTab
+                  categoryId={categoryId}
+                  onSuccess={onSuccess}
+                  type={type}
+                />
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -129,4 +98,4 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
   );
 };
 
-export default PackAddItemModal;
+export default AddItemToCategory;

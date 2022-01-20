@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { Currency, GearType } from "db";
+import { Currency } from "db";
 
 const createGearSchema = z.object({
   name: z.string(),
@@ -12,7 +12,6 @@ const createGearSchema = z.object({
   consumable: z.boolean().default(false),
   price: z.number().int().nullable().default(null),
   currency: z.nativeEnum(Currency),
-  type: z.nativeEnum(GearType).nullable().default(null),
 });
 
 export type CreateGearValues = z.infer<typeof createGearSchema>;

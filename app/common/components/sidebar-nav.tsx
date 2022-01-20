@@ -10,7 +10,6 @@ import {
   FcList,
   FcRating,
   FcTimeline,
-  FcPortraitMode,
   FcSearch,
   FcSettings,
 } from "react-icons/fc";

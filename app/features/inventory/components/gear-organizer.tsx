@@ -23,6 +23,7 @@ import deleteGearMutation from "../mutations/delete-gear-mutation";
 import CategoryForm from "./category-form";
 import GearForm from "./gear-form";
 import MoveBetweenWishListForm from "./move-between-wish-list-form";
+import AddItemToCategory from "./add-item-to-category";
 
 type GearOrganizerProps = {
   type: CategoryType;
@@ -127,14 +128,20 @@ const GearOrganizer: BlitzPage<GearOrganizerProps> = ({ type }) => {
       />
 
       <GearForm
-        categoryId={addingItemToCategory}
         gearId={editItem}
         onSuccess={() => refetch()}
-        isOpen={!!addingItemToCategory || !!editItem}
+        isOpen={!!editItem}
         onClose={() => {
           setEditItem(null);
-          setAddingItemToCategory(null);
         }}
+      />
+
+      <AddItemToCategory
+        categoryId={addingItemToCategory}
+        isOpen={!!addingItemToCategory}
+        onClose={() => setAddingItemToCategory(null)}
+        onAdd={() => refetch()}
+        type={type}
       />
 
       <ConfirmModal

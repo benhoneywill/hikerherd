@@ -26,7 +26,6 @@ import useUserPreferences from "app/features/users/hooks/use-user-preferences";
 import useModeColors from "../hooks/use-mode-colors";
 import displayWeight from "../helpers/display-weight";
 import displayCurrency from "../helpers/display-currency";
-import gearTypeIcon from "../helpers/gear-type-icon";
 
 import Popover from "./popover";
 
@@ -43,7 +42,6 @@ type GearCardProps = {
   menu?: JSX.Element | null;
   dragging?: boolean;
   quantity?: number;
-  type?: GearType | null;
 };
 
 const GearCardHeader: FC<Pick<GearCardProps, "menu" | "name" | "imageUrl">> = ({
@@ -127,20 +125,12 @@ const GearCardValues: FC<
 };
 
 const GearCardTags: FC<
-  Pick<GearCardProps, "link" | "worn" | "consumable" | "notes" | "type">
-> = ({ link, worn, consumable, notes, type }) => {
+  Pick<GearCardProps, "link" | "worn" | "consumable" | "notes">
+> = ({ link, worn, consumable, notes }) => {
   const { gray } = useModeColors();
 
   return (
     <Wrap>
-      {type && (
-        <Tooltip label={type.toLowerCase()}>
-          <Tag size="sm" bg={gray[200]} borderRadius="full">
-            <Icon as={gearTypeIcon(type)} />
-          </Tag>
-        </Tooltip>
-      )}
-
       {link && (
         <Tooltip label="link">
           <Link href={link} isExternal display="inline-flex">
@@ -195,11 +185,10 @@ const GearCard: FC<GearCardProps> = ({
   dragging = false,
   quantity = 1,
   currency,
-  type,
   children,
 }) => {
   const { gray } = useModeColors();
-  const hasTags = worn || consumable || link || notes || type;
+  const hasTags = worn || consumable || link || notes;
 
   return (
     <Flex
@@ -234,7 +223,6 @@ const GearCard: FC<GearCardProps> = ({
             link={link}
             consumable={consumable}
             notes={notes}
-            type={type}
           />
         )}
       </Wrap>

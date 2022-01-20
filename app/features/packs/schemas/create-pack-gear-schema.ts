@@ -2,18 +2,20 @@ import { z } from "zod";
 
 import { Currency } from "db";
 
-const updateGearSchema = z.object({
-  id: z.string(),
+const createPackGearSchema = z.object({
   name: z.string(),
+  packId: z.string(),
+  categoryId: z.string(),
   weight: z.number(),
-  consumable: z.boolean(),
   imageUrl: z.string().nullable().default(null),
   link: z.string().nullable().default(null),
   notes: z.string().nullable().default(null),
+  consumable: z.boolean().default(false),
+  worn: z.boolean().default(false),
   price: z.number().int().nullable().default(null),
   currency: z.nativeEnum(Currency),
 });
 
-export type UpdateGearValues = z.infer<typeof updateGearSchema>;
+export type CreatePackGearValues = z.infer<typeof createPackGearSchema>;
 
-export default updateGearSchema;
+export default createPackGearSchema;

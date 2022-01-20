@@ -39,6 +39,7 @@ import toggleWornMutation from "../../mutations/toggle-worn-mutation";
 import deletePackCategoryMutation from "../../mutations/delete-pack-category-mutation";
 import deletePackGearMutation from "../../mutations/delete-pack-gear-mutation";
 import updateItemQuantityMutation from "../../mutations/update-item-quantity-mutation";
+import PackGearForm from "../../components/pack-gear-form";
 
 const PackPage: BlitzPage = () => {
   const router = useRouter();
@@ -57,6 +58,8 @@ const PackPage: BlitzPage = () => {
     name: string;
     id: string;
   } | null>(null);
+
+  const [editingItem, setEditingItem] = useState<string | null>(null);
 
   const [movePackCategory] = useMutation(movePackCategoryMutation);
   const [movePackGear] = useMutation(movePackGearMutation);
@@ -151,6 +154,13 @@ const PackPage: BlitzPage = () => {
         }}
       />
 
+      <PackGearForm
+        id={editingItem}
+        onSuccess={() => refetch()}
+        isOpen={!!editingItem}
+        onClose={() => setEditingItem(null)}
+      />
+
       <ConfirmModal
         isOpen={!!deletingCategory}
         onClose={() => setDeletingCategory(null)}
@@ -202,6 +212,9 @@ const PackPage: BlitzPage = () => {
         )}
         itemMenu={(item) => (
           <MenuList>
+            <MenuItem icon={<FaEdit />} onClick={() => setEditingItem(item.id)}>
+              Edit item
+            </MenuItem>
             <MenuItem
               icon={<FaTrash />}
               onClick={() =>
