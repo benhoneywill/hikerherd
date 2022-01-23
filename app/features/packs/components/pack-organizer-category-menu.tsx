@@ -1,18 +1,18 @@
-import type { CategoryItem } from "@prisma/client";
 import type { FC } from "react";
+import type { DragAndDropState } from "app/modules/drag-and-drop/contexts/gear-dnd-context";
 
 import { useContext } from "react";
 
 import { MenuItem, MenuList } from "@chakra-ui/react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
-import gearOrganizerContext from "../contexts/gear-organizer-context";
+import gearOrganizerContext from "app/features/inventory/contexts/gear-organizer-context";
 
-type GearOrganizerCategoryMenuProps = {
-  category: { id: string; items: CategoryItem[] };
+type PackOrganizerCategoryMenuProps = {
+  category: DragAndDropState[number];
 };
 
-const GearOrganizerCategoryMenu: FC<GearOrganizerCategoryMenuProps> = ({
+const PackOrganizerCategoryMenu: FC<PackOrganizerCategoryMenuProps> = ({
   category,
 }) => {
   const { editCategory, deleteCategory } = useContext(gearOrganizerContext);
@@ -22,6 +22,7 @@ const GearOrganizerCategoryMenu: FC<GearOrganizerCategoryMenuProps> = ({
       <MenuItem icon={<FaEdit />} onClick={() => editCategory(category.id)}>
         Edit category
       </MenuItem>
+
       <MenuItem
         icon={<FaTrash />}
         onClick={() => deleteCategory(category.id)}
@@ -33,4 +34,4 @@ const GearOrganizerCategoryMenu: FC<GearOrganizerCategoryMenuProps> = ({
   );
 };
 
-export default GearOrganizerCategoryMenu;
+export default PackOrganizerCategoryMenu;

@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import type { CategoryType } from "db";
 
 import { useMutation } from "blitz";
 import { useContext, Fragment } from "react";
@@ -14,9 +15,12 @@ import gearOrganizerContext from "../contexts/gear-organizer-context";
 import ToggleItemTypeForm from "./toggle-item-type-form";
 import AddItemToCategoryModal from "./add-item-to-category-modal";
 
-const GearOrganizerModals: FC = () => {
+type GearOrganizerModalsProps = {
+  type: CategoryType;
+};
+
+const GearOrganizerModals: FC<GearOrganizerModalsProps> = ({ type }) => {
   const {
-    type,
     refetch,
 
     addingCategory,
@@ -26,7 +30,7 @@ const GearOrganizerModals: FC = () => {
     addingItemToCategory,
     deletingItem,
     editingItem,
-    togglingItemType,
+    togglingMetaItem,
 
     closeModals,
   } = useContext(gearOrganizerContext);
@@ -87,9 +91,9 @@ const GearOrganizerModals: FC = () => {
 
       <ToggleItemTypeForm
         type={type === "INVENTORY" ? "WISH_LIST" : "INVENTORY"}
-        itemId={togglingItemType}
+        itemId={togglingMetaItem}
         onSuccess={() => refetch()}
-        isOpen={!!togglingItemType}
+        isOpen={!!togglingMetaItem}
         onClose={closeModals}
       />
     </Fragment>

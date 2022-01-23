@@ -1,31 +1,26 @@
-import type { CategoryType } from "@prisma/client";
 import type { FC } from "react";
+import type { DragAndDropState } from "app/modules/drag-and-drop/contexts/gear-dnd-context";
 
-import { useQuery } from "blitz";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import gearOrganizerContext from "../contexts/gear-organizer-context";
-import inventoryQuery from "../queries/inventory-query";
 
 const { Provider } = gearOrganizerContext;
 
 type Id = string | null;
 
 type GearOrganizerProviderProps = {
-  type: CategoryType;
+  state: DragAndDropState;
+  setState: (update: (state: DragAndDropState) => DragAndDropState) => void;
+  refetch: () => void;
 };
 
 const GearOrganizerProvider: FC<GearOrganizerProviderProps> = ({
-  type,
+  state,
+  setState,
+  refetch,
   children,
 }) => {
-  const [data, { refetch }] = useQuery(inventoryQuery, { type });
-  const [state, setState] = useState(data);
-
-  useEffect(() => {
-    setState(data);
-  }, [data]);
-
   const [addingCategory, setAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Id>(null);
   const [deletingCategory, setDeletingCategory] = useState<Id>(null);
@@ -33,21 +28,21 @@ const GearOrganizerProvider: FC<GearOrganizerProviderProps> = ({
   const [addingItemToCategory, setAddingItemToCategory] = useState<Id>(null);
   const [editingItem, setEditingItem] = useState<Id>(null);
   const [deletingItem, setDeletingItem] = useState<Id>(null);
-  const [togglingItemType, setTogglingItemType] = useState<Id>(null);
+
+  const [togglingMetaItem, setTogglingMetaItem] = useState<Id>(null);
 
   const closeModals = () => {
     setAddingCategory(false);
     setDeletingCategory(null);
     setEditingItem(null);
     setDeletingItem(null);
-    setTogglingItemType(null);
+    setTogglingMetaItem(null);
     setAddingItemToCategory(null);
   };
 
   return (
     <Provider
       value={{
-        type,
         state,
         setState,
         refetch,
@@ -72,8 +67,8 @@ const GearOrganizerProvider: FC<GearOrganizerProviderProps> = ({
         deletingItem,
         deleteItem: (id: string) => setDeletingItem(id),
 
-        togglingItemType,
-        toggleItemType: (id: string) => setTogglingItemType(id),
+        togglingMetaItem,
+        toggleMetaItem: (id: string) => setTogglingMetaItem(id),
       }}
     >
       {children}

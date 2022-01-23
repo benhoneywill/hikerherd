@@ -1,6 +1,7 @@
 import type { BlitzPage } from "blitz";
 
-import { Link, Routes, useQuery } from "blitz";
+import { useRouter, Routes, useQuery } from "blitz";
+import { useState } from "react";
 
 import { Button } from "@chakra-ui/button";
 import { FcTimeline } from "react-icons/fc";
@@ -10,28 +11,28 @@ import SidebarLayout from "app/modules/common/layouts/sidebar-layout";
 import LinkCard from "app/modules/common/components/link-card";
 
 import packsQuery from "../queries/packs-query";
+import PackForm from "../components/pack-form";
 
 const PacksPage: BlitzPage = () => {
+  const router = useRouter();
   const [packs] = useQuery(packsQuery, {});
+  const [addingNewPack, setAddingNewPack] = useState(false);
 
   return (
     <>
       <Heading>Packs</Heading>
 
-      <Link href={Routes.NewPackPage()} passHref>
-        <Button as="a" colorScheme="green">
-          New pack
-        </Button>
-      </Link>
+      <Button as="a" colorScheme="green" onClick={() => setAddingNewPack(true)}>
+        New pack
+      </Button>
 
-      {packs.length === 0 && (
-        <LinkCard
-          href={Routes.NewPackPage()}
-          icon={FcTimeline}
-          title="Create your first pack"
-          text="You haven't created any packs yet! Click this box to get started."
-        />
-      )}
+      <PackForm
+        isOpen={addingNewPack}
+        onClose={() => setAddingNewPack(false)}
+        onSuccess={(pack) => {
+          router.push(Routes.PackPage({ packId: pack.id }));
+        }}
+      />
 
       {packs.length >= 1 && (
         <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4}>

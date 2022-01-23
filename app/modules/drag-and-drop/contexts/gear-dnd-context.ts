@@ -14,7 +14,7 @@ export type DragAndDropState = Array<
       (CategoryItem | PackCategoryItem) & {
         gear: Gear;
         worn?: boolean;
-        notes?: string;
+        notes?: string | null;
         quantity?: number;
       }
     >;

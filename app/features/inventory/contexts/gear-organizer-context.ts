@@ -1,15 +1,10 @@
-import type { CategoryType } from "db";
-import type { PromiseReturnType } from "blitz";
-import type inventoryQuery from "../queries/inventory-query";
+import type { DragAndDropState } from "app/modules/drag-and-drop/contexts/gear-dnd-context";
 
 import { createContext } from "react";
 
-type GearOrganizerState = PromiseReturnType<typeof inventoryQuery>;
-
 type GearOrganizerContext = {
-  type: CategoryType;
-  state: GearOrganizerState;
-  setState: (update: (state: GearOrganizerState) => GearOrganizerState) => void;
+  state: DragAndDropState;
+  setState: (update: (state: DragAndDropState) => DragAndDropState) => void;
   refetch: () => void;
 
   closeModals: () => void;
@@ -32,8 +27,8 @@ type GearOrganizerContext = {
   deletingItem: string | null;
   deleteItem: (id: string) => void;
 
-  togglingItemType: string | null;
-  toggleItemType: (id: string) => void;
+  togglingMetaItem: string | null;
+  toggleMetaItem: (id: string) => void;
 };
 
 const gearOrganizerContext = createContext<GearOrganizerContext>(

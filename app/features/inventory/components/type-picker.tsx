@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import type { IconType } from "react-icons";
 
+import { Fragment } from "react";
 import { Link, Routes } from "blitz";
 
 import {
@@ -10,6 +11,7 @@ import {
   Icon,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
 } from "@chakra-ui/react";
@@ -21,7 +23,7 @@ type TypePickerProps = {
   title: string;
 };
 
-const TypePicker: FC<TypePickerProps> = ({ icon, title }) => {
+const TypePicker: FC<TypePickerProps> = ({ icon, title, children }) => {
   return (
     <Menu>
       <MenuButton
@@ -48,6 +50,13 @@ const TypePicker: FC<TypePickerProps> = ({ icon, title }) => {
             Wish list
           </MenuItem>
         </Link>
+
+        {children && (
+          <Fragment>
+            <MenuDivider />
+            {children}
+          </Fragment>
+        )}
       </MenuList>
     </Menu>
   );

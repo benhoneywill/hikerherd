@@ -1,33 +1,31 @@
-import type { FC } from "react";
 import type { DropResult } from "react-beautiful-dnd";
-import type { CategoryType } from "@prisma/client";
+import type { FC } from "react";
 
 import { useContext } from "react";
 import { useMutation } from "blitz";
 
-import DragAndDrop from "app/modules/drag-and-drop/components/drag-and-drop";
 import reorder from "app/modules/drag-and-drop/helpers/reorder";
 import reorderNested from "app/modules/drag-and-drop/helpers/reorder-nested";
-import moveCategoryMutation from "app/features/categories/mutations/move-category-mutation";
-import moveCategoryGearMutation from "app/features/category-gear/mutations/move-category-gear-mutation";
+import DragAndDrop from "app/modules/drag-and-drop/components/drag-and-drop";
+import gearOrganizerContext from "app/features/inventory/contexts/gear-organizer-context";
+import movePackCategoryMutation from "app/features/pack-categories/mutations/move-pack-category-mutation";
+import movePackGearMutation from "app/features/pack-gear/mutations/move-pack-gear-mutation";
 
-import gearOrganizerContext from "../contexts/gear-organizer-context";
+import PackOrganizerItemMenu from "./pack-organizer-item-menu";
+import PackOrganizerCategoryMenu from "./pack-organizer-category-menu";
 
-import GearOrganizerCategoryMenu from "./gear-organizer-category-menu";
-import GearOrganizerItemMenu from "./gear-organizer-item-menu";
-
-type GearOrganizerDragAndDropProps = {
-  type: CategoryType;
+type PackOrganizerDragAndDropProps = {
+  id: string;
 };
 
-const GearOrganizerDragAndDrop: FC<GearOrganizerDragAndDropProps> = ({
-  type,
+const PackOrganizerDragAndDrop: FC<PackOrganizerDragAndDropProps> = ({
+  id,
 }) => {
   const { state, setState, refetch, addCategory, addItemToCategory } =
     useContext(gearOrganizerContext);
 
-  const [moveCategory] = useMutation(moveCategoryMutation);
-  const [moveGear] = useMutation(moveCategoryGearMutation);
+  const [movePackCategory] = useMutation(movePackCategoryMutation);
+  const [movePackGear] = useMutation(movePackGearMutation);
 
   const handleCategoryDrop = async (drop: DropResult) => {
     if (drop.destination) {
@@ -39,10 +37,12 @@ const GearOrganizerDragAndDrop: FC<GearOrganizerDragAndDropProps> = ({
         });
       });
 
-      await moveCategory({
+      await movePackCategory({
         id: drop.draggableId,
         index: drop.destination.index,
       });
+
+      await refetch();
     }
   };
 
@@ -57,11 +57,14 @@ const GearOrganizerDragAndDrop: FC<GearOrganizerDragAndDropProps> = ({
         });
       });
 
-      await moveGear({
+      await movePackGear({
         id: drop.draggableId,
+        packId: id,
         categoryId: drop.destination.droppableId,
         index: drop.destination.index,
       });
+
+      refetch();
     }
   };
 
@@ -73,8 +76,6 @@ const GearOrganizerDragAndDrop: FC<GearOrganizerDragAndDropProps> = ({
     if (drop.type === "item") {
       await handleItemDrop(drop);
     }
-
-    refetch();
   };
 
   return (
@@ -84,11 +85,11 @@ const GearOrganizerDragAndDrop: FC<GearOrganizerDragAndDropProps> = ({
       addCategory={addCategory}
       addItemToCategory={addItemToCategory}
       categoryMenu={(category) => (
-        <GearOrganizerCategoryMenu category={category} />
+        <PackOrganizerCategoryMenu category={category} />
       )}
-      itemMenu={(item) => <GearOrganizerItemMenu type={type} item={item} />}
+      itemMenu={(item) => <PackOrganizerItemMenu item={item} />}
     />
   );
 };
 
-export default GearOrganizerDragAndDrop;
+export default PackOrganizerDragAndDrop;
