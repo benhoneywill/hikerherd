@@ -1,18 +1,13 @@
-import type { AddImageValues } from "../schemas/add-image-schema";
+import { useContext } from "react";
 
-import TextField from "app/common/components/text-field";
-import ModalForm from "app/common/components/modal-form";
+import TextField from "app/modules/forms/components/text-field";
+import ModalForm from "app/modules/forms/components/modal-form";
 
-import useEditorContext from "../hooks/use-editor-context";
 import addImageSchema from "../schemas/add-image-schema";
+import editorContext from "../contexts/editor-context";
 
 const EditorAddImage = () => {
-  const { editor, addingImage, toggleAddingImage } = useEditorContext();
-
-  const addImage = ({ image }: AddImageValues) => {
-    editor.chain().focus().setImage({ src: image }).run();
-    toggleAddingImage();
-  };
+  const { editor, addingImage, toggleAddingImage } = useContext(editorContext);
 
   return (
     <ModalForm
@@ -21,12 +16,16 @@ const EditorAddImage = () => {
       title="Add an image"
       schema={addImageSchema}
       initialValues={{ image: "" }}
-      onSubmit={addImage}
+      submitText="Add"
+      onSubmit={({ image }) => {
+        editor.chain().focus().setImage({ src: image }).run();
+        toggleAddingImage();
+      }}
       render={() => (
         <TextField
           name="image"
-          label="Image"
-          placeholder="Enter an image url"
+          label="Image URL"
+          placeholder="Paste the url of the image"
         />
       )}
     />

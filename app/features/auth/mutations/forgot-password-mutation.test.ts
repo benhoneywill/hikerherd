@@ -1,6 +1,6 @@
 import { hash256 } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import createMockContext from "testing/create-mock-context";
 
 import db from "db";
 

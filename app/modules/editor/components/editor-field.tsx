@@ -16,12 +16,12 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 
 import useEditorField from "../hooks/use-editor-field";
+import EditorActionsProvider from "../providers/editor-actions-provider";
 
 import EditorFloatingMenu from "./editor-floating-menu";
 import EditorBubbleMenu from "./editor-bubble-menu";
 import EditorHtml from "./editor-html";
 import EditorBarMenu from "./editor-bar-menu";
-import EditorActionsProvider from "./editor-actions-provider";
 
 const FakeInput = styled(Box)`
   .ProseMirror {
@@ -90,7 +90,7 @@ type EditorFieldProps = {
   fieldProps?: UseFieldConfig<string>;
   fontSize?: BoxProps["fontSize"];
   features?: EditorFeatures;
-  required?: boolean;
+  required?: string;
   label?: string;
   autofocus?: boolean;
   bubbleMenu?: boolean;
@@ -103,7 +103,7 @@ const EditorField: FC<EditorFieldProps> = ({
   fieldProps,
   fontSize,
   features = {},
-  required = false,
+  required,
   autofocus,
   label,
   bubbleMenu,
@@ -113,10 +113,8 @@ const EditorField: FC<EditorFieldProps> = ({
   const { editor, error, meta } = useEditorField(name, {
     features,
     fieldProps,
-    options: {
-      required,
-      autofocus,
-    },
+    required,
+    autofocus,
   });
 
   if (!editor) return null;

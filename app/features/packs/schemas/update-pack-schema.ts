@@ -8,6 +8,4 @@ const updatePackSchema = z.object({
   notes: editorContentSchema.nullable(),
 });
 
-export type UpdatePackValues = z.infer<typeof updatePackSchema>;
-
 export default updatePackSchema;

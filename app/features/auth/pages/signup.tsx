@@ -6,8 +6,8 @@ import { Stack } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
 
-import BoxLayout from "app/common/layouts/box-layout";
-import TextDivider from "app/common/components/text-divider";
+import BoxLayout from "app/modules/common/layouts/box-layout";
+import TextDivider from "app/modules/common/components/text-divider";
 
 import SignupForm from "../components/signup-form";
 
@@ -15,18 +15,19 @@ const SignupPage: BlitzPage = () => {
   const router = useRouter();
   const toast = useToast();
 
-  const handleSuccess = () => {
-    router.push(Routes.HomePage());
-    toast({
-      title: "Welcome to hikerherd.",
-      description: "We've created your account for you.",
-      status: "success",
-    });
-  };
-
   return (
     <Stack spacing={8}>
-      <SignupForm onSuccess={handleSuccess} />
+      <SignupForm
+        onSuccess={(user) => {
+          router.push(Routes.HomePage());
+          toast({
+            title: "Welcome to hikerherd.",
+            description: `Hi ${user.username}, I hope you enjoy using hikerherd.`,
+            status: "success",
+          });
+        }}
+      />
+
       <TextDivider>Or</TextDivider>
       <Link href={Routes.LoginPage()} passHref>
         <Button size="lg" as="a">

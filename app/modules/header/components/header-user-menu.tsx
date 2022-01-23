@@ -12,7 +12,7 @@ import { SkeletonCircle } from "@chakra-ui/skeleton";
 import { FaChevronDown, FaCog, FaSignOutAlt } from "react-icons/fa";
 
 import useCurrentUser from "app/features/users/hooks/use-current-user";
-import logoutMutation from "app/features/auth/mutations/logout-mutation";
+import logoutMutation from "app/auth/mutations/logout-mutation";
 
 const UserMenuLoader: FC = () => (
   <Button

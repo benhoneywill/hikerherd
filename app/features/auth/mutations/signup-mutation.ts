@@ -1,5 +1,3 @@
-import type { PromiseReturnType } from "blitz";
-
 import { resolver, SecurePassword } from "blitz";
 
 import db from "db";
@@ -33,7 +31,5 @@ const signupMutation = resolver.pipe(
     }
   }
 );
-
-export type SignupResult = PromiseReturnType<typeof signupMutation>;
 
 export default signupMutation;

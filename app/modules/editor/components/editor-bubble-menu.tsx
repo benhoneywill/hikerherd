@@ -1,7 +1,7 @@
 import type { FC, ReactElement } from "react";
 import type { EditorFeatures } from "../helpers/get-editor-extensions";
 
-import React from "react";
+import React, { useContext } from "react";
 
 import "tippy.js/dist/svg-arrow.css";
 import { isTextSelection, BubbleMenu } from "@tiptap/react";
@@ -19,7 +19,7 @@ import { HStack } from "@chakra-ui/layout";
 import Icon from "@chakra-ui/icon";
 import { DarkMode } from "@chakra-ui/react";
 
-import useEditorContext from "../hooks/use-editor-context";
+import editorContext from "../contexts/editor-context";
 
 type EditorBubbleMenuButtonProps = {
   onClick: () => void;
@@ -52,7 +52,7 @@ type EditorBubbleMenuProps = {
 };
 
 const EditorBubbleMenu: FC<EditorBubbleMenuProps> = ({ features = {} }) => {
-  const { editor, toggleAddingLink } = useEditorContext();
+  const { editor, toggleAddingLink } = useContext(editorContext);
 
   return (
     <BubbleMenu

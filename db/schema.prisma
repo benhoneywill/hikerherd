@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// learn more about this file: https://pris.ly/d/prisma-schema
 
 datasource db {
   provider = "postgres"
@@ -23,33 +22,43 @@ enum WeightUnit {
   IMPERIAL
 }
 
+enum Currency {
+  USD
+  GBP
+  EUR
+}
+
 model User {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email      String     @unique
-  username   String     @unique
-  avatar     String?    @unique
-  weightUnit WeightUnit @default(METRIC)
-  currency   Currency   @default(USD)
-
-  packs Pack[]
-  gear  Gear[]
-
+  email          String     @unique
+  username       String     @unique
   hashedPassword String?
+  avatar         String?    @unique
+  weightUnit     WeightUnit @default(METRIC)
+  currency       Currency   @default(USD)
   role           UserRole   @default(USER)
-  tokens         Token[]
-  sessions       Session[]
-  Category       Category[]
+
+  packs    Pack[]
+  gear     Gear[]
+  tokens   Token[]
+  sessions Session[]
+  Category Category[]
 }
 
 // ***** Auth *****
 
+enum TokenType {
+  RESET_PASSWORD
+}
+
 model Session {
-  id                 String    @id @default(cuid())
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   expiresAt          DateTime?
   handle             String    @unique
   hashedSessionToken String?
@@ -61,14 +70,11 @@ model Session {
   userId String?
 }
 
-enum TokenType {
-  RESET_PASSWORD
-}
-
 model Token {
-  id          String    @id @default(cuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   hashedToken String
   type        TokenType
   expiresAt   DateTime
@@ -81,10 +87,10 @@ model Token {
 }
 
 // ***** Gear ***** //
-enum Currency {
-  USD
-  GBP
-  EUR
+
+enum CategoryType {
+  INVENTORY
+  WISH_LIST
 }
 
 model Gear {
@@ -110,11 +116,6 @@ model Gear {
 
   packCategoryItems PackCategoryItem[]
   categoryItems     CategoryItem[]
-}
-
-enum CategoryType {
-  INVENTORY
-  WISH_LIST
 }
 
 model Category {

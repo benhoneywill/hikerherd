@@ -1,17 +1,18 @@
 import type { FC } from "react";
 import type { CategoryType, Gear } from "db";
-import type { AddToInventoryResult } from "../mutations/add-to-inventory-mutation";
-import type { AddToInventoryValues } from "../schemas/add-to-inventory-schema";
+import type { PromiseReturnType } from "blitz";
 
-import { Link, Routes, useMutation, useQuery } from "blitz";
+import { Fragment } from "react";
+import { useMutation, useQuery } from "blitz";
 
-import { Stack, Link as Anchor } from "@chakra-ui/layout";
-import { Text } from "@chakra-ui/react";
+import { Center } from "@chakra-ui/layout";
+import { Spinner, Text } from "@chakra-ui/react";
+import { FORM_ERROR } from "final-form";
 
-import SelectField from "app/common/components/select-field";
-import { FORM_ERROR } from "app/common/components/form";
-import ModalForm from "app/common/components/modal-form";
-import categoriesQuery from "app/features/inventory/queries/categories-query";
+import SelectField from "app/modules/forms/components/select-field";
+import ModalForm from "app/modules/forms/components/modal-form";
+import categoriesQuery from "app/features/categories/queries/categories-query";
+import displayCategoryType from "app/features/categories/helpers/display-category-type";
 
 import addToInventoryMutation from "../mutations/add-to-inventory-mutation";
 import addToInventorySchema from "../schemas/add-to-inventory-schema";
@@ -19,7 +20,9 @@ import addToInventorySchema from "../schemas/add-to-inventory-schema";
 type AddToInventoryFormProps = {
   type?: CategoryType;
   gear?: Gear;
-  onSuccess?: (result: AddToInventoryResult) => void;
+  onSuccess?: (
+    result: PromiseReturnType<typeof addToInventoryMutation>
+  ) => void;
   isOpen: boolean;
   onClose: () => void;
 };
@@ -39,69 +42,65 @@ const AddToInventoryForm: FC<AddToInventoryFormProps> = ({
     { suspense: false, enabled: !!type }
   );
 
-  const initialValues = {
-    type,
-    id: gear?.id,
-    categoryId: categories?.[0]?.id,
-  };
-
-  const handleSubmit = async (values: AddToInventoryValues) => {
-    try {
-      const result = await add(values);
-
-      onClose();
-
-      if (onSuccess) {
-        onSuccess(result);
-      }
-    } catch (error: unknown) {
-      return {
-        [FORM_ERROR]: "Sorry, there was an unexpected error. Please try again.",
-      };
-    }
-  };
-
-  const typeName = type?.toLowerCase().replace("_", " ");
+  if (!gear || !type) return null;
 
   return (
     <ModalForm
       isOpen={isOpen}
       onClose={onClose}
-      title={`Add ${gear?.name} to your ${typeName}`}
-      isLoading={isLoading}
+      title={`Add ${gear.name} to your ${displayCategoryType(type)}`}
       schema={addToInventorySchema}
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      disabled={!categories?.length}
-      render={() => (
-        <Stack spacing={3}>
-          {!categories?.length && (
-            <Text>
-              Before you can start adding gear you need to create a category in{" "}
-              <Link
-                href={
-                  type === "INVENTORY"
-                    ? Routes.InventoryPage()
-                    : Routes.WishListPage()
-                }
-              >
-                <Anchor color="blue.400" textDecoration="underline">
-                  your {typeName}
-                </Anchor>
-              </Link>
-            </Text>
-          )}
+      submitText="Add"
+      initialValues={{
+        type,
+        gearId: gear?.id,
+        categoryId: categories?.[0]?.id,
+      }}
+      onSubmit={async (values) => {
+        try {
+          const result = await add(values);
 
-          {categories?.length && (
-            <SelectField name="categoryId" label="Choose a category">
-              {categories?.map((category) => (
-                <option value={category.id} key={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </SelectField>
+          onClose();
+
+          if (onSuccess) {
+            onSuccess(result);
+          }
+        } catch (error: unknown) {
+          return {
+            [FORM_ERROR]:
+              "Sorry, there was an unexpected error. Please try again.",
+          };
+        }
+      }}
+      render={() => (
+        <Fragment>
+          {isLoading ? (
+            <Center p={3}>
+              <Spinner />
+            </Center>
+          ) : (
+            <Fragment>
+              {!categories?.length && (
+                <Text>
+                  Before you can start adding gear you need to create a category
+                  in your {displayCategoryType(type)}
+                </Text>
+              )}
+
+              <SelectField
+                name="categoryId"
+                label="Choose a category"
+                isDisabled={!categories?.length}
+              >
+                {categories?.map((category) => (
+                  <option value={category.id} key={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </SelectField>
+            </Fragment>
           )}
-        </Stack>
+        </Fragment>
       )}
     />
   );

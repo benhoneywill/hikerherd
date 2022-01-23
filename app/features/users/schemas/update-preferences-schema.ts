@@ -7,6 +7,4 @@ const updatePreferencesSchema = z.object({
   currency: z.nativeEnum(Currency),
 });
 
-export type UpdatePreferencesValues = z.infer<typeof updatePreferencesSchema>;
-
 export default updatePreferencesSchema;

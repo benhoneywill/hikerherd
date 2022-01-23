@@ -1,5 +1,3 @@
-import type { PromiseReturnType } from "blitz";
-
 import { resolver } from "blitz";
 
 import db from "db";
@@ -22,7 +20,5 @@ const currentUserQuery = resolver.pipe(async (_, ctx) => {
 
   return user;
 });
-
-export type CurrentUserResult = PromiseReturnType<typeof currentUserQuery>;
 
 export default currentUserQuery;

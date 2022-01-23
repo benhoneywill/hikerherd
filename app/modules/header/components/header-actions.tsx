@@ -1,5 +1,7 @@
 import type { FC } from "react";
 
+import { useContext } from "react";
+
 import { HStack } from "@chakra-ui/layout";
 import {
   FaSun,
@@ -11,15 +13,16 @@ import {
 import Icon from "@chakra-ui/icon";
 import { useColorMode } from "@chakra-ui/react";
 
-import useUserPreferences from "app/features/users/hooks/use-user-preferences";
-
-import useHeader from "../hooks/use-header";
+import userPreferencesContext from "app/features/users/contexts/user-preferences-context";
 
 import HeaderIconButton from "./header-icon-button";
 
-const HeaderActions: FC = () => {
-  const { toggleDrawer } = useHeader();
-  const { toggleWeightUnits, weightUnit } = useUserPreferences();
+type HeaderActionsProps = {
+  toggleDrawer: () => void;
+};
+
+const HeaderActions: FC<HeaderActionsProps> = ({ toggleDrawer }) => {
+  const { toggleWeightUnits, weightUnit } = useContext(userPreferencesContext);
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (

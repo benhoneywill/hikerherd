@@ -4,7 +4,7 @@ import { Link, Routes } from "blitz";
 
 import { Button } from "@chakra-ui/button";
 
-import BoxLayout from "app/common/layouts/box-layout";
+import BoxLayout from "app/modules/common/layouts/box-layout";
 
 const ForgotPasswordConfirmPage: BlitzPage = () => {
   return (
@@ -20,7 +20,7 @@ ForgotPasswordConfirmPage.redirectAuthenticatedTo = Routes.HomePage();
 ForgotPasswordConfirmPage.getLayout = (page) => (
   <BoxLayout
     title="Your email is on the way"
-    description="If the email address you have provided has a hikerherd account then we have sent you a password reset link."
+    description="If your email address has a hikerherd account then you have been sent a password reset link."
   >
     {page}
   </BoxLayout>

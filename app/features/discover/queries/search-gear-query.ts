@@ -1,4 +1,3 @@
-import type { PromiseReturnType } from "blitz";
 import type { Gear } from "db";
 
 import { resolver } from "blitz";
@@ -25,7 +24,5 @@ const searchGearQuery = resolver.pipe(
     return results as Gear[];
   }
 );
-
-export type SearchGearResult = PromiseReturnType<typeof searchGearQuery>;
 
 export default searchGearQuery;

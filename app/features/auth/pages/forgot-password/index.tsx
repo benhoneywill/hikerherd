@@ -5,8 +5,8 @@ import { useRouter, Link, Routes } from "blitz";
 import { Stack } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 
-import BoxLayout from "app/common/layouts/box-layout";
-import TextDivider from "app/common/components/text-divider";
+import BoxLayout from "app/modules/common/layouts/box-layout";
+import TextDivider from "app/modules/common/components/text-divider";
 
 import ForgotPasswordForm from "../../components/forgot-password-form";
 
@@ -36,7 +36,7 @@ ForgotPasswordPage.redirectAuthenticatedTo = Routes.HomePage();
 ForgotPasswordPage.getLayout = (page) => (
   <BoxLayout
     title="Forgot Your Password?"
-    description="No worries. Tell us your email and we will send you instructions for resetting your password."
+    description="No worries. Tell us your email and you will be sent instructions for resetting your password."
   >
     {page}
   </BoxLayout>

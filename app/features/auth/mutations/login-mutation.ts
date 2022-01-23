@@ -1,5 +1,3 @@
-import type { PromiseReturnType } from "blitz";
-
 import { resolver } from "blitz";
 
 import loginSchema from "../schemas/login-schema";
@@ -14,7 +12,5 @@ export const loginMutation = resolver.pipe(
     return user;
   }
 );
-
-export type LoginResult = PromiseReturnType<typeof loginMutation>;
 
 export default loginMutation;

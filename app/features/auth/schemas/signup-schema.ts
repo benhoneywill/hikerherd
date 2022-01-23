@@ -12,6 +12,4 @@ const signupSchema = z.object({
     .max(32),
 });
 
-export type SignupValues = z.infer<typeof signupSchema>;
-
 export default signupSchema;

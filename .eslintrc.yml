@@ -6,7 +6,7 @@ plugins:
   - "@typescript-eslint"
 
 rules:
-  # Nextjs rule
+  # Nextjs rules
   "@next/next/no-img-element": off
 
   # Typescript rules
@@ -27,7 +27,7 @@ rules:
         - pattern: "+(react|blitz)"
           group: builtin
           position: before
-        - pattern: "+(app|db|public|test|integrations)/**"
+        - pattern: "+(app|db|public|testing|integrations)/**"
           group: internal
           position: before
 

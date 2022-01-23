@@ -1,14 +1,14 @@
 import type { FC, ReactElement } from "react";
 import type { EditorFeatures } from "../helpers/get-editor-extensions";
 
-import React from "react";
+import React, { useContext } from "react";
 
 import { FloatingMenu } from "@tiptap/react";
 import { IconButton } from "@chakra-ui/button";
 import { FaImage, FaRulerHorizontal } from "react-icons/fa";
 import { HStack } from "@chakra-ui/layout";
 
-import useEditorContext from "../hooks/use-editor-context";
+import editorContext from "../contexts/editor-context";
 
 type EditorBubbleMenuButtonProps = {
   onClick: () => void;
@@ -37,7 +37,7 @@ type EditorFloatingMenuProps = {
 };
 
 const EditorFloatingMenu: FC<EditorFloatingMenuProps> = ({ features = {} }) => {
-  const { editor, toggleAddingImage } = useEditorContext();
+  const { editor, toggleAddingImage } = useContext(editorContext);
 
   // If none of the features are supported don't render the menu
   if (!features.image && !features.horizontalRule) {

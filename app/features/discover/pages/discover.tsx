@@ -1,48 +1,25 @@
 import type { BlitzPage } from "blitz";
 import type { CategoryType, Gear } from "@prisma/client";
 
-import { useSession, useQuery } from "blitz";
-import { useState } from "react";
+import { useSession } from "blitz";
+import { Fragment, useState } from "react";
 
-import {
-  Button,
-  Center,
-  Heading,
-  HStack,
-  Icon,
-  SimpleGrid,
-  Spinner,
-  Stack,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
-import { FcList, FcRating, FcSearch } from "react-icons/fc";
+import { Button, Heading, HStack, useToast } from "@chakra-ui/react";
+import { FcList, FcRating } from "react-icons/fc";
 
-import SidebarLayout from "app/common/layouts/sidebar-layout";
-import GearCard from "app/common/components/gear-card";
-import SearchInput from "app/common/components/search-input";
-import useModeColors from "app/common/hooks/use-mode-colors";
-import PageHeader from "app/common/components/page-header";
+import SidebarLayout from "app/modules/common/layouts/sidebar-layout";
 
-import searchGearQuery from "../queries/search-gear-query";
 import AddToInventoryForm from "../components/add-to-inventory-form";
+import GlobalGearSearch from "../components/global-gear-search";
 
 const DiscoverPage: BlitzPage = () => {
   const session = useSession({ suspense: false });
-  const [query, setQuery] = useState("");
-  const { gray } = useModeColors();
   const toast = useToast();
 
   const [adding, setAdding] = useState<{
     type: CategoryType;
     gear: Gear;
   } | null>(null);
-
-  const [items, { isLoading }] = useQuery(
-    searchGearQuery,
-    { query },
-    { suspense: false, enabled: !!query }
-  );
 
   return (
     <>
@@ -61,82 +38,34 @@ const DiscoverPage: BlitzPage = () => {
         }}
       />
 
-      <PageHeader title="Discover" icon={FcSearch} />
+      <Heading>Discover</Heading>
 
-      <Stack spacing={3}>
-        <SearchInput setQuery={setQuery} />
-
-        {isLoading && (
-          <HStack bg={gray[50]} p={6} justify="center" spacing={4}>
-            <Spinner />
-            <Heading size="md">Searching...</Heading>
-          </HStack>
+      <GlobalGearSearch
+        gearActions={(gear) => (
+          <Fragment>
+            {session.userId && (
+              <HStack spacing={2}>
+                <Button
+                  isFullWidth
+                  size="sm"
+                  leftIcon={<FcList />}
+                  onClick={() => setAdding({ type: "INVENTORY", gear })}
+                >
+                  Add to inventory
+                </Button>
+                <Button
+                  isFullWidth
+                  size="sm"
+                  leftIcon={<FcRating />}
+                  onClick={() => setAdding({ type: "WISH_LIST", gear })}
+                >
+                  Add to wish list
+                </Button>
+              </HStack>
+            )}
+          </Fragment>
         )}
-
-        {!query && (
-          <Stack
-            bg={gray[50]}
-            borderRadius="md"
-            p={6}
-            align="center"
-            textAlign="center"
-          >
-            <Heading size="md">Search hikerherd for gear...</Heading>
-            <Text opacity={0.6}>
-              Use the search input above to search the hikerherd gear database.
-            </Text>
-          </Stack>
-        )}
-
-        {items?.length === 0 && (
-          <Center bg={gray[50]} borderRadius="md" p={6}>
-            <Heading size="md">No gear found for &quot;{query}&quot; </Heading>
-          </Center>
-        )}
-
-        {!isLoading && items?.length && (
-          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={3}>
-            {items?.map((item) => (
-              <GearCard
-                key={item.id}
-                name={item.name}
-                weight={item.weight}
-                price={item.price}
-                currency={item.currency}
-                consumable={item.consumable}
-                link={item.link}
-                notes={item.notes}
-                type={item.type}
-              >
-                {session.userId && (
-                  <HStack spacing={2}>
-                    <Button
-                      isFullWidth
-                      size="sm"
-                      leftIcon={<FcList />}
-                      onClick={() =>
-                        setAdding({ type: "INVENTORY", gear: item })
-                      }
-                    >
-                      Add to inventory
-                    </Button>
-                    <Button
-                      isFullWidth
-                      size="sm"
-                      leftIcon={<FcRating />}
-                      onClick={() =>
-                        setAdding({ type: "WISH_LIST", gear: item })
-                      }
-                    >
-                      Add to wish list
-                    </Button>
-                  </HStack>
-                )}
-              </GearCard>
-            ))}
-          </SimpleGrid>
-        )}
-      </Stack>
+      />
     </>
   );
 };

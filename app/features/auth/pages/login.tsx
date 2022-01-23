@@ -6,8 +6,8 @@ import { Stack } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
 
-import BoxLayout from "app/common/layouts/box-layout";
-import TextDivider from "app/common/components/text-divider";
+import BoxLayout from "app/modules/common/layouts/box-layout";
+import TextDivider from "app/modules/common/components/text-divider";
 
 import LoginForm from "../components/login-form";
 
@@ -15,7 +15,8 @@ const LoginPage: BlitzPage = () => {
   const router = useRouter();
   const toast = useToast();
 
-  const redirectTo = decodeURIComponent((router.query.next as string) || "/");
+  const next = router.query.next as string | undefined;
+  const redirectTo = decodeURIComponent(next || "/");
 
   return (
     <Stack spacing={8}>

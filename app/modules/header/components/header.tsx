@@ -1,11 +1,11 @@
 import type { FC } from "react";
 
+import { useState, Fragment } from "react";
 import { useSession } from "blitz";
 
 import { Box, Container, Grid, GridItem } from "@chakra-ui/layout";
 import { useColorModeValue } from "@chakra-ui/react";
 
-import HeaderProvider from "./header-provider";
 import HeaderDrawer from "./header-drawer";
 import HeaderActions from "./header-actions";
 import HeaderLogo from "./header-logo";
@@ -15,12 +15,15 @@ import HeaderLoggedIn from "./header-logged-in";
 const Header: FC = () => {
   const session = useSession({ suspense: false });
 
+  const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+  const toggleDrawer = () => setDrawerIsOpen((state) => !state);
+
   const isLoggedIn = !!session.userId;
   const isLoggedOut = !session.userId && !session.isLoading;
 
   return (
-    <HeaderProvider>
-      <HeaderDrawer />
+    <Fragment>
+      <HeaderDrawer isOpen={drawerIsOpen} onClose={toggleDrawer} />
 
       <Box
         as="header"
@@ -41,13 +44,10 @@ const Header: FC = () => {
             gap={3}
           >
             <GridItem>
-              <HeaderActions />
+              <HeaderActions toggleDrawer={toggleDrawer} />
             </GridItem>
 
-            <GridItem
-              justify={{ base: "flex-start", md: "center" }}
-              order={{ base: -1, md: 0 }}
-            >
+            <GridItem order={{ base: -1, md: 0 }}>
               <HeaderLogo />
             </GridItem>
 
@@ -58,7 +58,7 @@ const Header: FC = () => {
           </Grid>
         </Container>
       </Box>
-    </HeaderProvider>
+    </Fragment>
   );
 };
 

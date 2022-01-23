@@ -1,12 +1,11 @@
-import { CategoryType } from "db";
 import { z } from "zod";
 
+import { CategoryType } from "db";
+
 const addToInventorySchema = z.object({
-  id: z.string(),
+  gearId: z.string(),
   categoryId: z.string(),
   type: z.nativeEnum(CategoryType),
 });
-
-export type AddToInventoryValues = z.infer<typeof addToInventorySchema>;
 
 export default addToInventorySchema;

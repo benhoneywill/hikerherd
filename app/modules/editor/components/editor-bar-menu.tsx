@@ -1,6 +1,8 @@
 import type { FC, ReactElement } from "react";
 import type { EditorFeatures } from "../helpers/get-editor-extensions";
 
+import { useContext } from "react";
+
 import { IconButton } from "@chakra-ui/button";
 import {
   FaBold,
@@ -16,7 +18,7 @@ import { HStack } from "@chakra-ui/layout";
 import Icon from "@chakra-ui/icon";
 import { useColorModeValue } from "@chakra-ui/react";
 
-import useEditorContext from "../hooks/use-editor-context";
+import editorContext from "../contexts/editor-context";
 
 type EditorBarMenuButtonProps = {
   onClick: () => void;
@@ -48,7 +50,8 @@ type EditorBarMenuProps = {
 };
 
 const EditorBarMenu: FC<EditorBarMenuProps> = ({ features = {} }) => {
-  const { editor, toggleAddingImage, toggleAddingLink } = useEditorContext();
+  const { editor, toggleAddingImage, toggleAddingLink } =
+    useContext(editorContext);
 
   return (
     <HStack

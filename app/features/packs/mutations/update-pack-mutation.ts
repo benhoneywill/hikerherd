@@ -1,5 +1,3 @@
-import type { PromiseReturnType } from "blitz";
-
 import { NotFoundError, resolver } from "blitz";
 
 import db from "db";
@@ -28,7 +26,5 @@ const updatePackMutation = resolver.pipe(
     });
   }
 );
-
-export type UpdatePackResult = PromiseReturnType<typeof updatePackMutation>;
 
 export default updatePackMutation;

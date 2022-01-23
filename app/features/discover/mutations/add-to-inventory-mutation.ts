@@ -1,5 +1,3 @@
-import type { PromiseReturnType } from "blitz";
-
 import { NotFoundError, resolver } from "blitz";
 
 import db from "db";
@@ -10,7 +8,7 @@ const addToInventoryMutation = resolver.pipe(
   resolver.zod(addToInventorySchema),
   resolver.authorize(),
 
-  async ({ categoryId, id, type }, ctx) => {
+  async ({ categoryId, gearId, type }, ctx) => {
     return db.$transaction(async () => {
       const category = await db.category.findFirst({
         where: {
@@ -28,7 +26,7 @@ const addToInventoryMutation = resolver.pipe(
         },
       });
 
-      const gear = await db.gear.findUnique({ where: { id } });
+      const gear = await db.gear.findUnique({ where: { id: gearId } });
 
       if (!gear || !category) {
         throw new NotFoundError();
@@ -44,9 +42,5 @@ const addToInventoryMutation = resolver.pipe(
     });
   }
 );
-
-export type AddToInventoryResult = PromiseReturnType<
-  typeof addToInventoryMutation
->;
 
 export default addToInventoryMutation;
