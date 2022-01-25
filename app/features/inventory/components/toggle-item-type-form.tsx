@@ -52,7 +52,7 @@ const ToggleItemTypeForm: FC<ToggleItemTypeFormProps> = ({
       schema={moveCategoryGearSchema}
       initialValues={{
         index: 0,
-        id: itemId,
+        id: itemId || "",
         categoryId: categories?.[0]?.id,
       }}
       submitText="Move"

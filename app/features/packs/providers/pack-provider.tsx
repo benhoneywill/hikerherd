@@ -20,7 +20,7 @@ const PackProvider: FC<PackProviderProps> = ({ id, share, children }) => {
   const [editingPack, setEditingPack] = useState(false);
   const [showingDetails, setShowingDetails] = useState(false);
 
-  const [packOrganizer] = useQuery(
+  const [packOrganizer, { refetch }] = useQuery(
     packOrganizerQuery,
     { id },
     { suspense: false }
@@ -54,7 +54,7 @@ const PackProvider: FC<PackProviderProps> = ({ id, share, children }) => {
         packId={id}
         isOpen={editingPack}
         onClose={() => setEditingPack(false)}
-        onSuccess={() => refetchPack()}
+        onSuccess={() => refetch()}
       />
 
       <PackDetails
