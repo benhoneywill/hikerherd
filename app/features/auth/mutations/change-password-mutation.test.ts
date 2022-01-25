@@ -2,7 +2,7 @@ import type { User } from "db";
 
 import { AuthenticationError, SecurePassword } from "blitz";
 
-import createMockContext from "testing/create-mock-context";
+import createMockContext from "test/create-mock-context";
 
 import db from "db";
 

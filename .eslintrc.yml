@@ -27,7 +27,7 @@ rules:
         - pattern: "+(react|blitz)"
           group: builtin
           position: before
-        - pattern: "+(app|db|public|testing|integrations)/**"
+        - pattern: "+(app|db|public|test|integrations)/**"
           group: internal
           position: before
 
