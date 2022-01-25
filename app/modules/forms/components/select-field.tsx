@@ -32,6 +32,7 @@ const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
           {...input}
           value={input.value}
           disabled={meta.submitting}
+          variant="filled"
           {...props}
           ref={ref}
         >

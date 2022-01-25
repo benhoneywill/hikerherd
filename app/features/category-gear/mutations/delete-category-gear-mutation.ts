@@ -30,6 +30,18 @@ const deleteGearMutation = resolver.pipe(
         },
       });
 
+      await db.categoryItem.updateMany({
+        where: {
+          categoryId: item.categoryId,
+          index: { gt: item.index },
+        },
+        data: {
+          index: {
+            decrement: 1,
+          },
+        },
+      });
+
       await db.categoryItem.delete({
         where: {
           id,

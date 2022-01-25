@@ -57,12 +57,10 @@ const EditorBarMenu: FC<EditorBarMenuProps> = ({ features = {} }) => {
     <HStack
       spacing={1}
       p={1}
-      border="1px solid"
-      borderTop="none"
       borderBottomLeftRadius="md"
       borderBottomRightRadius="md"
       borderColor="inherit"
-      bg={useColorModeValue("gray.50", "gray.700")}
+      bg={useColorModeValue("gray.50", "gray.600")}
     >
       <EditorBarMenuButton
         onClick={() => editor.chain().focus().toggleBold().run()}

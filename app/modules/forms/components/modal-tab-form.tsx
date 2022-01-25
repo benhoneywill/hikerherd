@@ -6,7 +6,7 @@ import { Form as FinalForm } from "react-final-form";
 import { Stack } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { Alert, AlertIcon } from "@chakra-ui/alert";
-import { HStack } from "@chakra-ui/react";
+import { HStack, useColorModeValue } from "@chakra-ui/react";
 
 type ModalTabFormProps = {
   submitText: string;
@@ -22,6 +22,8 @@ const ModalTabForm: FormComponent<ModalTabFormProps> = ({
   onClose,
   ...props
 }) => {
+  const stickyBg = useColorModeValue("white", "gray.700");
+
   return (
     <FinalForm
       initialValues={initialValues}
@@ -45,6 +47,7 @@ const ModalTabForm: FormComponent<ModalTabFormProps> = ({
             justifyContent="flex-end"
             position="sticky"
             bottom="0"
+            bg={stickyBg}
             py={3}
             mb={-4}
           >

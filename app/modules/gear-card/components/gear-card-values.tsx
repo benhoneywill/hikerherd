@@ -38,7 +38,7 @@ const GearCardValues: FC = () => {
         </Tooltip>
       )}
 
-      {quantity !== 1 && (
+      {(quantity === 0 || (quantity && quantity > 1)) && (
         <Tooltip label="quantity">
           <Tag colorScheme="orange" size="sm">
             <TagLeftIcon as={FaClone} />

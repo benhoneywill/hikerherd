@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import type { CategoryType } from "@prisma/client";
 
+import { useState } from "react";
 import { useMutation } from "blitz";
 
 import { FcPlus, FcSearch } from "react-icons/fc";
@@ -28,8 +29,10 @@ const AddItemToCategoryModal: FC<AddItemToCategoryModalProps> = ({
 }) => {
   const toast = useToast();
   const [addToInventory] = useMutation(addToInventoryMutation);
+  const [isAdding, setIsAdding] = useState<string | null>(null);
 
   const handleSuccess = () => {
+    setIsAdding(null);
     onSuccess();
     toast({
       title: "Success",
@@ -63,14 +66,18 @@ const AddItemToCategoryModal: FC<AddItemToCategoryModalProps> = ({
               gearActions={(gear) => (
                 <Button
                   isFullWidth
+                  isLoading={isAdding === gear.id}
+                  size="sm"
+                  colorScheme="green"
                   onClick={async () => {
                     if (categoryId) {
+                      setIsAdding(gear.id);
                       await addToInventory({
                         type,
                         gearId: gear.id,
                         categoryId,
                       });
-                      onSuccess();
+                      handleSuccess();
                     }
                   }}
                 >

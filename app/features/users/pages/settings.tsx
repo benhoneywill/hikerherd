@@ -6,14 +6,20 @@ import { Fragment } from "react";
 import { Heading } from "@chakra-ui/react";
 
 import SidebarLayout from "app/modules/common/layouts/sidebar-layout";
+import Card from "app/modules/common/components/card";
 
 import UserPreferencesForm from "../components/user-preferences-form";
 
 const SettingsPage: BlitzPage = () => {
   return (
     <Fragment>
-      <Heading size="md">Settings</Heading>
-      <UserPreferencesForm />
+      <Heading size="md" mb={6}>
+        Settings
+      </Heading>
+
+      <Card>
+        <UserPreferencesForm />
+      </Card>
     </Fragment>
   );
 };

@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/form-control";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
+import { useColorMode } from "@chakra-ui/react";
 
 import useEditorField from "../hooks/use-editor-field";
 import EditorActionsProvider from "../providers/editor-actions-provider";
@@ -41,11 +42,15 @@ const FakeInput = styled(Box)`
     padding-bottom: var(--chakra-space-2);
     border-radius: var(--chakra-radii-md);
     border: 1px solid;
-    border-color: inherit;
-    background: inherit;
+    border-color: transparent;
+    background: ${({ colorMode }) =>
+      colorMode === "dark"
+        ? "var(--chakra-colors-whiteAlpha-50)"
+        : "var(--chakra-colors-gray-100)"};
 
     &:focus {
       outline: none;
+      background: none;
     }
 
     img.has-focus,
@@ -117,6 +122,8 @@ const EditorField: FC<EditorFieldProps> = ({
     autofocus,
   });
 
+  const { colorMode } = useColorMode();
+
   if (!editor) return null;
 
   return (
@@ -128,6 +135,7 @@ const EditorField: FC<EditorFieldProps> = ({
           focused={meta.focused}
           invalid={!!error}
           hasBarMenu={barMenu}
+          colorMode={colorMode}
         >
           {bubbleMenu && <EditorBubbleMenu features={features} />}
           {floatingMenu && <EditorFloatingMenu features={features} />}

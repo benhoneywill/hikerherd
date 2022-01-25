@@ -42,6 +42,7 @@ const ResetPasswordForm: FC<ResetPasswordFormProps> = ({ onSuccess }) => {
       schema={resetPasswordSchema}
       initialValues={initialValues}
       submitText="Reset password"
+      large
       onSubmit={async (values) => {
         try {
           const result = await resetPassword(values);

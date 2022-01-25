@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { Box, HStack } from "@chakra-ui/layout";
 import { Droppable } from "react-beautiful-dnd";
 import { Button } from "@chakra-ui/button";
+import { useColorModeValue } from "@chakra-ui/react";
 
 import dragAndDropContext from "../contexts/gear-dnd-context";
 
@@ -13,19 +14,27 @@ import DraggableCategory from "./draggable-category";
 const CategoryDropZone: FC = () => {
   const { addCategory, state, readonly } = useContext(dragAndDropContext);
 
+  const dragColor = useColorModeValue("blue.200", "blue.700");
+
   return (
-    <Droppable droppableId="category" type="category" isDropDisabled={readonly}>
+    <Droppable
+      droppableId="category"
+      type="category"
+      isDropDisabled={readonly}
+      direction="horizontal"
+    >
       {(provided, snapshot) => (
         <Box
           {...provided.droppableProps}
           ref={provided.innerRef}
-          bg={snapshot.isDraggingOver ? "blue" : "gray"}
+          bg={snapshot.isDraggingOver ? dragColor : ""}
           width="100%"
           height="100%"
         >
           <HStack
             spacing={0}
             overflowX="auto"
+            alignItems="flex-start"
             width="100%"
             height="100%"
             px={3}
@@ -40,7 +49,13 @@ const CategoryDropZone: FC = () => {
             {provided.placeholder}
 
             {addCategory && (
-              <Box width="270px" padding={2} borderRadius="md" mx={1}>
+              <Box
+                width="270px"
+                flex="0 0 270px"
+                padding={2}
+                borderRadius="md"
+                mx={1}
+              >
                 <Button
                   isFullWidth
                   size="sm"

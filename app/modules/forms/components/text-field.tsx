@@ -42,7 +42,13 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 
         <InputGroup>
           {icon && <InputLeftElement>{icon}</InputLeftElement>}
-          <Input {...input} disabled={meta.submitting} {...props} ref={ref} />
+          <Input
+            {...input}
+            disabled={meta.submitting}
+            variant="filled"
+            {...props}
+            ref={ref}
+          />
           {suffix && <InputRightAddon>{suffix}</InputRightAddon>}
         </InputGroup>
 

@@ -5,6 +5,7 @@ import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/modal";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
 import { Icon } from "@chakra-ui/icon";
 import { HStack, Text } from "@chakra-ui/layout";
+import { useColorModeValue } from "@chakra-ui/react";
 
 type TabModalProps = {
   isOpen: boolean;
@@ -13,6 +14,8 @@ type TabModalProps = {
 };
 
 const TabModal: FC<TabModalProps> = ({ isOpen, onClose, tabs }) => {
+  const bg = useColorModeValue("white", "gray.700");
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
       <ModalOverlay />
@@ -21,6 +24,7 @@ const TabModal: FC<TabModalProps> = ({ isOpen, onClose, tabs }) => {
           <Tabs isFitted>
             <TabList
               position="sticky"
+              bg={bg}
               top={0}
               zIndex={3}
               borderTopLeftRadius="md"

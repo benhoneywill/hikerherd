@@ -17,7 +17,7 @@ type HeaderDrawerProps = {
 };
 
 const HeaderDrawer: FC<HeaderDrawerProps> = ({ isOpen, onClose }) => {
-  const bg = useColorModeValue("white", "gray.800");
+  const bg = useColorModeValue("gray.100", "#242c3a");
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose} placement="left">

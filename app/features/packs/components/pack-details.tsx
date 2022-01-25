@@ -29,7 +29,7 @@ const PackDetails: FC<PackDetailsProps> = ({ isOpen, onClose }) => {
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton onClose={onClose} zIndex={2} />
-        <DrawerHeader borderBottomWidth="1px">{pack.name}</DrawerHeader>
+        <DrawerHeader borderBottomWidth="1px">{pack.name || ""}</DrawerHeader>
         <DrawerBody p={0}>
           <PackAnalytics />
           <PackNotes />

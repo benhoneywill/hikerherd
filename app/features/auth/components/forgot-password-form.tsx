@@ -23,6 +23,7 @@ const ForgotPasswordForm: FC<ForgotPasswordFormProps> = ({ onSuccess }) => {
       schema={forgotPasswordSchema}
       initialValues={{ email: "" }}
       submitText="Send reset email"
+      large
       onSubmit={async (values) => {
         try {
           const result = await forgotPassword(values);

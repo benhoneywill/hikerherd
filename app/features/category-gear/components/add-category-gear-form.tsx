@@ -71,7 +71,7 @@ const AddCategoryGearForm: FC<AddCategoryGearFormProps> = ({
           };
         }
       }}
-      render={() => <GearFormFields includeWorn />}
+      render={() => <GearFormFields />}
     />
   );
 };

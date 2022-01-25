@@ -10,9 +10,10 @@ import { Menu, MenuList, MenuItem, MenuButton } from "@chakra-ui/menu";
 import Icon from "@chakra-ui/icon";
 import { SkeletonCircle } from "@chakra-ui/skeleton";
 import { FaChevronDown, FaCog, FaSignOutAlt } from "react-icons/fa";
+import { Portal } from "@chakra-ui/react";
 
 import useCurrentUser from "app/features/users/hooks/use-current-user";
-import logoutMutation from "app/auth/mutations/logout-mutation";
+import logoutMutation from "app/features/auth/mutations/logout-mutation";
 
 const UserMenuLoader: FC = () => (
   <Button
@@ -51,20 +52,22 @@ const HeaderUserMenu: FC = () => {
       <Menu>
         <UserMenuButton />
 
-        <MenuList>
-          <Link href={Routes.MySettingsPage()} passHref>
-            <MenuItem as="a" icon={<FaCog />}>
-              My settings
+        <Portal>
+          <MenuList>
+            <Link href={Routes.SettingsPage()} passHref>
+              <MenuItem as="a" icon={<FaCog />}>
+                My settings
+              </MenuItem>
+            </Link>
+            <MenuItem
+              as="button"
+              onClick={() => logout()}
+              icon={<FaSignOutAlt />}
+            >
+              Logout
             </MenuItem>
-          </Link>
-          <MenuItem
-            as="button"
-            onClick={() => logout()}
-            icon={<FaSignOutAlt />}
-          >
-            Logout
-          </MenuItem>
-        </MenuList>
+          </MenuList>
+        </Portal>
       </Menu>
     </Suspense>
   );

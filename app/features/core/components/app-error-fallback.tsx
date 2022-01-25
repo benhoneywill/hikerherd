@@ -11,9 +11,8 @@ import {
 
 import { Button } from "@chakra-ui/button";
 
-import LoginForm from "app/auth/components/login-form";
-
-import BoxLayout from "../../modules/common/layouts/box-layout";
+import LoginForm from "app/features/auth/components/login-form";
+import BoxLayout from "app/modules/common/layouts/box-layout";
 
 const HomeButton = () => (
   <Link href={Routes.HomePage()} passHref>

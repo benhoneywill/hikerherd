@@ -27,6 +27,7 @@ const DraggableGear: BlitzPage<DraggableGearProps> = ({ item, index }) => {
           {...provided.dragHandleProps}
           style={provided.draggableProps.style}
           userSelect="none"
+          py={1}
         >
           <GearCard
             name={item.gear.name}

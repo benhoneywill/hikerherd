@@ -26,7 +26,13 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
     return (
       <FormControl isInvalid={meta.touched && error}>
         <FormLabel>{label}</FormLabel>
-        <Textarea {...input} disabled={meta.submitting} {...props} ref={ref} />
+        <Textarea
+          {...input}
+          disabled={meta.submitting}
+          variant="filled"
+          {...props}
+          ref={ref}
+        />
         <FormErrorMessage>{error}</FormErrorMessage>
       </FormControl>
     );

@@ -5,10 +5,12 @@ import { useState } from "react";
 
 import { Button } from "@chakra-ui/button";
 import { FcTimeline } from "react-icons/fc";
-import { Heading, SimpleGrid } from "@chakra-ui/layout";
+import { Heading, SimpleGrid, HStack, Text, Stack } from "@chakra-ui/layout";
+import { Icon } from "@chakra-ui/react";
 
 import SidebarLayout from "app/modules/common/layouts/sidebar-layout";
 import LinkCard from "app/modules/common/components/link-card";
+import Card from "app/modules/common/components/card";
 
 import packsQuery from "../queries/packs-query";
 import PackForm from "../components/pack-form";
@@ -20,11 +22,19 @@ const PacksPage: BlitzPage = () => {
 
   return (
     <>
-      <Heading>Packs</Heading>
+      <HStack mb={6} justify="space-between">
+        <Heading size="md">Packs</Heading>
 
-      <Button as="a" colorScheme="green" onClick={() => setAddingNewPack(true)}>
-        New pack
-      </Button>
+        <Button
+          as="a"
+          colorScheme="green"
+          onClick={() => setAddingNewPack(true)}
+          size="sm"
+          cursor="pointer"
+        >
+          New pack
+        </Button>
+      </HStack>
 
       <PackForm
         isOpen={addingNewPack}
@@ -33,6 +43,15 @@ const PacksPage: BlitzPage = () => {
           router.push(Routes.PackPage({ packId: pack.id }));
         }}
       />
+
+      {packs.length === 0 && (
+        <Card>
+          <Stack alignItems="center">
+            <Icon w={10} h={10} as={FcTimeline} />
+            <Text color="gray.500">You have not created any packs yet</Text>
+          </Stack>
+        </Card>
+      )}
 
       {packs.length >= 1 && (
         <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4}>

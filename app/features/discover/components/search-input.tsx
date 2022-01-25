@@ -32,11 +32,12 @@ const SearchInput: FC<SearchInputProps> = ({ setQuery, ...props }) => {
   return (
     <InputGroup size="lg">
       <InputLeftElement pointerEvents="none">
-        <Icon as={FaSearch} />
+        <Icon as={FaSearch} color="gray.500" />
       </InputLeftElement>
       <Input
         onChange={debouncedChangeHandler}
         placeholder="Search..."
+        variant="filled"
         {...props}
       />
     </InputGroup>

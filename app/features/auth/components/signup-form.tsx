@@ -48,6 +48,7 @@ const SignupForm: FC<SignupFormProps> = ({ onSuccess }) => {
       schema={signupSchema}
       initialValues={{ email: "", username: "", password: "" }}
       submitText="Join hikerherd"
+      large
       onSubmit={async (values) => {
         try {
           const result = await signup(values);

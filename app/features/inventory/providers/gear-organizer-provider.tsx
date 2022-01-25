@@ -33,6 +33,7 @@ const GearOrganizerProvider: FC<GearOrganizerProviderProps> = ({
 
   const closeModals = () => {
     setAddingCategory(false);
+    setEditingCategory(null);
     setDeletingCategory(null);
     setEditingItem(null);
     setDeletingItem(null);

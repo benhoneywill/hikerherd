@@ -19,7 +19,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
   const getLayout = Component.getLayout || ((page) => page);
 
   return (
-    <ChakraProvider portalZIndex={1}>
+    <ChakraProvider portalZIndex={2}>
       <ErrorBoundary FallbackComponent={AppErrorFallback} onReset={reset}>
         <UserPreferencesProvider>
           {getLayout(

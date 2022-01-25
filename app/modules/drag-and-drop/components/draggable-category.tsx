@@ -5,8 +5,8 @@ import { useContext } from "react";
 
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import { Button, IconButton } from "@chakra-ui/button";
-import { HStack, Heading, Box, Flex, Stack } from "@chakra-ui/layout";
-import { Menu, MenuButton } from "@chakra-ui/react";
+import { HStack, Heading, Box, Flex } from "@chakra-ui/layout";
+import { Menu, MenuButton, useColorModeValue } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
 import dragAndDropContext from "../contexts/gear-dnd-context";
@@ -25,6 +25,12 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
   const { categoryMenu, addItemToCategory, readonly } =
     useContext(dragAndDropContext);
 
+  const bg = useColorModeValue("white", "gray.700");
+  const innerBg = useColorModeValue("", "gray.700");
+  const borderColor = useColorModeValue("gray.200", "gray.800");
+  const borderWidth = useColorModeValue("2px", "1px");
+  const dragColor = useColorModeValue("blue.200", "blue.700");
+
   return (
     <Draggable
       draggableId={category.id}
@@ -38,8 +44,11 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
           style={provided.draggableProps.style}
           userSelect="none"
           px={2}
-          border="3px solid"
-          borderColor={snapshot.isDragging ? "blue" : "gray"}
+          pb={2}
+          borderStyle="solid"
+          borderWidth={borderWidth}
+          bg={bg}
+          borderColor={snapshot.isDragging ? "blue.400" : borderColor}
           borderRadius="md"
           mx={2}
           width="270px"
@@ -52,6 +61,7 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
             justify="space-between"
             px={1}
             py={3}
+            pb={2}
           >
             <Heading size="sm">{category.name}</Heading>
             {categoryMenu && (
@@ -78,18 +88,16 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
                 <Box
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  p={1}
+                  px={1}
                   width="100%"
-                  bg={snapshot.isDraggingOver ? "blue" : "gray"}
+                  bg={snapshot.isDraggingOver ? dragColor : innerBg}
                   borderRadius="md"
                 >
-                  <Stack>
-                    {category.items.map((item, index) => (
-                      <DraggableGear item={item} index={index} key={item.id} />
-                    ))}
+                  {category.items.map((item, index) => (
+                    <DraggableGear item={item} index={index} key={item.id} />
+                  ))}
 
-                    {provided.placeholder}
-                  </Stack>
+                  {provided.placeholder}
                 </Box>
               )}
             </Droppable>

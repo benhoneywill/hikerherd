@@ -38,7 +38,7 @@ const useEditorField = (
   const tiptap = useEditor({
     extensions: getEditorExtensions(features),
     content: input.value,
-    autofocus: autofocus && "end",
+    autofocus: autofocus ? "end" : false,
 
     onBlur: ({ editor }) => {
       input.onChange(editor.getJSON());

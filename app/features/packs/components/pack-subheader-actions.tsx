@@ -13,19 +13,22 @@ import {
   MenuList,
   useToast,
 } from "@chakra-ui/react";
-import { FaChevronDown, FaCog, FaEdit, FaShare } from "react-icons/fa";
+import {
+  FaArrowRight,
+  FaChevronDown,
+  FaCog,
+  FaEdit,
+  FaShare,
+} from "react-icons/fa";
 import { FcDoughnutChart } from "react-icons/fc";
-
-import useCurrentUser from "app/features/users/hooks/use-current-user";
 
 import packShareLink from "../helpers/pack-share-link";
 import packContext from "../contexts/pack-context";
 
 const PackSubheaderActions: FC = () => {
   const toast = useToast();
-  const user = useCurrentUser({ suspense: false });
 
-  const { pack, showDetails, editPack } = useContext(packContext);
+  const { pack, showDetails, editPack, share } = useContext(packContext);
 
   const copyShareLink = () => {
     navigator.clipboard.writeText(packShareLink(pack.id)).then(() => {
@@ -40,7 +43,7 @@ const PackSubheaderActions: FC = () => {
 
   return (
     <HStack>
-      {pack && pack.userId === user?.id && (
+      {!share && (
         <Menu>
           <MenuButton
             as={IconButton}
@@ -68,10 +71,10 @@ const PackSubheaderActions: FC = () => {
       <Button
         size="sm"
         leftIcon={<Icon w={6} h={6} as={FcDoughnutChart} />}
-        color="blue.500"
+        rightIcon={<Icon w={3} h={3} as={FaArrowRight} />}
         fontWeight="bold"
-        colorScheme="blue"
         variant="outline"
+        colorScheme="blue"
         onClick={showDetails}
       >
         Details

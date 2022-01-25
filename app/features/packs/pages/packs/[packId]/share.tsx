@@ -18,7 +18,7 @@ const PackSharePage: BlitzPage = () => {
 };
 
 PackSharePage.getLayout = (page) => {
-  return <FixedLayout subheader={<PackSubheader />}>{page}</FixedLayout>;
+  return <FixedLayout subheader={<PackSubheader share />}>{page}</FixedLayout>;
 };
 
 export default PackSharePage;

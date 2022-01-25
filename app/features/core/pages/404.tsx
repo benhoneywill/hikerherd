@@ -4,7 +4,7 @@ import { Link, Routes } from "blitz";
 
 import { Button } from "@chakra-ui/button";
 
-import BoxLayout from "../../modules/common/layouts/box-layout";
+import BoxLayout from "app/modules/common/layouts/box-layout";
 
 const NotFoundPage: BlitzPage = () => {
   return (

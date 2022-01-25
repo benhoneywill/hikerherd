@@ -9,6 +9,7 @@ import { Alert, AlertIcon } from "@chakra-ui/alert";
 
 type SimpleFormProps = {
   submitText: string;
+  large?: boolean;
 };
 
 const SimpleForm: FormComponent<SimpleFormProps> = ({
@@ -17,6 +18,7 @@ const SimpleForm: FormComponent<SimpleFormProps> = ({
   onSubmit,
   render,
   submitText,
+  large,
   ...props
 }) => {
   return (
@@ -37,7 +39,8 @@ const SimpleForm: FormComponent<SimpleFormProps> = ({
             <Stack spacing={4}>{render(form)}</Stack>
 
             <Button
-              size="lg"
+              size={large ? "lg" : "md"}
+              alignSelf={large ? "stretch" : "flex-end"}
               colorScheme="green"
               isLoading={form.submitting}
               type="submit"

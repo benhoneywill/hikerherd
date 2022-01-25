@@ -6,9 +6,9 @@ import { FcRating } from "react-icons/fc";
 
 import FixedLayout from "app/modules/common/layouts/fixed-layout";
 import Subheader from "app/modules/common/components/subheader";
+import PackPicker from "app/features/packs/components/pack-picker";
 
 import GearOrganizer from "../components/gear-organizer";
-import TypePicker from "../components/type-picker";
 
 const WishListPage: BlitzPage = () => {
   return <GearOrganizer type="WISH_LIST" />;
@@ -19,7 +19,7 @@ WishListPage.getLayout = (page) => (
   <FixedLayout
     subheader={
       <Subheader>
-        <TypePicker title="Wish list" icon={FcRating} />
+        <PackPicker title="Wish list" icon={FcRating} />
       </Subheader>
     }
   >

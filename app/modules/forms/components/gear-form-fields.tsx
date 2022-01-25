@@ -2,7 +2,7 @@ import type { FC } from "react";
 
 import { useContext } from "react";
 
-import { Stack } from "@chakra-ui/layout";
+import { Grid, Stack } from "@chakra-ui/layout";
 import {
   FaImage,
   FaLink,
@@ -71,20 +71,19 @@ const GearFormFields: FC<GearFormFieldsProps> = ({ includeWorn }) => {
 
       <TextDivider>Addons</TextDivider>
 
-      <HStack align="flex-end">
-        <TextField
-          type="number"
-          name="price"
-          label="Price"
-          placeholder="Price"
-          inputLeftElement={<Icon color="purple.400" as={FaTag} />}
-        />
-        <SelectField name="currency" controlProps={{ flex: "0 0 60px" }}>
+      <Grid templateColumns="70px 1fr" gap={2} alignItems="flex-end">
+        <SelectField label="Price" name="currency">
           <option value="USD">$</option>
           <option value="GBP">£</option>
           <option value="EUR">€</option>
         </SelectField>
-      </HStack>
+        <TextField
+          type="number"
+          name="price"
+          placeholder="0.00"
+          inputLeftElement={<Icon color="purple.400" as={FaTag} />}
+        />
+      </Grid>
 
       <TextField
         name="link"

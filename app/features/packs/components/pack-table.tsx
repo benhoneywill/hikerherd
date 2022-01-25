@@ -24,7 +24,7 @@ const TotalRow: FC<TotalRowProps> = ({ description, name, value }) => {
 
   return (
     <Tr fontWeight="bold">
-      <Td border="none">
+      <Td>
         <Popover
           trigger={
             <IconButton
@@ -41,10 +41,8 @@ const TotalRow: FC<TotalRowProps> = ({ description, name, value }) => {
           {description}
         </Popover>
       </Td>
-      <Td border="none">{name}</Td>
-      <Td border="none" isNumeric>
-        {displayWeight(value, weightUnit, true)}
-      </Td>
+      <Td>{name}</Td>
+      <Td isNumeric>{displayWeight(value, weightUnit, true)}</Td>
     </Tr>
   );
 };
@@ -59,23 +57,21 @@ const PackTable: FC<PackTableProps> = ({ colors }) => {
   const { weightUnit, toggleWeightUnits } = useContext(userPreferencesContext);
 
   return (
-    <Stack w="100%" align="flex-end">
-      <Stack alignSelf="stretch" border="1px solid" borderRadius="md" p={3}>
+    <Stack w="100%" align="flex-end" spacing={6}>
+      <Stack alignSelf="stretch">
         <Table variant="simple" size="sm">
           <Thead>
             <Tr>
-              <Th w="40px" border="none"></Th>
-              <Th border="none">Category</Th>
-              <Th border="none" isNumeric>
-                Weight
-              </Th>
+              <Th w="40px"></Th>
+              <Th>Category</Th>
+              <Th isNumeric>Weight</Th>
             </Tr>
           </Thead>
 
           <Tbody>
             {categories.map((category, index) => (
               <Tr key={category.id}>
-                <Td border="none">
+                <Td>
                   <Box
                     bg={colors[index % colors.length]}
                     w={3}
@@ -83,8 +79,8 @@ const PackTable: FC<PackTableProps> = ({ colors }) => {
                     borderRadius="full"
                   />
                 </Td>
-                <Td border="none">{category.name}</Td>
-                <Td border="none" isNumeric>
+                <Td>{category.name}</Td>
+                <Td isNumeric>
                   {displayWeight(category.weight, weightUnit, true)}
                 </Td>
               </Tr>

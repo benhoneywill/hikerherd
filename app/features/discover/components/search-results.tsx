@@ -1,6 +1,12 @@
 import type { FC } from "react";
 
-import { Stack, Text } from "@chakra-ui/react";
+import {
+  Center,
+  Spinner,
+  Box,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 
 type SearchResultsProps = {
   query: string;
@@ -16,18 +22,30 @@ const SearchResults: FC<SearchResultsProps> = ({
   message,
   items,
 }) => {
+  const textColor = useColorModeValue("gray.500", "gray.400");
+
   return (
-    <Stack spacing={3}>
-      {isLoading && <Text>Searching...</Text>}
+    <Box>
+      {isLoading && (
+        <Center p={3}>
+          <Spinner />
+        </Center>
+      )}
 
-      {!query && <Text>{message}</Text>}
+      {!query && !items.length && (
+        <Text pl={3} fontSize="lg" color={textColor}>
+          {message}
+        </Text>
+      )}
 
-      {items?.length === 0 && (
-        <Text>No results found for &quot;{query}&quot;.</Text>
+      {query && !isLoading && items?.length === 0 && (
+        <Text pl={3} fontSize="lg" color={textColor}>
+          No results found for &quot;{query}&quot;.
+        </Text>
       )}
 
       {!isLoading && items?.length > 0 && children}
-    </Stack>
+    </Box>
   );
 };
 

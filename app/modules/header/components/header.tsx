@@ -28,11 +28,10 @@ const Header: FC = () => {
       <Box
         as="header"
         py={3}
-        bg={useColorModeValue("gray.50", "gray.700")}
-        borderTop="3px solid"
+        bg={useColorModeValue("white", "gray.700")}
         borderBottom="1px solid"
-        borderTopColor={useColorModeValue("cyan.400", "cyan.700")}
-        borderBottomColor={useColorModeValue("gray.200", "gray.600")}
+        borderBottomColor={useColorModeValue("gray.200", "gray.800")}
+        transition="border 0.2s ease"
         position="sticky"
         top="0"
         zIndex={2}

@@ -37,6 +37,7 @@ const LoginForm: FC<LoginFormProps> = ({ onSuccess }) => {
       schema={loginSchema}
       initialValues={{ email: "", password: "" }}
       submitText="Log in"
+      large
       onSubmit={async (values) => {
         try {
           const user = await login(values);

@@ -47,6 +47,7 @@ const PackForm: FC<PackFormProps> = ({
     <ModalForm
       isOpen={isOpen}
       onClose={onClose}
+      size="lg"
       schema={createPackSchema}
       title={packId ? "Update pack" : "Create a new pack"}
       submitText={packId ? "Update" : "Create"}
