@@ -14,7 +14,7 @@ type LinkCardProps = {
   icon: IconType;
   title: string;
   text?: string;
-  actions: JSX.Element;
+  actions?: JSX.Element;
 };
 
 const LinkCard: FC<LinkCardProps> = ({ href, title, text, icon, actions }) => {
