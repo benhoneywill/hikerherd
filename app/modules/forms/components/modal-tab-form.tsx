@@ -3,10 +3,10 @@ import type { FormComponent } from "../types/form-component";
 import { validateZodSchema } from "blitz";
 
 import { Form as FinalForm } from "react-final-form";
-import { Stack } from "@chakra-ui/layout";
+import { Stack, HStack } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { Alert, AlertIcon } from "@chakra-ui/alert";
-import { HStack, useColorModeValue } from "@chakra-ui/react";
+import { useColorModeValue } from "@chakra-ui/react";
 
 type ModalTabFormProps = {
   submitText: string;

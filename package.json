@@ -36,6 +36,7 @@
     "final-form": "4.20.4",
     "framer-motion": "5.3.1",
     "fuse.js": "6.5.3",
+    "html-to-text": "^8.1.0",
     "lodash": "4.17.21",
     "postmark": "2.7.8",
     "react": "18.0.0-rc.0",
@@ -47,6 +48,7 @@
     "zod": "3.11.6"
   },
   "devDependencies": {
+    "@types/html-to-text": "^8.0.1",
     "@types/react": "17.0.34",
     "@types/react-beautiful-dnd": "13.1.2",
     "@typescript-eslint/eslint-plugin": "5.7.0",

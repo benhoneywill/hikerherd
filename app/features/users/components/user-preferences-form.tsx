@@ -3,7 +3,7 @@ import type { BlitzPage } from "blitz";
 import { useMutation } from "blitz";
 import { Fragment } from "react";
 
-import { useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/toast";
 import { FORM_ERROR } from "final-form";
 
 import SimpleForm from "app/modules/forms/components/simple-form";

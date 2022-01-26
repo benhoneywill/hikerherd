@@ -10,7 +10,7 @@ import { Menu, MenuList, MenuItem, MenuButton } from "@chakra-ui/menu";
 import Icon from "@chakra-ui/icon";
 import { SkeletonCircle } from "@chakra-ui/skeleton";
 import { FaChevronDown, FaCog, FaSignOutAlt } from "react-icons/fa";
-import { Portal } from "@chakra-ui/react";
+import { Portal } from "@chakra-ui/portal";
 
 import useCurrentUser from "app/features/users/hooks/use-current-user";
 import logoutMutation from "app/features/auth/mutations/logout-mutation";

@@ -26,8 +26,8 @@ const NavigationItem: FC<NavigationItemProps> = ({ children, icon, route }) => {
   const isActive = router.pathname === route.pathname;
 
   const bgColor = useColorModeValue("gray.50", "gray.700");
-  const activeBgColor = useColorModeValue("gray.200", "gray.900");
-  const activeColor = useColorModeValue("blue.500", "cyan.400");
+  const activeBgColor = useColorModeValue("gray.50", "gray.900");
+  const activeColor = useColorModeValue("blue.400", "cyan.400");
 
   return (
     <Link href={route} passHref>

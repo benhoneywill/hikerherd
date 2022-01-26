@@ -4,7 +4,7 @@ import { useRouter, Link, Routes } from "blitz";
 
 import { Stack } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
-import { useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/toast";
 
 import BoxLayout from "app/modules/common/layouts/box-layout";
 import TextDivider from "app/modules/common/components/text-divider";

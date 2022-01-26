@@ -1,5 +1,7 @@
 import type { BlitzLayout } from "blitz";
 
+import { Fragment } from "react";
+
 import { Container, Grid, GridItem } from "@chakra-ui/layout";
 
 import Header from "app/modules/header/components/header";
@@ -18,7 +20,7 @@ const SidebarLayout: BlitzLayout<SidebarLayoutProps> = ({
   children,
 }) => {
   return (
-    <>
+    <Fragment>
       <Seo title={title} description={description} />
 
       <Header />
@@ -35,7 +37,7 @@ const SidebarLayout: BlitzLayout<SidebarLayoutProps> = ({
           <GridItem>{children}</GridItem>
         </Grid>
       </Container>
-    </>
+    </Fragment>
   );
 };
 

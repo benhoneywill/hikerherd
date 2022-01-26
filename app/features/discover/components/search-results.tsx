@@ -1,12 +1,8 @@
 import type { FC } from "react";
 
-import {
-  Center,
-  Spinner,
-  Box,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { useColorModeValue } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/spinner";
+import { Center, Box, Text } from "@chakra-ui/layout";
 
 type SearchResultsProps = {
   query: string;

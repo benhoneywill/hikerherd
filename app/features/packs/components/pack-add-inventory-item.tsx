@@ -5,7 +5,8 @@ import { useMemo, useState } from "react";
 import { useQuery } from "blitz";
 
 import Fuse from "fuse.js";
-import { Button, SimpleGrid, Stack } from "@chakra-ui/react";
+import { SimpleGrid, Stack } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/button";
 
 import GearCard from "app/modules/gear-card/components/gear-card";
 import SearchInput from "app/features/discover/components/search-input";

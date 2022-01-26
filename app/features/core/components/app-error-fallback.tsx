@@ -1,26 +1,10 @@
 import type { FC } from "react";
 import type { ErrorFallbackProps } from "blitz";
 
-import {
-  Link,
-  Routes,
-  AuthenticationError,
-  AuthorizationError,
-  NotFoundError,
-} from "blitz";
-
-import { Button } from "@chakra-ui/button";
+import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
 import LoginForm from "app/features/auth/components/login-form";
 import BoxLayout from "app/modules/common/layouts/box-layout";
-
-const HomeButton = () => (
-  <Link href={Routes.HomePage()} passHref>
-    <Button as="a" size="lg" isFullWidth>
-      Go home
-    </Button>
-  </Link>
-);
 
 const AppErrorFallback: FC<ErrorFallbackProps> = ({
   error,
@@ -42,27 +26,19 @@ const AppErrorFallback: FC<ErrorFallbackProps> = ({
       <BoxLayout
         title="Unauthorized"
         description="Sorry, you are not allowed to do that."
-      >
-        <HomeButton />
-      </BoxLayout>
+      />
     );
   }
 
   if (error instanceof NotFoundError) {
-    return (
-      <BoxLayout title="Not found" description="Are you lost?">
-        <HomeButton />
-      </BoxLayout>
-    );
+    return <BoxLayout title="Not found" description="Are you lost?" />;
   }
 
   return (
     <BoxLayout
       title="There was an error"
       description={error.message || error.name}
-    >
-      <HomeButton />
-    </BoxLayout>
+    />
   );
 };
 

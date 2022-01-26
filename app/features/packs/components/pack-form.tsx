@@ -6,7 +6,7 @@ import { useQuery, useMutation } from "blitz";
 
 import { Center } from "@chakra-ui/layout";
 import { FORM_ERROR } from "final-form";
-import { Spinner } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/spinner";
 
 import TextField from "app/modules/forms/components/text-field";
 import EditorField from "app/modules/editor/components/editor-field";

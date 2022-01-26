@@ -32,9 +32,24 @@ const addToInventoryMutation = resolver.pipe(
         throw new NotFoundError();
       }
 
+      const clone = await db.gear.create({
+        data: {
+          name: gear.name,
+          imageUrl: gear.imageUrl,
+          link: gear.link,
+          notes: gear.notes,
+          consumable: gear.consumable,
+          weight: gear.weight,
+          price: gear.price,
+          currency: gear.currency,
+          userId: ctx.session.userId,
+          clonedFromId: gear.id,
+        },
+      });
+
       return db.categoryItem.create({
         data: {
-          gearId: gear.id,
+          gearId: clone.id,
           categoryId: category.id,
           index: category._count?.items || 0,
         },

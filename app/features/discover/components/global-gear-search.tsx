@@ -4,7 +4,7 @@ import type { FC } from "react";
 import { useQuery } from "blitz";
 import { useState } from "react";
 
-import { SimpleGrid, Stack } from "@chakra-ui/react";
+import { SimpleGrid, Stack } from "@chakra-ui/layout";
 
 import GearCard from "app/modules/gear-card/components/gear-card";
 

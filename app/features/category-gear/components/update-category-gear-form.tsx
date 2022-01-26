@@ -5,31 +5,34 @@ import { Fragment, useContext } from "react";
 import { useMutation, useQuery } from "blitz";
 
 import { FORM_ERROR } from "final-form";
-import { Center, Spinner } from "@chakra-ui/react";
+import { Center } from "@chakra-ui/layout";
+import { Spinner } from "@chakra-ui/spinner";
 
 import ModalForm from "app/modules/forms/components/modal-form";
 import { gToOz, ozTog } from "app/modules/common/helpers/display-weight";
 import GearFormFields from "app/modules/forms/components/gear-form-fields";
 import userPreferencesContext from "app/features/users/contexts/user-preferences-context";
 
-import updateGearMutation from "../mutations/update-category-gear-mutation";
+import updateCategoryGearMutation from "../mutations/update-category-gear-mutation";
 import categoryGearQuery from "../queries/category-gear-query";
 import updateCategoryGearSchema from "../schemas/update-category-gear-schema";
 
-type CategoryGearFormProps = {
+type UpdateCategoryGearFormProps = {
   id?: string | null;
-  onSuccess?: (gear: PromiseReturnType<typeof updateGearMutation>) => void;
+  onSuccess?: (
+    gear: PromiseReturnType<typeof updateCategoryGearMutation>
+  ) => void;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const CategoryGearForm: FC<CategoryGearFormProps> = ({
+const UpdateCategoryGearForm: FC<UpdateCategoryGearFormProps> = ({
   id,
   onSuccess,
   isOpen,
   onClose,
 }) => {
-  const [updateGear] = useMutation(updateGearMutation);
+  const [updateGear] = useMutation(updateCategoryGearMutation);
   const { weightUnit } = useContext(userPreferencesContext);
 
   const [gearItem, { isLoading }] = useQuery(
@@ -98,4 +101,4 @@ const CategoryGearForm: FC<CategoryGearFormProps> = ({
   );
 };
 
-export default CategoryGearForm;
+export default UpdateCategoryGearForm;

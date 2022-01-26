@@ -15,7 +15,8 @@ const searchGearQuery = resolver.pipe(
     const results = await db.$queryRaw`
       SELECT  *
       FROM "Gear"
-      WHERE SIMILARITY(name, ${query}) > 0.2
+      WHERE "clonedFromId" IS NULL
+      AND SIMILARITY(name, ${query}) > 0.2
       OR SIMILARITY(notes, ${query}) > 0.1
       ORDER BY SIMILARITY(name, ${query}) DESC
       LIMIT 20;

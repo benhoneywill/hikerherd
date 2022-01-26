@@ -1,10 +1,12 @@
 import type { BlitzPage } from "blitz";
-import type { CategoryType, Gear } from "@prisma/client";
+import type { CategoryType, Gear } from "db";
 
 import { useSession } from "blitz";
 import { Fragment, useState } from "react";
 
-import { Button, Heading, HStack, useToast } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/button";
+import { useToast } from "@chakra-ui/toast";
+import { Heading, HStack } from "@chakra-ui/layout";
 import { FcList, FcRating } from "react-icons/fc";
 
 import SidebarLayout from "app/modules/common/layouts/sidebar-layout";

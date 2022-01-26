@@ -1,8 +1,8 @@
 import type { FC } from "react";
 
-import { useContext } from "react";
+import { useContext, Fragment } from "react";
 
-import { Heading, HStack } from "@chakra-ui/layout";
+import { Heading, HStack, Link } from "@chakra-ui/layout";
 import { Avatar } from "@chakra-ui/avatar";
 import { Icon } from "@chakra-ui/icon";
 import { FaImage } from "react-icons/fa";
@@ -21,8 +21,12 @@ type GearCardHeaderProps = {
 };
 
 const GearCardHeader: FC<GearCardHeaderProps> = ({ menu }) => {
-  const { name, imageUrl } = useContext(gearCardContext);
+  const { name, imageUrl, link } = useContext(gearCardContext);
   const avatarColor = useColorModeValue("gray.200", "gray.600");
+
+  const HeadingWrapper: FC = link
+    ? (props) => <Link href={link} {...props} isExternal isTruncated />
+    : ({ children }) => <Fragment>{children}</Fragment>;
 
   return (
     <HStack justify="space-between" p={2} pb={0}>
@@ -40,9 +44,12 @@ const GearCardHeader: FC<GearCardHeaderProps> = ({ menu }) => {
         >
           <img src={imageUrl || ""} alt={name} />
         </Popover>
-        <Heading size="xs" isTruncated>
-          {name}
-        </Heading>
+
+        <HeadingWrapper>
+          <Heading size="xs" isTruncated>
+            {name}
+          </Heading>
+        </HeadingWrapper>
       </HStack>
 
       {menu && (

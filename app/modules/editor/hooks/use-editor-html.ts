@@ -6,7 +6,7 @@ import { generateHTML } from "@tiptap/react";
 
 import getEditorExtensions from "../helpers/get-editor-extensions";
 
-type EditorHtmlOptions = {
+export type EditorHtmlOptions = {
   snippet?: boolean;
 };
 

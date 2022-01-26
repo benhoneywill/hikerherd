@@ -1,4 +1,4 @@
-import type { Pack } from "@prisma/client";
+import type { Pack } from "db";
 import type useCalculatePackTotals from "../hooks/use-calculate-pack-totals";
 
 import { createContext } from "react";

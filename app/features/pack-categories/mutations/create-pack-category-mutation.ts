@@ -1,5 +1,3 @@
-import type { PromiseReturnType } from "blitz";
-
 import { NotFoundError, resolver } from "blitz";
 
 import db from "db";
@@ -37,9 +35,5 @@ const createPackCategoryMutation = resolver.pipe(
     });
   }
 );
-
-export type CreatePackCategoryResult = PromiseReturnType<
-  typeof createPackCategoryMutation
->;
 
 export default createPackCategoryMutation;

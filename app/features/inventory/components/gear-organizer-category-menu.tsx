@@ -1,9 +1,9 @@
-import type { CategoryItem } from "@prisma/client";
+import type { CategoryItem } from "db";
 import type { FC } from "react";
 
 import { useContext } from "react";
 
-import { MenuItem, MenuList } from "@chakra-ui/react";
+import { MenuItem, MenuList } from "@chakra-ui/menu";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 import gearOrganizerContext from "../contexts/gear-organizer-context";

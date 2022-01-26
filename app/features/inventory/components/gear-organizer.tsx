@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { CategoryType } from "@prisma/client";
+import type { CategoryType } from "db";
 import type { DragAndDropState } from "app/modules/drag-and-drop/contexts/gear-dnd-context";
 
 import { useEffect, useState } from "react";

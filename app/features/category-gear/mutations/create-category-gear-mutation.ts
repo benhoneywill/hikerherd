@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
@@ -8,15 +8,13 @@ const createGearMutation = resolver.pipe(
   resolver.zod(createCategoryGearSchema),
   resolver.authorize(),
 
-  async (values, ctx) => {
+  async ({ categoryId, ...values }, ctx) => {
     return db.$transaction(async () => {
-      const category = await db.category.findFirst({
-        where: {
-          id: values.categoryId,
-          userId: ctx.session.userId,
-        },
+      const category = await db.category.findUnique({
+        where: { id: categoryId },
         select: {
           id: true,
+          userId: true,
           _count: {
             select: {
               items: true,
@@ -26,17 +24,24 @@ const createGearMutation = resolver.pipe(
       });
 
       if (!category) {
-        throw new NotFoundError("Category not found");
+        throw new NotFoundError();
+      }
+
+      if (category.userId !== ctx.session.userId) {
+        throw new AuthorizationError();
       }
 
       return db.categoryItem.create({
         data: {
+          // add the new item last in the category
           index: category._count?.items || 0,
+
           category: {
             connect: {
               id: category.id,
             },
           },
+
           gear: {
             create: {
               name: values.name,

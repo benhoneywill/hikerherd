@@ -2,7 +2,8 @@ import type { ChangeEventHandler, FC } from "react";
 
 import { useCallback, useEffect, useMemo } from "react";
 
-import { Icon, Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
+import { Icon } from "@chakra-ui/icon";
+import { Input, InputGroup, InputLeftElement } from "@chakra-ui/input";
 import { FaSearch } from "react-icons/fa";
 import debounce from "lodash/debounce";
 

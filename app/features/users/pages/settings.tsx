@@ -3,7 +3,7 @@ import type { BlitzPage } from "blitz";
 import { Routes } from "blitz";
 import { Fragment } from "react";
 
-import { Heading } from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/layout";
 
 import SidebarLayout from "app/modules/common/layouts/sidebar-layout";
 import Card from "app/modules/common/components/card";

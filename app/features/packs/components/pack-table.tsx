@@ -2,8 +2,8 @@ import type { FC } from "react";
 
 import { useContext } from "react";
 
-import { Button, IconButton, Stack } from "@chakra-ui/react";
-import { Box } from "@chakra-ui/layout";
+import { Button, IconButton } from "@chakra-ui/button";
+import { Box, Stack } from "@chakra-ui/layout";
 import { Table, Thead, Tr, Th, Tbody, Td } from "@chakra-ui/table";
 import { FaFlagUsa, FaGlobeEurope, FaInfo } from "react-icons/fa";
 

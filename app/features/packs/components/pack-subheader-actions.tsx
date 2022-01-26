@@ -3,16 +3,10 @@ import type { FC } from "react";
 import { useContext } from "react";
 
 import { HStack } from "@chakra-ui/layout";
-import {
-  Button,
-  Icon,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, IconButton } from "@chakra-ui/button";
+import { Icon } from "@chakra-ui/icon";
+import { useToast } from "@chakra-ui/toast";
+import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/menu";
 import {
   FaArrowRight,
   FaChevronDown,

@@ -7,6 +7,4 @@ const updatePackGearSchema = gearSchema.extend({
   worn: z.boolean().default(false),
 });
 
-export type UpdatePackGearValues = z.infer<typeof updatePackGearSchema>;
-
 export default updatePackGearSchema;

@@ -2,7 +2,7 @@ import type { BlitzPage } from "blitz";
 
 import { useRouter, Routes } from "blitz";
 
-import { useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/toast";
 
 import BoxLayout from "app/modules/common/layouts/box-layout";
 

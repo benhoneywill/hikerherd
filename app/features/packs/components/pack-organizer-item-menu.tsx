@@ -1,17 +1,13 @@
 import type { FC } from "react";
 import type { DragAndDropState } from "app/modules/drag-and-drop/contexts/gear-dnd-context";
 
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { useMutation } from "blitz";
 
-import {
-  IconButton,
-  MenuItem,
-  MenuList,
-  HStack,
-  Icon,
-  Text,
-} from "@chakra-ui/react";
+import { HStack, Text } from "@chakra-ui/layout";
+import { MenuItem, MenuList } from "@chakra-ui/menu";
+import { Icon } from "@chakra-ui/icon";
+import { IconButton } from "@chakra-ui/button";
 import {
   FaClone,
   FaEdit,
@@ -31,9 +27,13 @@ type PackOrganizerItemMenuProps = {
 
 const PackOrganizerItemMenu: FC<PackOrganizerItemMenuProps> = ({ item }) => {
   const { refetch, editItem, deleteItem } = useContext(gearOrganizerContext);
+  const [isIncrementing, setIsIncrementing] = useState(false);
+  const [isDecrementing, setIsDecrementing] = useState(false);
 
   const [toggleWorn] = useMutation(togglePackGearWornMutation);
-  const [updateQuantity] = useMutation(updatePackGearQuantityMutation);
+  const [updateQuantity, { isLoading }] = useMutation(
+    updatePackGearQuantityMutation
+  );
 
   return (
     <MenuList>
@@ -61,24 +61,39 @@ const PackOrganizerItemMenu: FC<PackOrganizerItemMenuProps> = ({ item }) => {
           <Text>Quantity</Text>
         </HStack>
 
-        <HStack>
+        <HStack
+          border="1px solid"
+          borderColor="gray.100"
+          rounded="full"
+          p="2px"
+        >
           <IconButton
             size="xs"
+            rounded="full"
             icon={<FaMinus />}
             aria-label="decrement quantity"
+            isDisabled={isLoading}
+            isLoading={isDecrementing}
             onClick={async () => {
+              setIsDecrementing(true);
               await updateQuantity({ id: item.id, type: "decrement" });
-              refetch();
+              await refetch();
+              setIsDecrementing(false);
             }}
           />
-          <span>{item.quantity}</span>
+          <Text fontSize="sm">{item.quantity}</Text>
           <IconButton
             size="xs"
+            rounded="full"
             icon={<FaPlus />}
             aria-label="increment quantity"
+            isDisabled={isLoading}
+            isLoading={isIncrementing}
             onClick={async () => {
+              setIsIncrementing(true);
               await updateQuantity({ id: item.id, type: "increment" });
-              refetch();
+              await refetch();
+              setIsIncrementing(false);
             }}
           />
         </HStack>

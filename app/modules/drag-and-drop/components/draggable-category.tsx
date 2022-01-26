@@ -6,7 +6,8 @@ import { useContext } from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import { Button, IconButton } from "@chakra-ui/button";
 import { HStack, Heading, Box, Flex } from "@chakra-ui/layout";
-import { Menu, MenuButton, useColorModeValue } from "@chakra-ui/react";
+import { useColorModeValue } from "@chakra-ui/react";
+import { Menu, MenuButton } from "@chakra-ui/menu";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
 import dragAndDropContext from "../contexts/gear-dnd-context";

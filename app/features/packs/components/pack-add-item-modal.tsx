@@ -3,7 +3,8 @@ import type { FC } from "react";
 import { useMutation } from "blitz";
 
 import { FcPlus, FcList, FcRating, FcSearch } from "react-icons/fc";
-import { Button, useToast } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/button";
+import { useToast } from "@chakra-ui/toast";
 
 import AddPackGearForm from "app/features/pack-gear/components/add-pack-gear-form";
 import TabModal from "app/modules/common/components/tab-modal";

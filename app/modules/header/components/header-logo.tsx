@@ -2,7 +2,7 @@ import type { FC } from "react";
 
 import { Link, Routes } from "blitz";
 
-import { HStack, Heading } from "@chakra-ui/react";
+import { HStack, Heading } from "@chakra-ui/layout";
 
 import LogoIcon from "app/modules/common/icons/logo";
 

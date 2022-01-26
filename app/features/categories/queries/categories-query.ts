@@ -9,9 +9,27 @@ const categoriesQuery = resolver.pipe(
   resolver.zod(categoriesQuerySchema),
 
   async ({ type }, ctx) => {
-    return db.category.findMany({
-      where: { userId: ctx.session.userId, type },
+    const user = await db.user.findUnique({
+      where: { id: ctx.session.userId },
+      select: {
+        categories: {
+          where: { type },
+          orderBy: { index: "asc" },
+          select: {
+            id: true,
+            name: true,
+            index: true,
+            userId: true,
+          },
+        },
+      },
     });
+
+    if (!user) {
+      throw new Error("Something went wrong");
+    }
+
+    return user.categories;
   }
 );
 

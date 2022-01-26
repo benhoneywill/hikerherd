@@ -4,7 +4,8 @@ import { useContext } from "react";
 import { useRouter } from "blitz";
 
 import { FcTimeline } from "react-icons/fc";
-import { Heading, HStack, Icon } from "@chakra-ui/react";
+import { Heading, HStack } from "@chakra-ui/layout";
+import { Icon } from "@chakra-ui/icon";
 
 import Subheader from "app/modules/common/components/subheader";
 
@@ -12,17 +13,23 @@ import PackProvider from "../providers/pack-provider";
 import packContext from "../contexts/pack-context";
 
 import PackSubheaderActions from "./pack-subheader-actions";
+import PackPicker from "./pack-picker";
 
 const SubheaderPackPicker: FC = () => {
-  const { pack } = useContext(packContext);
-  return (
-    <HStack pl={1}>
-      <Icon as={FcTimeline} w={5} h={5} />
-      <Heading size="sm" isTruncated>
-        {pack.name}
-      </Heading>
-    </HStack>
-  );
+  const { pack, share } = useContext(packContext);
+
+  if (share) {
+    return (
+      <HStack pl={1}>
+        <Icon as={FcTimeline} w={5} h={5} />
+        <Heading size="sm" isTruncated>
+          {pack.name}
+        </Heading>
+      </HStack>
+    );
+  }
+
+  return <PackPicker icon={FcTimeline} title={pack.name || ""} />;
 };
 
 type PackSubheaderProps = {

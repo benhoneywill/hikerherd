@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import idSchema from "app/modules/common/schemas/id-schema";
 
@@ -10,28 +10,46 @@ const deleteCategoryMutation = resolver.pipe(
 
   async ({ id }, ctx) => {
     return db.$transaction(async () => {
-      const category = await db.category.findFirst({
-        where: { id, userId: ctx.session.userId },
+      const category = await db.category.findUnique({
+        where: { id },
+        select: {
+          type: true,
+          index: true,
+          userId: true,
+          items: { take: 1 },
+        },
       });
 
       if (!category) {
         throw new NotFoundError();
       }
 
-      const item = await db.categoryItem.findFirst({
+      if (category.userId !== ctx.session.userId) {
+        throw new AuthorizationError();
+      }
+
+      if (category.items.length > 0) {
+        throw new Error("Can not delete a category that still has items");
+      }
+
+      // Decrement the indexes of all the categories with
+      // a higher index than this category
+      await db.category.updateMany({
         where: {
-          categoryId: id,
+          userId: ctx.session.userId,
+          type: category.type,
+          index: { gt: category.index },
+        },
+        data: {
+          index: {
+            decrement: 1,
+          },
         },
       });
 
-      if (item) {
-        throw new Error("Category still has items");
-      }
-
+      // Delete the category
       return db.category.delete({
-        where: {
-          id,
-        },
+        where: { id },
       });
     });
   }

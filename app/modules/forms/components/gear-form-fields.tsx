@@ -2,7 +2,7 @@ import type { FC } from "react";
 
 import { useContext } from "react";
 
-import { Grid, Stack } from "@chakra-ui/layout";
+import { Grid, Stack, HStack } from "@chakra-ui/layout";
 import {
   FaImage,
   FaLink,
@@ -12,14 +12,9 @@ import {
   FaWeightHanging,
   FaTshirt,
 } from "react-icons/fa";
-import {
-  Icon,
-  HStack,
-  Tag,
-  TagLeftIcon,
-  TagLabel,
-  FormLabel,
-} from "@chakra-ui/react";
+import { Icon } from "@chakra-ui/icon";
+import { Tag, TagLeftIcon, TagLabel } from "@chakra-ui/tag";
+import { FormLabel } from "@chakra-ui/form-control";
 
 import userPreferencesContext from "app/features/users/contexts/user-preferences-context";
 import TextDivider from "app/modules/common/components/text-divider";

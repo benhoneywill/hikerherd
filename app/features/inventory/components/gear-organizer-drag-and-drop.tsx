@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import type { DropResult } from "react-beautiful-dnd";
-import type { CategoryType } from "@prisma/client";
+import type { CategoryType } from "db";
 
 import { useContext } from "react";
 import { useMutation } from "blitz";

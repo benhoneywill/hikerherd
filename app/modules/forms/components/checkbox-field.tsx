@@ -4,8 +4,13 @@ import type { Checkbox } from "@chakra-ui/checkbox";
 import { forwardRef } from "react";
 
 import { useField } from "react-final-form";
-import { FormControl, FormErrorMessage } from "@chakra-ui/form-control";
-import { FormLabel, HStack, Switch } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+} from "@chakra-ui/form-control";
+import { HStack } from "@chakra-ui/layout";
+import { Switch } from "@chakra-ui/switch";
 
 import getFieldErrorMessage from "../helpers/get-field-error-message";
 

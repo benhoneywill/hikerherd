@@ -1,7 +1,8 @@
 import type { FC } from "react";
-import type { BoxProps } from "@chakra-ui/react";
+import type { BoxProps } from "@chakra-ui/layout";
 
-import { Box, useColorModeValue } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/layout";
+import { useColorModeValue } from "@chakra-ui/react";
 
 const Card: FC<BoxProps> = ({ children, ...props }) => {
   const borderColor = useColorModeValue("gray.200", "gray.800");
@@ -18,6 +19,7 @@ const Card: FC<BoxProps> = ({ children, ...props }) => {
       bg={bgColor}
       w="100%"
       overflow="hidden"
+      display="block"
       {...props}
     >
       {children}

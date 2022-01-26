@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
@@ -10,14 +10,24 @@ const moveCategoryMutation = resolver.pipe(
 
   async ({ id, index }, ctx) => {
     return db.$transaction(async () => {
-      const category = await db.category.findFirst({
-        where: { id, userId: ctx.session.userId },
+      const category = await db.category.findUnique({
+        where: { id },
+        select: {
+          type: true,
+          index: true,
+          userId: true,
+        },
       });
 
       if (!category) {
         throw new NotFoundError();
       }
 
+      if (category.userId !== ctx.session.userId) {
+        throw new AuthorizationError();
+      }
+
+      // First, every category after this one has it's index decremented
       await db.category.updateMany({
         where: {
           userId: ctx.session.userId,
@@ -25,12 +35,12 @@ const moveCategoryMutation = resolver.pipe(
           index: { gt: category.index },
         },
         data: {
-          index: {
-            decrement: 1,
-          },
+          index: { decrement: 1 },
         },
       });
 
+      // Then, every category after or equal to the new index
+      // has their indexes incremented
       await db.category.updateMany({
         where: {
           userId: ctx.session.userId,
@@ -44,11 +54,10 @@ const moveCategoryMutation = resolver.pipe(
         },
       });
 
+      // Save the category in it's new index
       return await db.category.update({
         where: { id },
-        data: {
-          index,
-        },
+        data: { index },
       });
     });
   }

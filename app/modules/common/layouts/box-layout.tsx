@@ -1,9 +1,11 @@
 import type { BlitzLayout } from "blitz";
 
+import { Routes, Link } from "blitz";
 import { Fragment } from "react";
 
 import { useColorModeValue } from "@chakra-ui/react";
-import { Flex, Box, Heading, Text } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/button";
+import { Flex, Box, Heading, Text, Stack } from "@chakra-ui/layout";
 
 import Seo from "../components/seo";
 
@@ -51,7 +53,15 @@ const BoxLayout: BlitzLayout<BoxLayoutProps> = ({
             </Text>
           </Box>
 
-          {children}
+          <Stack spacing={4}>
+            {children}
+
+            <Link href={Routes.HomePage()} passHref>
+              <Button as="a" size="lg" isFullWidth>
+                Back to hikerherd
+              </Button>
+            </Link>
+          </Stack>
         </Box>
       </Flex>
     </Fragment>

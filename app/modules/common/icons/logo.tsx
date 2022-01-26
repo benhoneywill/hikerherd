@@ -1,7 +1,8 @@
-import type { IconProps } from "@chakra-ui/react";
+import type { IconProps } from "@chakra-ui/icon";
 import type { FC } from "react";
 
-import { useColorModeValue, Icon } from "@chakra-ui/react";
+import { useColorModeValue } from "@chakra-ui/react";
+import { Icon } from "@chakra-ui/icon";
 
 const LogoIcon: FC<IconProps> = (props) => {
   const fg = useColorModeValue("white", "#2D3748");

@@ -5,7 +5,8 @@ import { Fragment, useContext } from "react";
 import { useMutation, useQuery } from "blitz";
 
 import { FORM_ERROR } from "final-form";
-import { Center, Spinner } from "@chakra-ui/react";
+import { Center } from "@chakra-ui/layout";
+import { Spinner } from "@chakra-ui/spinner";
 
 import ModalForm from "app/modules/forms/components/modal-form";
 import { gToOz, ozTog } from "app/modules/common/helpers/display-weight";

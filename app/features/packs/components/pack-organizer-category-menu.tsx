@@ -3,7 +3,7 @@ import type { DragAndDropState } from "app/modules/drag-and-drop/contexts/gear-d
 
 import { useContext } from "react";
 
-import { MenuItem, MenuList } from "@chakra-ui/react";
+import { MenuItem, MenuList } from "@chakra-ui/menu";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 import gearOrganizerContext from "app/features/inventory/contexts/gear-organizer-context";

@@ -1,11 +1,12 @@
 import type { FC } from "react";
-import type { CategoryType } from "@prisma/client";
+import type { CategoryType } from "db";
 
 import { useState } from "react";
 import { useMutation } from "blitz";
 
 import { FcPlus, FcSearch } from "react-icons/fc";
-import { Button, useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/toast";
+import { Button } from "@chakra-ui/button";
 
 import TabModal from "app/modules/common/components/tab-modal";
 import AddCategoryGearForm from "app/features/category-gear/components/add-category-gear-form";

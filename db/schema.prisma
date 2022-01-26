@@ -41,11 +41,11 @@ model User {
   currency       Currency   @default(USD)
   role           UserRole   @default(USER)
 
-  packs    Pack[]
-  gear     Gear[]
-  tokens   Token[]
-  sessions Session[]
-  Category Category[]
+  packs      Pack[]
+  gear       Gear[]
+  tokens     Token[]
+  sessions   Session[]
+  categories Category[]
 }
 
 // ***** Auth *****

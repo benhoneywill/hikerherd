@@ -2,8 +2,8 @@ import type { FC } from "react";
 
 import { useContext } from "react";
 
-import { Container, useColorModeValue } from "@chakra-ui/react";
-import { Box, Heading, Text, Center } from "@chakra-ui/layout";
+import { useColorModeValue } from "@chakra-ui/react";
+import { Box, Heading, Text, Center, Container } from "@chakra-ui/layout";
 
 import EditorHtml from "app/modules/editor/components/editor-html";
 import useEditorHtml from "app/modules/editor/hooks/use-editor-html";

@@ -10,18 +10,34 @@ const createCategoryMutation = resolver.pipe(
 
   async ({ name, type }, ctx) => {
     return db.$transaction(async () => {
-      const lastCategory = await db.category.findFirst({
-        where: { userId: ctx.session.userId, type },
-        orderBy: { index: "desc" },
+      // Find the current user along with the category
+      // with the highest index in the current type
+      const user = await db.user.findUnique({
+        where: { id: ctx.session.userId },
+        select: {
+          categories: {
+            where: { type },
+            orderBy: { index: "desc" },
+            take: 1,
+            select: { index: true },
+          },
+        },
       });
 
-      const index = lastCategory ? lastCategory.index + 1 : 0;
+      if (!user) {
+        throw new Error("Something went wrong");
+      }
+
+      // Find out what the index of the new category should be
+      // based on the index of the current highest-index category
+      const highestCategoryIndex = user.categories[0]?.index;
+      const index = highestCategoryIndex ? highestCategoryIndex + 1 : 0;
 
       return await db.category.create({
         data: {
           name,
-          index,
           type,
+          index,
           userId: ctx.session.userId,
         },
       });

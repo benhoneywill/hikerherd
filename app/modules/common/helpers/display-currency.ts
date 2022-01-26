@@ -1,4 +1,4 @@
-import type { Currency } from "@prisma/client";
+import type { Currency } from "db";
 
 const displayCurrency = (currency?: Currency) => {
   switch (currency) {

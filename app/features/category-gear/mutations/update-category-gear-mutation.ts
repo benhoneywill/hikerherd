@@ -4,13 +4,13 @@ import db from "db";
 
 import updateCategoryGearSchema from "../schemas/update-category-gear-schema";
 
-const updateGearMutation = resolver.pipe(
+const updateCategoryGearMutation = resolver.pipe(
   resolver.zod(updateCategoryGearSchema),
   resolver.authorize(),
 
   async ({ id, ...values }, ctx) => {
-    const gear = await db.gear.findFirst({
-      where: { id, userId: ctx.session.userId },
+    const gear = await db.categoryItem.findFirst({
+      where: { id, category: { userId: ctx.session.userId } },
     });
 
     if (!gear) {
@@ -18,7 +18,7 @@ const updateGearMutation = resolver.pipe(
     }
 
     return db.gear.update({
-      where: { id },
+      where: { id: gear.gearId },
       data: {
         name: values.name,
         weight: values.weight,
@@ -33,4 +33,4 @@ const updateGearMutation = resolver.pipe(
   }
 );
 
-export default updateGearMutation;
+export default updateCategoryGearMutation;

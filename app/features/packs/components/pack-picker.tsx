@@ -3,17 +3,16 @@ import type { IconType } from "react-icons";
 
 import { Link, Routes, useQuery } from "blitz";
 
+import { Heading, HStack } from "@chakra-ui/layout";
+import { Icon } from "@chakra-ui/icon";
+import { Button } from "@chakra-ui/button";
 import {
-  Button,
-  Heading,
-  HStack,
-  Icon,
   Menu,
   MenuButton,
   MenuDivider,
   MenuItem,
   MenuList,
-} from "@chakra-ui/react";
+} from "@chakra-ui/menu";
 import { FaChevronDown } from "react-icons/fa";
 import { FcList, FcRating, FcTimeline } from "react-icons/fc";
 

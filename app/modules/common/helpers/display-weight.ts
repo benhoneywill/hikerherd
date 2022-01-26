@@ -1,4 +1,4 @@
-import { WeightUnit } from "@prisma/client";
+import { WeightUnit } from "db";
 
 export const gToOz = (grams: number) => {
   return grams * 0.03527396195;

@@ -5,8 +5,9 @@ import type { PromiseReturnType } from "blitz";
 import { Fragment } from "react";
 import { useMutation, useQuery } from "blitz";
 
-import { Center, Stack } from "@chakra-ui/layout";
-import { Spinner, Text, useToast } from "@chakra-ui/react";
+import { Center, Stack, Text } from "@chakra-ui/layout";
+import { useToast } from "@chakra-ui/toast";
+import { Spinner } from "@chakra-ui/spinner";
 import { FORM_ERROR } from "final-form";
 
 import SelectField from "app/modules/forms/components/select-field";

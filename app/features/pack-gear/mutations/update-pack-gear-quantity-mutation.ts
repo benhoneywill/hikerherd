@@ -22,6 +22,10 @@ const updatePackGearQuantityMutation = resolver.pipe(
         throw new Error("Can not decrement below 0");
       }
 
+      if (type === "increment" && item.quantity === 99) {
+        throw new Error("Can not increment above 99");
+      }
+
       return db.packCategoryItem.update({
         where: { id },
         data: { quantity: { [type]: 1 } },
