@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
@@ -9,16 +9,24 @@ const updateCategoryGearMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id, ...values }, ctx) => {
-    const gear = await db.categoryItem.findFirst({
-      where: { id, category: { userId: ctx.session.userId } },
+    const item = await db.categoryItem.findUnique({
+      where: { id },
+      select: {
+        gearId: true,
+        category: { select: { userId: true } },
+      },
     });
 
-    if (!gear) {
+    if (!item) {
       throw new NotFoundError();
     }
 
+    if (item.category.userId !== ctx.session.userId) {
+      throw new AuthorizationError();
+    }
+
     return db.gear.update({
-      where: { id: gear.gearId },
+      where: { id: item.gearId },
       data: {
         name: values.name,
         weight: values.weight,
