@@ -12,7 +12,6 @@ let user: User;
 let category1: Category;
 let category2: Category;
 let item1: CategoryItem;
-let item2: CategoryItem;
 
 const GEAR_VALUES = {
   name: "My gear",
@@ -58,23 +57,6 @@ beforeEach(async () => {
       category: {
         connect: {
           id: category1.id,
-        },
-      },
-      gear: {
-        create: {
-          ...GEAR_VALUES,
-          userId: user.id,
-        },
-      },
-    },
-  });
-
-  item2 = await db.categoryItem.create({
-    data: {
-      index: 0,
-      category: {
-        connect: {
-          id: category2.id,
         },
       },
       gear: {
@@ -162,6 +144,40 @@ describe("moveCategoryGearMutation", () => {
   it("should update the category and indexes of items correctly", async () => {
     const { ctx } = await createMockContext({ user });
 
+    const item2 = await db.categoryItem.create({
+      data: {
+        index: 0,
+        category: {
+          connect: {
+            id: category2.id,
+          },
+        },
+        gear: {
+          create: {
+            ...GEAR_VALUES,
+            userId: user.id,
+          },
+        },
+      },
+    });
+
+    const item3 = await db.categoryItem.create({
+      data: {
+        index: 1,
+        category: {
+          connect: {
+            id: category1.id,
+          },
+        },
+        gear: {
+          create: {
+            ...GEAR_VALUES,
+            userId: user.id,
+          },
+        },
+      },
+    });
+
     await moveCategoryGearMutation(
       { id: item1.id, categoryId: category2.id, index: 0 },
       ctx
@@ -173,9 +189,13 @@ describe("moveCategoryGearMutation", () => {
     const fetchedItem2 = await db.categoryItem.findUnique({
       where: { id: item2.id },
     });
+    const fetchedItem3 = await db.categoryItem.findUnique({
+      where: { id: item3.id },
+    });
 
     expect(fetchedItem1?.categoryId).toEqual(category2.id);
     expect(fetchedItem1?.index).toEqual(0);
     expect(fetchedItem2?.index).toEqual(1);
+    expect(fetchedItem3?.index).toEqual(0);
   });
 });

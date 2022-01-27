@@ -10,13 +10,26 @@ const listCategoryGearQuery = resolver.pipe(
 
   async ({ type }, ctx) => {
     return db.categoryItem.findMany({
-      include: {
-        gear: true,
-      },
       where: {
         category: {
           userId: ctx.session.userId,
           type,
+        },
+      },
+      select: {
+        id: true,
+        gear: {
+          select: {
+            id: true,
+            name: true,
+            weight: true,
+            price: true,
+            currency: true,
+            link: true,
+            imageUrl: true,
+            notes: true,
+            consumable: true,
+          },
         },
       },
     });

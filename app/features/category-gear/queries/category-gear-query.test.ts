@@ -6,7 +6,7 @@ import createMockContext from "test/create-mock-context";
 
 import db from "db";
 
-import updateCategoryGearMutation from "./update-category-gear-mutation";
+import categoryGearQuery from "./category-gear-query";
 
 let user: User;
 let category: Category;
@@ -59,21 +59,21 @@ beforeEach(async () => {
   });
 });
 
-describe("updateCategoryGearMutation", () => {
+describe("categoryGearQuery", () => {
   it("should error if not logged in", async () => {
     const { ctx } = await createMockContext();
 
-    await expect(
-      updateCategoryGearMutation({ id: item.id, ...GEAR_VALUES }, ctx)
-    ).rejects.toThrow(AuthenticationError);
+    await expect(categoryGearQuery({ id: item.id }, ctx)).rejects.toThrow(
+      AuthenticationError
+    );
   });
 
   it("should error if the item does not exist", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await expect(
-      updateCategoryGearMutation({ id: "abc123", ...GEAR_VALUES }, ctx)
-    ).rejects.toThrow(NotFoundError);
+    await expect(categoryGearQuery({ id: "abc123" }, ctx)).rejects.toThrow(
+      NotFoundError
+    );
   });
 
   it("should error if the item does not belong to the user", async () => {
@@ -87,24 +87,21 @@ describe("updateCategoryGearMutation", () => {
 
     const { ctx } = await createMockContext({ user: otherUser });
 
-    await expect(
-      updateCategoryGearMutation({ id: item.id, ...GEAR_VALUES }, ctx)
-    ).rejects.toThrow(AuthorizationError);
+    await expect(categoryGearQuery({ id: item.id }, ctx)).rejects.toThrow(
+      AuthorizationError
+    );
   });
 
-  it("should update the item", async () => {
+  it("Should return the item", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await updateCategoryGearMutation(
-      { id: item.id, ...GEAR_VALUES, name: "updated" },
-      ctx
-    );
+    const result = await categoryGearQuery({ id: item.id }, ctx);
 
-    const fetchedItem = await db.categoryItem.findUnique({
-      where: { id: item.id },
-      include: { gear: true },
+    expect(result).toMatchObject({
+      id: item.id,
+      gear: {
+        name: GEAR_VALUES.name,
+      },
     });
-
-    expect(fetchedItem?.gear.name).toEqual("updated");
   });
 });
