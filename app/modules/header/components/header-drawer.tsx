@@ -25,7 +25,7 @@ const HeaderDrawer: FC<HeaderDrawerProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     onClose();
-  }, [router.pathname, onClose]);
+  }, [router.pathname]); // eslint-disable-line
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose} placement="left">

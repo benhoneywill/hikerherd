@@ -24,7 +24,10 @@ const Header: FC = () => {
 
   return (
     <Fragment>
-      <HeaderDrawer isOpen={drawerIsOpen} onClose={toggleDrawer} />
+      <HeaderDrawer
+        isOpen={drawerIsOpen}
+        onClose={() => setDrawerIsOpen(false)}
+      />
 
       <Box position="sticky" top="0" zIndex={2}>
         <BetaBanner />
