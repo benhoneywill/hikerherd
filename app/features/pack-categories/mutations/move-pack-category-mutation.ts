@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
@@ -10,30 +10,40 @@ const movePackCategoryMutation = resolver.pipe(
 
   async ({ id, index }, ctx) => {
     return db.$transaction(async () => {
-      const Packcategory = await db.packCategory.findFirst({
-        where: { id, pack: { userId: ctx.session.userId } },
-      });
-
-      if (!Packcategory) {
-        throw new NotFoundError();
-      }
-
-      await db.packCategory.updateMany({
-        where: {
-          packId: Packcategory.packId,
-          pack: { userId: ctx.session.userId },
-          index: { gt: Packcategory.index },
-        },
-        data: {
-          index: {
-            decrement: 1,
+      const category = await db.packCategory.findUnique({
+        where: { id },
+        select: {
+          index: true,
+          pack: {
+            select: { id: true, userId: true },
           },
         },
       });
 
+      if (!category) {
+        throw new NotFoundError();
+      }
+
+      if (category.pack.userId !== ctx.session.userId) {
+        throw new AuthorizationError();
+      }
+
+      // First, every category after this one has it's index decremented
       await db.packCategory.updateMany({
         where: {
-          packId: Packcategory.packId,
+          packId: category.pack.id,
+          index: { gt: category.index },
+        },
+        data: {
+          index: { decrement: 1 },
+        },
+      });
+
+      // Then, every category after or equal to the new index
+      // has their indexes incremented
+      await db.packCategory.updateMany({
+        where: {
+          packId: category.pack.id,
           pack: { userId: ctx.session.userId },
           index: { gte: index },
         },
@@ -44,6 +54,7 @@ const movePackCategoryMutation = resolver.pipe(
         },
       });
 
+      // Save the category in it's new index
       return await db.packCategory.update({
         where: { id },
         data: {

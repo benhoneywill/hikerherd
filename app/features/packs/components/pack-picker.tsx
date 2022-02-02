@@ -55,7 +55,7 @@ const PackPicker: FC<PackPickerProps> = ({ icon, title }) => {
           </MenuItem>
         </Link>
 
-        <MenuDivider />
+        {!!packs?.length && <MenuDivider />}
 
         {packs?.map((pack) => (
           <Link

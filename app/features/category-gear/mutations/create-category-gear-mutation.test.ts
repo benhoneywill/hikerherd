@@ -89,7 +89,7 @@ describe("createCategoryGearMutation", () => {
     ).rejects.toThrow(AuthorizationError);
   });
 
-  it("It should correctly create the first gear in a category", async () => {
+  it("should correctly create the first gear in a category", async () => {
     const { ctx } = await createMockContext({ user });
 
     const item = await createCategoryGearMutation(
@@ -106,7 +106,7 @@ describe("createCategoryGearMutation", () => {
     expect(fetched?.gear).toMatchObject(GEAR_VALUES);
   });
 
-  it("It should create subsequent items with the correct index", async () => {
+  it("should create subsequent items with the correct index", async () => {
     const { ctx } = await createMockContext({ user });
 
     const first = await createCategoryGearMutation(
@@ -129,7 +129,7 @@ describe("createCategoryGearMutation", () => {
     expect(third.index).toEqual(2);
   });
 
-  it("It track different categories with different indexes", async () => {
+  it("should track different categories with different indexes", async () => {
     const { ctx } = await createMockContext({ user });
 
     const otherCategory = await db.category.create({

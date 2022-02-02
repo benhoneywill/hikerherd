@@ -8,16 +8,32 @@ const packOrganizerQuery = resolver.pipe(
   resolver.zod(idSchema),
 
   async ({ id }) => {
-    const pack = await db.pack.findFirst({
+    const pack = await db.pack.findUnique({
       where: { id },
-      include: {
+      select: {
         categories: {
           orderBy: { index: "asc" },
-          include: {
+          select: {
+            id: true,
+            name: true,
             items: {
               orderBy: { index: "asc" },
-              include: {
-                gear: true,
+              select: {
+                id: true,
+                worn: true,
+                quantity: true,
+                gear: {
+                  select: {
+                    name: true,
+                    weight: true,
+                    price: true,
+                    currency: true,
+                    consumable: true,
+                    link: true,
+                    notes: true,
+                    imageUrl: true,
+                  },
+                },
               },
             },
           },
@@ -29,7 +45,7 @@ const packOrganizerQuery = resolver.pipe(
       throw new NotFoundError();
     }
 
-    return pack;
+    return pack.categories;
   }
 );
 

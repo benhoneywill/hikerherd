@@ -52,7 +52,6 @@ const AddToInventoryForm: FC<AddToInventoryFormProps> = ({
       schema={addToInventorySchema}
       submitText="Add"
       initialValues={{
-        type,
         gearId: gear?.id,
         categoryId: categories?.[0]?.id,
       }}

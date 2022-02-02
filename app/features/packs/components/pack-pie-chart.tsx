@@ -41,77 +41,78 @@ const PackPieChart: FC<PackPieChartProps> = ({ rootColors, colors }) => {
   return (
     <Box
       w={300}
+      minH={300}
       mt={-5}
       alignSelf={{ base: "center", md: "stretch" }}
       flex="0 0 300px"
     >
-      <VictoryContainer>
-        <svg width={300} height={300}>
+      <VictoryContainer width={300} height={300}>
+        <VictoryPie
+          standalone={false}
+          width={300}
+          height={300}
+          innerRadius={75}
+          data={nonZeroCategories}
+          x="name"
+          y="weight"
+          colorScale={rootColors}
+          padAngle={1}
+          labelComponent={
+            <VictoryTooltip
+              {...tooltipProps}
+              text={({ datum }) =>
+                `${datum.name} (${displayWeight(
+                  datum.weight,
+                  weightUnit,
+                  true
+                )})`
+              }
+            />
+          }
+          events={[
+            {
+              target: "data",
+              eventHandlers: {
+                onClick: (_, data) => {
+                  setActive(data.index);
+                },
+              },
+            },
+          ]}
+        />
+
+        <g transform="translate(57, 57) scale(0.93)">
           <VictoryPie
+            data={nonZeroCategories[active]?.items
+              .filter(
+                (item) => item.gear.weight > 0 && (item.quantity || 1) > 0
+              )
+              .map((item) => ({
+                ...item,
+                weight: item.gear.weight * (item.quantity || 1),
+              }))}
+            animate={{ duration: 200 }}
+            colorScale={Object.values(colors[active] || {}).slice(1)}
             standalone={false}
-            width={300}
-            height={300}
+            width={200}
+            height={200}
             innerRadius={75}
-            data={nonZeroCategories}
-            x="name"
-            y="weight"
-            colorScale={rootColors}
             padAngle={1}
+            x="gear.name"
+            y="weight"
             labelComponent={
               <VictoryTooltip
                 {...tooltipProps}
                 text={({ datum }) =>
-                  `${datum.name} (${displayWeight(
+                  `${datum.gear.name} (${displayWeight(
                     datum.weight,
-                    weightUnit,
-                    true
+                    weightUnit
                   )})`
                 }
               />
             }
-            events={[
-              {
-                target: "data",
-                eventHandlers: {
-                  onClick: (_, data) => {
-                    setActive(data.index);
-                  },
-                },
-              },
-            ]}
           />
-
-          <g transform="translate(57, 57) scale(0.93)">
-            <VictoryPie
-              data={nonZeroCategories[active]?.items
-                .filter((item) => item.gear.weight > 0 && item.quantity > 0)
-                .map((item) => ({
-                  ...item,
-                  weight: item.gear.weight * item.quantity,
-                }))}
-              animate={{ duration: 200 }}
-              colorScale={Object.values(colors[active] || {}).slice(1)}
-              standalone={false}
-              width={200}
-              height={200}
-              innerRadius={75}
-              padAngle={1}
-              x="gear.name"
-              y="weight"
-              labelComponent={
-                <VictoryTooltip
-                  {...tooltipProps}
-                  text={({ datum }) =>
-                    `${datum.gear.name} (${displayWeight(
-                      datum.weight,
-                      weightUnit
-                    )})`
-                  }
-                />
-              }
-            />
-          </g>
-        </svg>
+        </g>
       </VictoryContainer>
     </Box>
   );

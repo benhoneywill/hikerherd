@@ -1,25 +1,31 @@
-import type {
-  Gear,
-  Category,
-  CategoryItem,
-  PackCategory,
-  PackCategoryItem,
-} from "db";
+import type { Currency } from "db";
 
 import { createContext } from "react";
 
-export type DragAndDropState = Array<
-  (Category | PackCategory) & {
-    items: Array<
-      (CategoryItem | PackCategoryItem) & {
-        gear: Gear;
-        worn?: boolean;
-        notes?: string | null;
-        quantity?: number;
-      }
-    >;
-  }
->;
+export type DragAndDropItem = {
+  id: string;
+  worn?: boolean;
+  quantity?: number;
+  notes?: string | null;
+  gear: {
+    name: string;
+    weight: number;
+    price: number | null;
+    currency: Currency;
+    consumable: boolean;
+    link: string | null;
+    notes: string | null;
+    imageUrl: string | null;
+  };
+};
+
+type DragAndDropCategory = {
+  id: string;
+  name: string;
+  items: DragAndDropItem[];
+};
+
+export type DragAndDropState = DragAndDropCategory[];
 
 export type DragAndDropContext = {
   readonly?: boolean;

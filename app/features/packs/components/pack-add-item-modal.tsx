@@ -15,7 +15,6 @@ import addGearToPackMutation from "../mutations/add-gear-to-pack-mutation";
 import PackAddInventoryItem from "./pack-add-inventory-item";
 
 type PackAddItemModalProps = {
-  packId: string;
   categoryId: string | null;
   isOpen: boolean;
   onClose: () => void;
@@ -24,7 +23,6 @@ type PackAddItemModalProps = {
 
 const PackAddItemModal: FC<PackAddItemModalProps> = ({
   categoryId,
-  packId,
   isOpen,
   onClose,
   onSuccess,
@@ -44,7 +42,7 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
 
   const addToPack = async (gearId: string) => {
     if (categoryId) {
-      await addGearToPack({ gearId, packId, categoryId });
+      await addGearToPack({ gearId, categoryId });
       handleSuccess();
     }
   };
@@ -73,7 +71,6 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
           icon: FcPlus,
           content: (
             <AddPackGearForm
-              packId={packId}
               categoryId={categoryId}
               onClose={onClose}
               onSuccess={handleSuccess}

@@ -22,7 +22,7 @@ const LoginForm: FC<LoginFormProps> = ({ onSuccess }) => {
   const handleError = (error: unknown) => {
     if (error instanceof AuthenticationError) {
       return {
-        [FORM_ERROR]: "Wrong email or password. Please check and try again.",
+        [FORM_ERROR]: "Wrong email or password. Please try again.",
       };
     } else {
       return {

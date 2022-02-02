@@ -29,7 +29,7 @@ describe("createCategoryMutation", () => {
     ).rejects.toThrow(AuthenticationError);
   });
 
-  it("It should correctly create a first category", async () => {
+  it("should correctly create a first category", async () => {
     const { ctx } = await createMockContext({ user });
 
     const category = await createCategoryMutation(
@@ -40,7 +40,7 @@ describe("createCategoryMutation", () => {
     expect(category?.index).toEqual(0);
   });
 
-  it("It should create subsequent categories with the correct index", async () => {
+  it("should create subsequent categories with the correct index", async () => {
     const { ctx } = await createMockContext({ user });
 
     await db.category.createMany({
@@ -59,7 +59,7 @@ describe("createCategoryMutation", () => {
     expect(category?.index).toEqual(3);
   });
 
-  it("It track different types with different indexes", async () => {
+  it("should track different types with different indexes", async () => {
     const { ctx } = await createMockContext({ user });
 
     await db.category.createMany({

@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
@@ -8,16 +8,13 @@ const addToInventoryMutation = resolver.pipe(
   resolver.zod(addToInventorySchema),
   resolver.authorize(),
 
-  async ({ categoryId, gearId, type }, ctx) => {
+  async ({ categoryId, gearId }, ctx) => {
     return db.$transaction(async () => {
-      const category = await db.category.findFirst({
-        where: {
-          id: categoryId,
-          type,
-          userId: ctx.session.userId,
-        },
+      const category = await db.category.findUnique({
+        where: { id: categoryId },
         select: {
           id: true,
+          userId: true,
           _count: {
             select: {
               items: true,
@@ -26,12 +23,21 @@ const addToInventoryMutation = resolver.pipe(
         },
       });
 
-      const gear = await db.gear.findUnique({ where: { id: gearId } });
-
-      if (!gear || !category) {
+      if (!category) {
         throw new NotFoundError();
       }
 
+      if (category.userId !== ctx.session.userId) {
+        throw new AuthorizationError();
+      }
+
+      const gear = await db.gear.findUnique({ where: { id: gearId } });
+
+      if (!gear) {
+        throw new NotFoundError();
+      }
+
+      // Clone the gear so that it belongs to the user
       const clone = await db.gear.create({
         data: {
           name: gear.name,

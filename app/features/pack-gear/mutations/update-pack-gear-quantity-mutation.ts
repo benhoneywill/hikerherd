@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
@@ -10,12 +10,28 @@ const updatePackGearQuantityMutation = resolver.pipe(
 
   async ({ id, type }, ctx) => {
     return db.$transaction(async () => {
-      const item = await db.packCategoryItem.findFirst({
-        where: { id, category: { pack: { userId: ctx.session.userId } } },
+      const item = await db.packCategoryItem.findUnique({
+        where: { id },
+        select: {
+          quantity: true,
+          category: {
+            select: {
+              pack: {
+                select: {
+                  userId: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!item) {
         throw new NotFoundError();
+      }
+
+      if (item.category.pack.userId !== ctx.session.userId) {
+        throw new AuthorizationError();
       }
 
       if (type === "decrement" && item.quantity === 0) {

@@ -17,16 +17,16 @@ type PackOrganizerProps = {
 
 const PackOrganizer: FC<PackOrganizerProps> = ({ id }) => {
   const [data, { refetch }] = useQuery(packOrganizerQuery, { id });
-  const [state, setState] = useState<DragAndDropState>(data.categories);
+  const [state, setState] = useState<DragAndDropState>(data);
 
   useEffect(() => {
-    setState(data.categories);
+    setState(data);
   }, [data]);
 
   return (
     <GearOrganizerProvider state={state} setState={setState} refetch={refetch}>
       <PackOrganizerModals id={id} />
-      <PackOrganizerDragAndDrop id={id} />
+      <PackOrganizerDragAndDrop />
     </GearOrganizerProvider>
   );
 };

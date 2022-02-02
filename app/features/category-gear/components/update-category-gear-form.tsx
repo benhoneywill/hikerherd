@@ -50,7 +50,7 @@ const UpdateCategoryGearForm: FC<UpdateCategoryGearFormProps> = ({
       weightUnit === "IMPERIAL"
         ? gToOz(gearItem?.gear.weight || 0)
         : gearItem?.gear.weight,
-    price: gearItem?.gear.price,
+    price: gearItem?.gear.price && gearItem?.gear.price / 100,
     currency: gearItem?.gear.currency,
     link: gearItem?.gear.link,
     imageUrl: gearItem?.gear.imageUrl,
@@ -71,6 +71,10 @@ const UpdateCategoryGearForm: FC<UpdateCategoryGearFormProps> = ({
         try {
           if (weightUnit === "IMPERIAL") {
             values.weight = ozTog(values.weight);
+          }
+
+          if (values.price) {
+            values.price = Math.floor(values.price * 100);
           }
 
           let result = await updateGear(values);

@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import idSchema from "app/modules/common/schemas/id-schema";
 
@@ -10,12 +10,30 @@ const deletePackGearMutation = resolver.pipe(
 
   async ({ id }, ctx) => {
     return db.$transaction(async () => {
-      const item = await db.packCategoryItem.findFirst({
-        where: { id, category: { pack: { userId: ctx.session.userId } } },
+      const item = await db.packCategoryItem.findUnique({
+        where: { id },
+        select: {
+          gearId: true,
+          index: true,
+          category: {
+            select: {
+              id: true,
+              pack: {
+                select: {
+                  userId: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!item) {
         throw new NotFoundError();
+      }
+
+      if (item.category.pack.userId !== ctx.session.userId) {
+        throw new AuthorizationError();
       }
 
       const inventoryItem = await db.categoryItem.findFirst({
@@ -30,7 +48,18 @@ const deletePackGearMutation = resolver.pipe(
         },
       });
 
-      await db.packCategoryItem.delete({
+      // Decrement the index of all items after this one in the category
+      await db.packCategoryItem.updateMany({
+        where: {
+          categoryId: item.category.id,
+          index: { gt: item.index },
+        },
+        data: {
+          index: { decrement: 1 },
+        },
+      });
+
+      const result = await db.packCategoryItem.delete({
         where: {
           id,
         },
@@ -39,6 +68,8 @@ const deletePackGearMutation = resolver.pipe(
       if (!inventoryItem && !clone) {
         await db.gear.delete({ where: { id: item.gearId } });
       }
+
+      return result;
     });
   }
 );

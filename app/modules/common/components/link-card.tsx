@@ -26,17 +26,18 @@ const LinkCard: FC<LinkCardProps> = ({ href, title, text, icon, actions }) => {
         </HStack>
       )}
       <Link href={href} passHref>
-        <Card
-          as="a"
-          transition="border 50ms ease"
-          _hover={{ borderColor: "blue.400" }}
-        >
-          <Stack align="center" textAlign="center">
-            <Icon mt={1} as={icon} w={8} h={8} />
-            <Heading size="md">{title}</Heading>
-            {text && <Text opacity="0.6">{text}</Text>}
-          </Stack>
-        </Card>
+        <a>
+          <Card
+            transition="border 50ms ease"
+            _hover={{ borderColor: "blue.400" }}
+          >
+            <Stack align="center" textAlign="center">
+              <Icon mt={1} as={icon} w={8} h={8} />
+              <Heading size="md">{title}</Heading>
+              {text && <Text opacity="0.6">{text}</Text>}
+            </Stack>
+          </Card>
+        </a>
       </Link>
     </Box>
   );

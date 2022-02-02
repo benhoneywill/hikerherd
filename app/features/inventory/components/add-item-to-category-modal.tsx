@@ -1,5 +1,4 @@
 import type { FC } from "react";
-import type { CategoryType } from "db";
 
 import { useState } from "react";
 import { useMutation } from "blitz";
@@ -17,7 +16,6 @@ type AddItemToCategoryModalProps = {
   categoryId: string | null;
   isOpen: boolean;
   onClose: () => void;
-  type: CategoryType;
   onSuccess: () => void;
 };
 
@@ -25,7 +23,6 @@ const AddItemToCategoryModal: FC<AddItemToCategoryModalProps> = ({
   categoryId,
   isOpen,
   onClose,
-  type,
   onSuccess,
 }) => {
   const toast = useToast();
@@ -74,7 +71,6 @@ const AddItemToCategoryModal: FC<AddItemToCategoryModalProps> = ({
                     if (categoryId) {
                       setIsAdding(gear.id);
                       await addToInventory({
-                        type,
                         gearId: gear.id,
                         categoryId,
                       });

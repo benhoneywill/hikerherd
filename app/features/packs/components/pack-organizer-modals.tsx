@@ -45,7 +45,6 @@ const PackOrganizerModals: FC<PackOrganizerModalsProps> = ({ id }) => {
       />
 
       <PackAddItemModal
-        packId={id}
         categoryId={addingItemToCategory}
         isOpen={!!addingItemToCategory}
         onSuccess={refetch}

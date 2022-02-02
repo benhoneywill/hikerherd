@@ -11,6 +11,7 @@ import HeaderActions from "./header-actions";
 import HeaderLogo from "./header-logo";
 import HeaderLoggedOut from "./header-logged-out";
 import HeaderLoggedIn from "./header-logged-in";
+import BetaBanner from "./beta-banner";
 
 const Header: FC = () => {
   const session = useSession({ suspense: false });
@@ -25,37 +26,37 @@ const Header: FC = () => {
     <Fragment>
       <HeaderDrawer isOpen={drawerIsOpen} onClose={toggleDrawer} />
 
-      <Box
-        as="header"
-        py={3}
-        bg={useColorModeValue("white", "gray.700")}
-        borderBottom="1px solid"
-        borderBottomColor={useColorModeValue("gray.200", "gray.800")}
-        transition="border 0.2s ease"
-        position="sticky"
-        top="0"
-        zIndex={2}
-      >
-        <Container maxW="100%">
-          <Grid
-            templateColumns={{ base: "auto 1fr 1fr", md: "1fr auto 1fr" }}
-            alignItems="center"
-            gap={3}
-          >
-            <GridItem>
-              <HeaderActions toggleDrawer={toggleDrawer} />
-            </GridItem>
+      <Box position="sticky" top="0" zIndex={2}>
+        <BetaBanner />
+        <Box
+          as="header"
+          py={3}
+          bg={useColorModeValue("white", "gray.700")}
+          borderBottom="1px solid"
+          borderBottomColor={useColorModeValue("gray.200", "gray.800")}
+          transition="border 0.2s ease"
+        >
+          <Container maxW="100%">
+            <Grid
+              templateColumns={{ base: "auto 1fr 1fr", md: "1fr auto 1fr" }}
+              alignItems="center"
+              gap={3}
+            >
+              <GridItem>
+                <HeaderActions toggleDrawer={toggleDrawer} />
+              </GridItem>
 
-            <GridItem order={{ base: -1, md: 0 }}>
-              <HeaderLogo />
-            </GridItem>
+              <GridItem order={{ base: -1, md: 0 }}>
+                <HeaderLogo />
+              </GridItem>
 
-            <GridItem>
-              {isLoggedOut && <HeaderLoggedOut />}
-              {isLoggedIn && <HeaderLoggedIn />}
-            </GridItem>
-          </Grid>
-        </Container>
+              <GridItem>
+                {isLoggedOut && <HeaderLoggedOut />}
+                {isLoggedIn && <HeaderLoggedIn />}
+              </GridItem>
+            </Grid>
+          </Container>
+        </Box>
       </Box>
     </Fragment>
   );

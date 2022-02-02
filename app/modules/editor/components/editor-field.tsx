@@ -43,8 +43,8 @@ const FakeInput = styled(Box)`
     border-radius: var(--chakra-radii-md);
     border: 1px solid;
     border-color: transparent;
-    background: ${({ colorMode }) =>
-      colorMode === "dark"
+    background: ${(props) =>
+      props["data-color-mode"] === "dark"
         ? "var(--chakra-colors-whiteAlpha-50)"
         : "var(--chakra-colors-gray-100)"};
 
@@ -67,22 +67,22 @@ const FakeInput = styled(Box)`
       pointer-events: none;
     }
 
-    ${({ invalid }) =>
-      invalid &&
+    ${(props) =>
+      props["data-has-error"] &&
       css`
         border-color: var(--chakra-colors-red-500);
         box-shadow: 0 0 0 1px var(--chakra-colors-red-500);
       `}
 
-    ${({ focused }) =>
-      focused &&
+    ${(props) =>
+      props["data-focused"] &&
       css`
         border-color: var(--chakra-colors-blue-500);
         box-shadow: 0 0 0 1px var(--chakra-colors-blue-500);
       `}
 
-    ${({ hasBarMenu }) =>
-      hasBarMenu &&
+    ${(props) =>
+      props["data-has-bar-menu"] &&
       css`
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
@@ -132,10 +132,10 @@ const EditorField: FC<EditorFieldProps> = ({
         {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
 
         <FakeInput
-          focused={meta.focused}
-          invalid={!!error}
-          hasBarMenu={barMenu}
-          colorMode={colorMode}
+          data-focused={meta.focused}
+          data-has-error={!!error}
+          data-has-bar-menu={barMenu}
+          data-color-mode={colorMode}
         >
           {bubbleMenu && <EditorBubbleMenu features={features} />}
           {floatingMenu && <EditorFloatingMenu features={features} />}

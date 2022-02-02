@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
@@ -8,12 +8,23 @@ const movePackGearMutation = resolver.pipe(
   resolver.zod(movePackGearSchema),
   resolver.authorize(),
 
-  async ({ id, categoryId, packId, index }, ctx) => {
+  async ({ id, categoryId, index }, ctx) => {
     return db.$transaction(async () => {
-      const packItem = await db.packCategoryItem.findFirst({
-        where: {
-          id,
-          category: { packId, pack: { userId: ctx.session.userId } },
+      const packItem = await db.packCategoryItem.findUnique({
+        where: { id },
+        select: {
+          gearId: true,
+          index: true,
+          category: {
+            select: {
+              id: true,
+              pack: {
+                select: {
+                  userId: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -21,21 +32,33 @@ const movePackGearMutation = resolver.pipe(
         throw new NotFoundError();
       }
 
-      const category = await db.packCategory.findFirst({
-        where: {
-          packId,
-          pack: { userId: ctx.session.userId },
-          id: categoryId,
+      if (packItem.category.pack.userId !== ctx.session.userId) {
+        throw new AuthorizationError();
+      }
+
+      const category = await db.packCategory.findUnique({
+        where: { id: categoryId },
+        select: {
+          id: true,
+          pack: {
+            select: {
+              userId: true,
+            },
+          },
         },
       });
 
       if (!category) {
-        throw new NotFoundError("Category not found");
+        throw new NotFoundError();
+      }
+
+      if (category.pack.userId !== ctx.session.userId) {
+        throw new AuthorizationError();
       }
 
       await db.packCategoryItem.updateMany({
         where: {
-          categoryId: packItem.categoryId,
+          categoryId: packItem.category.id,
           index: { gt: packItem.index },
         },
         data: {

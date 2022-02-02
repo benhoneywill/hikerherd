@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import idSchema from "app/modules/common/schemas/id-schema";
 
@@ -9,12 +9,28 @@ const togglePackGearWornMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id }, ctx) => {
-    const item = await db.packCategoryItem.findFirst({
-      where: { id, category: { pack: { userId: ctx.session.userId } } },
+    const item = await db.packCategoryItem.findUnique({
+      where: { id },
+      select: {
+        worn: true,
+        category: {
+          select: {
+            pack: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!item) {
       throw new NotFoundError();
+    }
+
+    if (item.category.pack.userId !== ctx.session.userId) {
+      throw new AuthorizationError();
     }
 
     return db.packCategoryItem.update({

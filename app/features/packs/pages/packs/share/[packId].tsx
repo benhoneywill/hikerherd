@@ -10,11 +10,16 @@ import packOrganizerQuery from "app/features/packs/queries/pack-organizer-query"
 import Seo from "app/modules/common/components/seo";
 import PrefetchQueryClient from "app/modules/common/helpers/prefetch-query-client";
 import useEditorText from "app/modules/editor/hooks/use-editor-text";
+import packQuery from "app/features/packs/queries/pack-query";
 
 const PackSharePage: BlitzPage = () => {
   const router = useRouter();
 
-  const [pack] = useQuery(packOrganizerQuery, {
+  const [packOrganizer] = useQuery(packOrganizerQuery, {
+    id: router.query.packId as string,
+  });
+
+  const [pack] = useQuery(packQuery, {
     id: router.query.packId as string,
   });
 
@@ -37,7 +42,7 @@ const PackSharePage: BlitzPage = () => {
   return (
     <Fragment>
       <Seo title={pack.name} description={description.replace(/(\n)+/g, " ")} />
-      <DragAndDrop state={pack.categories} readonly />
+      <DragAndDrop state={packOrganizer} readonly />
     </Fragment>
   );
 };

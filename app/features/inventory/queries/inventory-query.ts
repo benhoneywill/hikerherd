@@ -9,18 +9,39 @@ const inventoryQuery = resolver.pipe(
   resolver.zod(getInventorySchema),
 
   async ({ type }, ctx) => {
-    return db.category.findMany({
-      where: { userId: ctx.session.userId, type },
-      orderBy: { index: "asc" },
-      include: {
-        items: {
+    const user = await db.user.findUnique({
+      where: { id: ctx.session.userId },
+      select: {
+        categories: {
+          where: { type },
           orderBy: { index: "asc" },
-          include: {
-            gear: true,
+          select: {
+            id: true,
+            name: true,
+            items: {
+              orderBy: { index: "asc" },
+              select: {
+                id: true,
+                gear: {
+                  select: {
+                    name: true,
+                    weight: true,
+                    price: true,
+                    currency: true,
+                    consumable: true,
+                    link: true,
+                    notes: true,
+                    imageUrl: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
     });
+
+    return user?.categories || [];
   }
 );
 

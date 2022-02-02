@@ -1,8 +1,19 @@
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 -- CreateEnum
 CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'USER');
 
 -- CreateEnum
+CREATE TYPE "WeightUnit" AS ENUM ('METRIC', 'IMPERIAL');
+
+-- CreateEnum
+CREATE TYPE "Currency" AS ENUM ('USD', 'GBP', 'EUR');
+
+-- CreateEnum
 CREATE TYPE "TokenType" AS ENUM ('RESET_PASSWORD');
+
+-- CreateEnum
+CREATE TYPE "CategoryType" AS ENUM ('INVENTORY', 'WISH_LIST');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -11,8 +22,10 @@ CREATE TABLE "User" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
-    "avatar" TEXT,
     "hashedPassword" TEXT,
+    "avatar" TEXT,
+    "weightUnit" "WeightUnit" NOT NULL DEFAULT E'METRIC',
+    "currency" "Currency" NOT NULL DEFAULT E'USD',
     "role" "UserRole" NOT NULL DEFAULT E'USER',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -49,7 +62,7 @@ CREATE TABLE "Token" (
 );
 
 -- CreateTable
-CREATE TABLE "GearItem" (
+CREATE TABLE "Gear" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -57,81 +70,39 @@ CREATE TABLE "GearItem" (
     "imageUrl" TEXT,
     "link" TEXT,
     "notes" TEXT,
-    "consumable" BOOLEAN NOT NULL,
-    "weight" INTEGER NOT NULL,
+    "consumable" BOOLEAN NOT NULL DEFAULT false,
+    "weight" DOUBLE PRECISION NOT NULL,
     "price" INTEGER,
+    "currency" "Currency" NOT NULL DEFAULT E'USD',
     "userId" TEXT NOT NULL,
     "clonedFromId" TEXT,
 
-    CONSTRAINT "GearItem_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Gear_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Inventory" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "userId" TEXT NOT NULL,
-
-    CONSTRAINT "Inventory_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "InventoryCategory" (
+CREATE TABLE "Category" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
     "index" INTEGER NOT NULL,
-    "inventoryId" TEXT NOT NULL,
-
-    CONSTRAINT "InventoryCategory_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "InventoryGear" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "index" INTEGER NOT NULL,
-    "gearItemId" TEXT NOT NULL,
-    "categoryId" TEXT NOT NULL,
-
-    CONSTRAINT "InventoryGear_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "WishList" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "type" "CategoryType" NOT NULL,
     "userId" TEXT NOT NULL,
 
-    CONSTRAINT "WishList_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "WishListCategory" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "name" TEXT NOT NULL,
-    "index" INTEGER NOT NULL,
-    "wishListId" TEXT NOT NULL,
-
-    CONSTRAINT "WishListCategory_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "WishListGear" (
+CREATE TABLE "CategoryItem" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "index" INTEGER NOT NULL,
-    "gearItemId" TEXT NOT NULL,
+    "gearId" TEXT NOT NULL,
     "categoryId" TEXT NOT NULL,
 
-    CONSTRAINT "WishListGear_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "CategoryItem_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -140,8 +111,9 @@ CREATE TABLE "Pack" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
     "notes" TEXT,
-    "private" BOOLEAN NOT NULL,
+    "private" BOOLEAN NOT NULL DEFAULT false,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Pack_pkey" PRIMARY KEY ("id")
@@ -160,17 +132,18 @@ CREATE TABLE "PackCategory" (
 );
 
 -- CreateTable
-CREATE TABLE "PackGear" (
+CREATE TABLE "PackCategoryItem" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "index" INTEGER NOT NULL,
     "notes" TEXT,
     "worn" BOOLEAN NOT NULL,
+    "quantity" INTEGER NOT NULL DEFAULT 1,
     "categoryId" TEXT NOT NULL,
-    "gearItemId" TEXT NOT NULL,
+    "gearId" TEXT NOT NULL,
 
-    CONSTRAINT "PackGear_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "PackCategoryItem_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -189,13 +162,7 @@ CREATE UNIQUE INDEX "Session_handle_key" ON "Session"("handle");
 CREATE UNIQUE INDEX "Token_hashedToken_type_key" ON "Token"("hashedToken", "type");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Inventory_userId_key" ON "Inventory"("userId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "WishList_userId_key" ON "WishList"("userId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "PackGear_gearItemId_key" ON "PackGear"("gearItemId");
+CREATE UNIQUE INDEX "Pack_slug_key" ON "Pack"("slug");
 
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -204,34 +171,19 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Token" ADD CONSTRAINT "Token_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "GearItem" ADD CONSTRAINT "GearItem_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Gear" ADD CONSTRAINT "Gear_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "GearItem" ADD CONSTRAINT "GearItem_clonedFromId_fkey" FOREIGN KEY ("clonedFromId") REFERENCES "GearItem"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Gear" ADD CONSTRAINT "Gear_clonedFromId_fkey" FOREIGN KEY ("clonedFromId") REFERENCES "Gear"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Inventory" ADD CONSTRAINT "Inventory_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Category" ADD CONSTRAINT "Category_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "InventoryCategory" ADD CONSTRAINT "InventoryCategory_inventoryId_fkey" FOREIGN KEY ("inventoryId") REFERENCES "Inventory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CategoryItem" ADD CONSTRAINT "CategoryItem_gearId_fkey" FOREIGN KEY ("gearId") REFERENCES "Gear"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "InventoryGear" ADD CONSTRAINT "InventoryGear_gearItemId_fkey" FOREIGN KEY ("gearItemId") REFERENCES "GearItem"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "InventoryGear" ADD CONSTRAINT "InventoryGear_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "InventoryCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "WishList" ADD CONSTRAINT "WishList_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "WishListCategory" ADD CONSTRAINT "WishListCategory_wishListId_fkey" FOREIGN KEY ("wishListId") REFERENCES "WishList"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "WishListGear" ADD CONSTRAINT "WishListGear_gearItemId_fkey" FOREIGN KEY ("gearItemId") REFERENCES "GearItem"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "WishListGear" ADD CONSTRAINT "WishListGear_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "WishListCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CategoryItem" ADD CONSTRAINT "CategoryItem_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Pack" ADD CONSTRAINT "Pack_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -240,7 +192,7 @@ ALTER TABLE "Pack" ADD CONSTRAINT "Pack_userId_fkey" FOREIGN KEY ("userId") REFE
 ALTER TABLE "PackCategory" ADD CONSTRAINT "PackCategory_packId_fkey" FOREIGN KEY ("packId") REFERENCES "Pack"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PackGear" ADD CONSTRAINT "PackGear_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "PackCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "PackCategoryItem" ADD CONSTRAINT "PackCategoryItem_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "PackCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "PackGear" ADD CONSTRAINT "PackGear_gearItemId_fkey" FOREIGN KEY ("gearItemId") REFERENCES "GearItem"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "PackCategoryItem" ADD CONSTRAINT "PackCategoryItem_gearId_fkey" FOREIGN KEY ("gearId") REFERENCES "Gear"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

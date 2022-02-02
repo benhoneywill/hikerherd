@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import idSchema from "app/modules/common/schemas/id-schema";
 
@@ -9,13 +9,26 @@ const packCategoryQuery = resolver.pipe(
   resolver.zod(idSchema),
 
   async ({ id }, ctx) => {
-    const packCategory = await db.packCategory.findFirst({
-      where: { id, pack: { userId: ctx.session.userId } },
+    const category = await db.packCategory.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        pack: {
+          select: { id: true, userId: true },
+        },
+      },
     });
 
-    if (!packCategory) throw new NotFoundError();
+    if (!category) {
+      throw new NotFoundError();
+    }
 
-    return packCategory;
+    if (category.pack.userId !== ctx.session.userId) {
+      throw new AuthorizationError();
+    }
+
+    return category;
   }
 );
 

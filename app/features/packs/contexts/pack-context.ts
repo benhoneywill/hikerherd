@@ -1,26 +1,26 @@
-import type { Pack } from "db";
 import type useCalculatePackTotals from "../hooks/use-calculate-pack-totals";
 
 import { createContext } from "react";
 
-type UndefinedPack = {
-  id: string;
-  userId: undefined;
-  name: undefined;
-  notes: undefined;
-};
-
 type PackContext = {
+  share?: boolean;
+
   editPack: () => void;
   showDetails: () => void;
 
-  pack: Pack | UndefinedPack;
-  share?: boolean;
+  pack: {
+    id: string;
+    userId?: string;
+    notes?: string | null;
+    name?: string;
+  };
 
   categories: ReturnType<typeof useCalculatePackTotals>["categories"];
   totalWeight: number;
   packWeight: number;
   baseWeight: number;
+
+  refetchOrganizer: () => void;
 };
 
 const packContext = createContext<PackContext>({} as PackContext);

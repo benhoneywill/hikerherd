@@ -118,7 +118,7 @@ describe("deleteCategoryGearMutation", () => {
     ).rejects.toThrow(AuthorizationError);
   });
 
-  it("should should delete the item", async () => {
+  it("should delete the item", async () => {
     const { ctx } = await createMockContext({ user });
 
     await deleteCategoryGearMutation({ id: item.id }, ctx);

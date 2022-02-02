@@ -1,5 +1,5 @@
-import type { CategoryItem } from "db";
 import type { FC } from "react";
+import type { DragAndDropItem } from "app/modules/drag-and-drop/contexts/gear-dnd-context";
 
 import { useContext } from "react";
 
@@ -9,7 +9,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import gearOrganizerContext from "../contexts/gear-organizer-context";
 
 type GearOrganizerCategoryMenuProps = {
-  category: { id: string; items: CategoryItem[] };
+  category: { id: string; items: DragAndDropItem[] };
 };
 
 const GearOrganizerCategoryMenu: FC<GearOrganizerCategoryMenuProps> = ({

@@ -15,14 +15,12 @@ import createPackGearMutation from "../mutations/create-pack-gear-mutation";
 import createPackGearSchema from "../schemas/create-pack-gear-schema";
 
 type AddPackGearFormProps = {
-  packId: string;
   categoryId: string | null;
   onSuccess?: (gear: PromiseReturnType<typeof createPackGearMutation>) => void;
   onClose: () => void;
 };
 
 const AddPackGearForm: FC<AddPackGearFormProps> = ({
-  packId,
   categoryId,
   onSuccess,
   onClose,
@@ -42,7 +40,6 @@ const AddPackGearForm: FC<AddPackGearFormProps> = ({
     imageUrl: null,
     notes: null,
     consumable: false,
-    packId,
     categoryId,
     worn: false,
   };
@@ -57,6 +54,10 @@ const AddPackGearForm: FC<AddPackGearFormProps> = ({
         try {
           if (weightUnit === "IMPERIAL") {
             values.weight = ozTog(values.weight);
+          }
+
+          if (values.price) {
+            values.price = Math.floor(values.price * 100);
           }
 
           const result = await createGear(values);

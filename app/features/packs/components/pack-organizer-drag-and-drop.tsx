@@ -14,13 +14,7 @@ import movePackGearMutation from "app/features/pack-gear/mutations/move-pack-gea
 import PackOrganizerItemMenu from "./pack-organizer-item-menu";
 import PackOrganizerCategoryMenu from "./pack-organizer-category-menu";
 
-type PackOrganizerDragAndDropProps = {
-  id: string;
-};
-
-const PackOrganizerDragAndDrop: FC<PackOrganizerDragAndDropProps> = ({
-  id,
-}) => {
+const PackOrganizerDragAndDrop: FC = () => {
   const { state, setState, refetch, addCategory, addItemToCategory } =
     useContext(gearOrganizerContext);
 
@@ -59,7 +53,6 @@ const PackOrganizerDragAndDrop: FC<PackOrganizerDragAndDropProps> = ({
 
       await movePackGear({
         id: drop.draggableId,
-        packId: id,
         categoryId: drop.destination.droppableId,
         index: drop.destination.index,
       });

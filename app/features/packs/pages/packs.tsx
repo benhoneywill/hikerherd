@@ -34,15 +34,17 @@ const PacksPage: BlitzPage = () => {
       <HStack mb={6} justify="space-between">
         <Heading size="md">Packs</Heading>
 
-        <Button
-          as="a"
-          colorScheme="green"
-          onClick={() => setAddingNewPack(true)}
-          size="sm"
-          cursor="pointer"
-        >
-          New pack
-        </Button>
+        {packs.length !== 0 && (
+          <Button
+            as="a"
+            colorScheme="green"
+            onClick={() => setAddingNewPack(true)}
+            size="sm"
+            cursor="pointer"
+          >
+            New pack
+          </Button>
+        )}
       </HStack>
 
       <PackForm
@@ -55,9 +57,17 @@ const PacksPage: BlitzPage = () => {
 
       {packs.length === 0 && (
         <Card>
-          <Stack alignItems="center">
+          <Stack alignItems="center" spacing={6}>
             <Icon w={10} h={10} as={FcTimeline} />
             <Text color="gray.500">You have not created any packs yet</Text>
+            <Button
+              as="a"
+              colorScheme="green"
+              onClick={() => setAddingNewPack(true)}
+              cursor="pointer"
+            >
+              Create your first pack
+            </Button>
           </Stack>
         </Card>
       )}

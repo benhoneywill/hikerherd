@@ -57,6 +57,10 @@ const AddCategoryGearForm: FC<AddCategoryGearFormProps> = ({
             values.weight = ozTog(values.weight);
           }
 
+          if (values.price) {
+            values.price = Math.floor(values.price * 100);
+          }
+
           if (!categoryId) throw new Error("Category required");
           const result = await createGear(values);
 

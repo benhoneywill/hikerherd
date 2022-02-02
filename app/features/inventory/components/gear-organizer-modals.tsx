@@ -60,7 +60,6 @@ const GearOrganizerModals: FC<GearOrganizerModalsProps> = ({ type }) => {
         isOpen={!!addingItemToCategory}
         onClose={closeModals}
         onSuccess={() => refetch()}
-        type={type}
       />
 
       <ConfirmModal

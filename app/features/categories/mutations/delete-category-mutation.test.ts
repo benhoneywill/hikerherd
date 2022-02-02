@@ -71,7 +71,7 @@ describe("deleteCategoryMutation", () => {
     ).rejects.toThrow(AuthorizationError);
   });
 
-  it("should should delete the category", async () => {
+  it("should delete the category", async () => {
     const { ctx } = await createMockContext({ user });
 
     const category = await db.category.create({

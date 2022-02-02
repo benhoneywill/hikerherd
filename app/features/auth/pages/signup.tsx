@@ -42,7 +42,7 @@ SignupPage.redirectAuthenticatedTo = Routes.HomePage();
 SignupPage.getLayout = (page) => (
   <BoxLayout
     title="Sign up"
-    description="A journey of 1,000 miles begins with a single click."
+    description="You are at the trailhead, time to take your first step."
   >
     {page}
   </BoxLayout>

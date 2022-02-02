@@ -1,13 +1,8 @@
-import type { PromiseReturnType } from "blitz";
-import type packOrganizerQuery from "../queries/pack-organizer-query";
+import type { DragAndDropState } from "app/modules/drag-and-drop/contexts/gear-dnd-context";
 
 import { useMemo } from "react";
 
-type PackOrganizerResult = PromiseReturnType<typeof packOrganizerQuery>;
-
-const useCalculatePackTotals = (
-  categories: PackOrganizerResult["categories"]
-) => {
+const useCalculatePackTotals = (categories: DragAndDropState) => {
   return useMemo(() => {
     let totalWeight = 0;
     let packWeight = 0;
@@ -17,7 +12,7 @@ const useCalculatePackTotals = (
       return {
         ...category,
         weight: category.items.reduce((acc, item) => {
-          const itemWeight = item.gear.weight * item.quantity;
+          const itemWeight = item.gear.weight * (item.quantity || 1);
 
           totalWeight += itemWeight;
           if (!item.worn) {

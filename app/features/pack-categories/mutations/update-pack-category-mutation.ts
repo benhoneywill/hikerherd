@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
@@ -9,12 +9,21 @@ const updatePackCategoryMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id, name }, ctx) => {
-    const packCategory = await db.packCategory.findFirst({
-      where: { id, pack: { userId: ctx.session.userId } },
+    const category = await db.packCategory.findUnique({
+      where: { id },
+      select: {
+        pack: {
+          select: { userId: true, id: true },
+        },
+      },
     });
 
-    if (!packCategory) {
+    if (!category) {
       throw new NotFoundError();
+    }
+
+    if (category.pack.userId !== ctx.session.userId) {
+      throw new AuthorizationError();
     }
 
     return await db.packCategory.update({

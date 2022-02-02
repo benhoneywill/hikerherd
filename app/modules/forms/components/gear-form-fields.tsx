@@ -6,7 +6,6 @@ import { Grid, Stack, HStack } from "@chakra-ui/layout";
 import {
   FaImage,
   FaLink,
-  FaStickyNote,
   FaTag,
   FaHamburger,
   FaWeightHanging,
@@ -40,8 +39,8 @@ const GearFormFields: FC<GearFormFieldsProps> = ({ includeWorn }) => {
         name="weight"
         label="Weight"
         placeholder="Weight"
-        inputRightAddon={weightUnit === "METRIC" ? "g" : "oz"}
-        inputLeftElement={<Icon color="teal.400" as={FaWeightHanging} />}
+        suffix={weightUnit === "METRIC" ? "g" : "oz"}
+        icon={<Icon color="teal.400" as={FaWeightHanging} />}
       />
 
       <FormLabel>Tags</FormLabel>
@@ -76,7 +75,7 @@ const GearFormFields: FC<GearFormFieldsProps> = ({ includeWorn }) => {
           type="number"
           name="price"
           placeholder="0.00"
-          inputLeftElement={<Icon color="purple.400" as={FaTag} />}
+          icon={<Icon color="purple.400" as={FaTag} />}
         />
       </Grid>
 
@@ -84,21 +83,20 @@ const GearFormFields: FC<GearFormFieldsProps> = ({ includeWorn }) => {
         name="link"
         label="Link"
         placeholder="Link to somewhere"
-        inputLeftElement={<Icon color="gray.400" as={FaLink} />}
+        icon={<Icon color="gray.400" as={FaLink} />}
       />
 
       <TextField
         name="imageUrl"
         label="Image"
         placeholder="Enter an image url"
-        inputLeftElement={<Icon color="gray.400" as={FaImage} />}
+        icon={<Icon color="gray.400" as={FaImage} />}
       />
 
       <TextAreaField
         name="notes"
         label="Notes"
         placeholder="Extra notes about this gear"
-        inputLeftElement={<Icon color="yellow.400" as={FaStickyNote} />}
       />
     </Stack>
   );

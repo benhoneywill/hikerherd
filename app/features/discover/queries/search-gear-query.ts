@@ -13,13 +13,30 @@ const searchGearQuery = resolver.pipe(
     if (!query) return [];
 
     const results = await db.$queryRaw`
-      SELECT  *
-      FROM "Gear"
-      WHERE "clonedFromId" IS NULL
-      AND SIMILARITY(name, ${query}) > 0.2
-      OR SIMILARITY(notes, ${query}) > 0.1
-      ORDER BY SIMILARITY(name, ${query}) DESC
-      LIMIT 20;
+      SELECT
+        gear.*,
+        gear.id,
+        Count(clone."clonedFromId") as "cloneCount"
+      FROM
+        "Gear" gear
+      LEFT JOIN
+        "Gear" clone
+      ON
+        gear.id = clone."clonedFromId"
+      WHERE
+        gear."clonedFromId" IS NULL
+      AND
+        SIMILARITY(gear.name, ${query}) > 0.2
+      OR
+        SIMILARITY(gear.notes, ${query}) > 0.1
+      GROUP BY
+        gear.id
+      ORDER BY
+        SIMILARITY(gear.name, ${query}) DESC,
+        SIMILARITY(gear.notes, ${query}) DESC,
+        "cloneCount" DESC
+      LIMIT
+        20;
     `;
 
     return results as Gear[];

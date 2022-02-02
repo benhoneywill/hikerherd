@@ -1,4 +1,4 @@
-import { NotFoundError, resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
@@ -8,26 +8,17 @@ const addGearToPackMutation = resolver.pipe(
   resolver.zod(addGearToPackSchema),
   resolver.authorize(),
 
-  async ({ packId, categoryId, gearId }, ctx) => {
-    const pack = await db.pack.findFirst({
-      where: {
-        id: packId,
-        userId: ctx.session.userId,
-      },
-    });
-
-    if (!pack) {
-      throw new NotFoundError();
-    }
-
+  async ({ categoryId, gearId }, ctx) => {
     return db.$transaction(async () => {
-      const category = await db.packCategory.findFirst({
-        where: {
-          id: categoryId,
-          packId: pack.id,
-        },
+      const category = await db.packCategory.findUnique({
+        where: { id: categoryId },
         select: {
           id: true,
+          pack: {
+            select: {
+              userId: true,
+            },
+          },
           _count: {
             select: {
               items: true,
@@ -36,31 +27,46 @@ const addGearToPackMutation = resolver.pipe(
         },
       });
 
-      const gear = await db.gear.findUnique({ where: { id: gearId } });
-
-      if (!gear || !category) {
+      if (!category) {
         throw new NotFoundError();
       }
 
-      const clone = await db.gear.create({
-        data: {
-          name: gear.name,
-          imageUrl: gear.imageUrl,
-          link: gear.link,
-          notes: gear.notes,
-          consumable: gear.consumable,
-          weight: gear.weight,
-          price: gear.price,
-          currency: gear.currency,
-          userId: ctx.session.userId,
-          clonedFromId: gear.id,
-        },
-      });
+      if (category.pack.userId !== ctx.session.userId) {
+        throw new AuthorizationError();
+      }
+
+      const gear = await db.gear.findUnique({ where: { id: gearId } });
+
+      if (!gear) {
+        throw new NotFoundError();
+      }
+
+      let itemGearId = gear.id;
+
+      if (gear.userId !== ctx.session.userId) {
+        const clone = await db.gear.create({
+          data: {
+            name: gear.name,
+            imageUrl: gear.imageUrl,
+            link: gear.link,
+            notes: gear.notes,
+            consumable: gear.consumable,
+            weight: gear.weight,
+            price: gear.price,
+            currency: gear.currency,
+
+            userId: ctx.session.userId,
+            clonedFromId: gear.id,
+          },
+        });
+
+        itemGearId = clone.id;
+      }
 
       return db.packCategoryItem.create({
         data: {
           categoryId,
-          gearId: clone.id,
+          gearId: itemGearId,
           worn: false,
           index: category._count?.items || 0,
         },
