@@ -2,9 +2,9 @@ import type { BlitzPage } from "blitz";
 
 import { useRouter, Routes } from "blitz";
 
-import { useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/toast";
 
-import BoxLayout from "app/common/layouts/box-layout";
+import BoxLayout from "app/modules/common/layouts/box-layout";
 
 import ResetPasswordForm from "../components/reset-password-form";
 
@@ -15,8 +15,8 @@ const ResetPasswordPage: BlitzPage = () => {
   const handleSuccess = () => {
     router.push(Routes.HomePage());
     toast({
-      title: "Your password has been changed.",
-      description: "We've updated your password for you.",
+      title: "Password changed",
+      description: "You have successfully changed your password.",
       status: "success",
     });
   };
@@ -27,7 +27,7 @@ const ResetPasswordPage: BlitzPage = () => {
 ResetPasswordPage.getLayout = (page) => (
   <BoxLayout
     title="Reset Your Password"
-    description="Enter your new details in the form below to change your password"
+    description="What would you like your new password to be?"
   >
     {page}
   </BoxLayout>

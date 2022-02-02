@@ -1,5 +1,3 @@
-import type { PromiseReturnType } from "blitz";
-
 import { resolver, SecurePassword, hash256 } from "blitz";
 
 import db from "db";
@@ -49,9 +47,5 @@ const resetPasswordMutation = resolver.pipe(
     return { success: true };
   }
 );
-
-export type ResetPasswordResult = PromiseReturnType<
-  typeof resetPasswordMutation
->;
 
 export default resetPasswordMutation;

@@ -9,22 +9,23 @@ import {
 } from "@chakra-ui/modal";
 import { useColorModeValue } from "@chakra-ui/react";
 
-import SidebarNav from "app/common/components/sidebar-nav";
+import Navigation from "app/modules/common/components/navigation";
 
-import useHeader from "../hooks/use-header";
+type HeaderDrawerProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
 
-const HeaderDrawer: FC = () => {
-  const { drawerIsOpen, toggleDrawer } = useHeader();
-
-  const bg = useColorModeValue("white", "gray.800");
+const HeaderDrawer: FC<HeaderDrawerProps> = ({ isOpen, onClose }) => {
+  const bg = useColorModeValue("white", "#242c3a");
 
   return (
-    <Drawer isOpen={drawerIsOpen} onClose={toggleDrawer} placement="left">
+    <Drawer isOpen={isOpen} onClose={onClose} placement="left">
       <DrawerOverlay />
       <DrawerContent bg={bg} py={6}>
-        <DrawerCloseButton onClose={toggleDrawer} zIndex={2} />
+        <DrawerCloseButton onClose={onClose} zIndex={2} />
         <DrawerBody>
-          <SidebarNav />
+          <Navigation />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

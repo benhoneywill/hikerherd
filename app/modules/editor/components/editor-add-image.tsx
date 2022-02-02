@@ -1,50 +1,34 @@
-import type { AddImageValues } from "../schemas/add-image-schema";
+import { useContext } from "react";
 
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-} from "@chakra-ui/modal";
+import TextField from "app/modules/forms/components/text-field";
+import ModalForm from "app/modules/forms/components/modal-form";
 
-import Form from "app/common/components/form";
-import TextField from "app/common/components/text-field";
-
-import useEditorContext from "../hooks/use-editor-context";
 import addImageSchema from "../schemas/add-image-schema";
+import editorContext from "../contexts/editor-context";
 
 const EditorAddImage = () => {
-  const { editor, addingImage, toggleAddingImage } = useEditorContext();
-
-  const addImage = ({ image }: AddImageValues) => {
-    editor.chain().focus().setImage({ src: image }).run();
-    toggleAddingImage();
-  };
+  const { editor, addingImage, toggleAddingImage } = useContext(editorContext);
 
   return (
-    <Modal isOpen={addingImage} onClose={toggleAddingImage}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Add a image</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Form
-            submitText="Add image"
-            schema={addImageSchema}
-            initialValues={{ image: "" }}
-            onSubmit={addImage}
-          >
-            <TextField
-              name="image"
-              label="Image"
-              placeholder="Enter an image url"
-            />
-          </Form>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <ModalForm
+      isOpen={addingImage}
+      onClose={toggleAddingImage}
+      title="Add an image"
+      schema={addImageSchema}
+      initialValues={{ image: "" }}
+      submitText="Add"
+      onSubmit={({ image }) => {
+        editor.chain().focus().setImage({ src: image }).run();
+        toggleAddingImage();
+      }}
+      render={() => (
+        <TextField
+          name="image"
+          label="Image URL"
+          placeholder="Paste the url of the image"
+        />
+      )}
+    />
   );
 };
 

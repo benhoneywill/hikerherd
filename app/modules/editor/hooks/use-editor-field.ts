@@ -7,37 +7,30 @@ import { useState, useEffect } from "react";
 import { useEditor } from "@tiptap/react";
 import { useField } from "react-final-form";
 
+import getFieldErrorMessage from "app/modules/forms/helpers/get-field-error-message";
+
 import getEditorExtensions from "../helpers/get-editor-extensions";
 
 type UseEditorFieldOptions = {
   fieldProps?: UseFieldConfig<string>;
   features?: EditorFeatures;
-  options?: {
-    required?: boolean;
-    requiredError?: string;
-    autofocus?: boolean;
-  };
+  required?: string;
+  autofocus?: boolean;
 };
 
 const useEditorField = (
   name: string,
-  { fieldProps = {}, features = {}, options = {} }: UseEditorFieldOptions
+  { fieldProps, features, required, autofocus }: UseEditorFieldOptions
 ) => {
   const [editor, setEditor] = useState<Editor | null>(null);
   const [showError, setShowError] = useState(false);
   const [focused, setFocused] = useState(false);
 
-  const {
-    required = true,
-    requiredError = "Did you forget to write something?",
-    autofocus,
-  } = options;
-
   const { input, meta } = useField(name, {
     ...fieldProps,
     validate: () => {
       if (required && !editor?.getText().trim()) {
-        return requiredError;
+        return required;
       }
     },
   });
@@ -45,16 +38,19 @@ const useEditorField = (
   const tiptap = useEditor({
     extensions: getEditorExtensions(features),
     content: input.value,
-    autofocus: autofocus && "end",
+    autofocus: autofocus ? "end" : false,
+
     onBlur: ({ editor }) => {
       input.onChange(editor.getJSON());
       input.onBlur();
       setShowError(true);
       setFocused(false);
     },
+
     onUpdate: () => {
       setShowError(false);
     },
+
     onFocus: () => {
       input.onFocus();
       setFocused(true);
@@ -65,18 +61,13 @@ const useEditorField = (
     setEditor(tiptap);
   }, [tiptap]);
 
-  const { error, submitError, submitFailed } = meta;
-  const normalizedError = Array.isArray(error)
-    ? error.join(", ")
-    : error || submitError;
-
   useEffect(() => {
-    if (submitFailed) setShowError(true);
-  }, [submitFailed]);
+    if (meta.submitFailed) setShowError(true);
+  }, [meta.submitFailed]);
 
   return {
     editor,
-    error: showError && normalizedError,
+    error: showError && getFieldErrorMessage(meta),
     meta: { ...meta, focused },
   };
 };

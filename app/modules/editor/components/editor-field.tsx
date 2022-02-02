@@ -14,14 +14,15 @@ import {
 } from "@chakra-ui/form-control";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
+import { useColorMode } from "@chakra-ui/react";
 
 import useEditorField from "../hooks/use-editor-field";
+import EditorActionsProvider from "../providers/editor-actions-provider";
 
 import EditorFloatingMenu from "./editor-floating-menu";
 import EditorBubbleMenu from "./editor-bubble-menu";
 import EditorHtml from "./editor-html";
 import EditorBarMenu from "./editor-bar-menu";
-import EditorActionsProvider from "./editor-actions-provider";
 
 const FakeInput = styled(Box)`
   .ProseMirror {
@@ -41,11 +42,15 @@ const FakeInput = styled(Box)`
     padding-bottom: var(--chakra-space-2);
     border-radius: var(--chakra-radii-md);
     border: 1px solid;
-    border-color: inherit;
-    background: inherit;
+    border-color: transparent;
+    background: ${(props) =>
+      props["data-color-mode"] === "dark"
+        ? "var(--chakra-colors-whiteAlpha-50)"
+        : "var(--chakra-colors-gray-100)"};
 
     &:focus {
       outline: none;
+      background: none;
     }
 
     img.has-focus,
@@ -62,22 +67,22 @@ const FakeInput = styled(Box)`
       pointer-events: none;
     }
 
-    ${({ invalid }) =>
-      invalid &&
+    ${(props) =>
+      props["data-has-error"] &&
       css`
         border-color: var(--chakra-colors-red-500);
         box-shadow: 0 0 0 1px var(--chakra-colors-red-500);
       `}
 
-    ${({ focused }) =>
-      focused &&
+    ${(props) =>
+      props["data-focused"] &&
       css`
         border-color: var(--chakra-colors-blue-500);
         box-shadow: 0 0 0 1px var(--chakra-colors-blue-500);
       `}
 
-    ${({ hasBarMenu }) =>
-      hasBarMenu &&
+    ${(props) =>
+      props["data-has-bar-menu"] &&
       css`
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
@@ -90,7 +95,7 @@ type EditorFieldProps = {
   fieldProps?: UseFieldConfig<string>;
   fontSize?: BoxProps["fontSize"];
   features?: EditorFeatures;
-  required?: boolean;
+  required?: string;
   label?: string;
   autofocus?: boolean;
   bubbleMenu?: boolean;
@@ -103,7 +108,7 @@ const EditorField: FC<EditorFieldProps> = ({
   fieldProps,
   fontSize,
   features = {},
-  required = false,
+  required,
   autofocus,
   label,
   bubbleMenu,
@@ -113,11 +118,11 @@ const EditorField: FC<EditorFieldProps> = ({
   const { editor, error, meta } = useEditorField(name, {
     features,
     fieldProps,
-    options: {
-      required,
-      autofocus,
-    },
+    required,
+    autofocus,
   });
+
+  const { colorMode } = useColorMode();
 
   if (!editor) return null;
 
@@ -127,9 +132,10 @@ const EditorField: FC<EditorFieldProps> = ({
         {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
 
         <FakeInput
-          focused={meta.focused}
-          invalid={!!error}
-          hasBarMenu={barMenu}
+          data-focused={meta.focused}
+          data-has-error={!!error}
+          data-has-bar-menu={barMenu}
+          data-color-mode={colorMode}
         >
           {bubbleMenu && <EditorBubbleMenu features={features} />}
           {floatingMenu && <EditorFloatingMenu features={features} />}

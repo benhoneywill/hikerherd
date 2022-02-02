@@ -7,6 +7,4 @@ const changePasswordSchema = z.object({
   newPassword: passwordSchema,
 });
 
-export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
-
 export default changePasswordSchema;

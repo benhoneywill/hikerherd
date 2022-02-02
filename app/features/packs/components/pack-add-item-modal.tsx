@@ -2,78 +2,104 @@ import type { FC } from "react";
 
 import { useMutation } from "blitz";
 
-import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/modal";
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
-import { Icon } from "@chakra-ui/icon";
-import { FcList, FcRating } from "react-icons/fc";
-import { HStack, Text } from "@chakra-ui/layout";
+import { FcPlus, FcList, FcRating, FcSearch } from "react-icons/fc";
+import { Button } from "@chakra-ui/button";
+import { useToast } from "@chakra-ui/toast";
+
+import AddPackGearForm from "app/features/pack-gear/components/add-pack-gear-form";
+import TabModal from "app/modules/common/components/tab-modal";
+import GlobalGearSearch from "app/features/discover/components/global-gear-search";
 
 import addGearToPackMutation from "../mutations/add-gear-to-pack-mutation";
 
 import PackAddInventoryItem from "./pack-add-inventory-item";
 
 type PackAddItemModalProps = {
-  packId: string;
   categoryId: string | null;
   isOpen: boolean;
   onClose: () => void;
-  onAdd: () => void;
+  onSuccess: () => void;
 };
 
 const PackAddItemModal: FC<PackAddItemModalProps> = ({
   categoryId,
-  packId,
   isOpen,
   onClose,
-  onAdd,
+  onSuccess,
 }) => {
   const [addGearToPack] = useMutation(addGearToPackMutation);
+  const toast = useToast();
+
+  const handleSuccess = () => {
+    onSuccess();
+    toast({
+      title: "Success",
+      description: "The item has been added to your pack.",
+      status: "success",
+    });
+    onClose();
+  };
 
   const addToPack = async (gearId: string) => {
     if (categoryId) {
-      await addGearToPack({ gearId, packId, categoryId });
-      onClose();
-      onAdd();
+      await addGearToPack({ gearId, categoryId });
+      handleSuccess();
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalBody p={0}>
-          <Tabs isFitted>
-            <TabList position="sticky" top={0} zIndex={3} bg="white">
-              <Tab py={4} flexShrink={0}>
-                <HStack>
-                  <Icon as={FcList} />
-                  <Text whiteSpace="nowrap" overflow="hidden">
-                    Inventory
-                  </Text>
-                </HStack>
-              </Tab>
-              <Tab py={4} flexShrink={0}>
-                <HStack>
-                  <Icon as={FcRating} />
-                  <Text whiteSpace="nowrap" overflow="hidden">
-                    Wish list
-                  </Text>
-                </HStack>
-              </Tab>
-            </TabList>
-
-            <TabPanels>
-              <TabPanel>
-                <PackAddInventoryItem type="INVENTORY" addToPack={addToPack} />
-              </TabPanel>
-              <TabPanel>
-                <PackAddInventoryItem type="WISH_LIST" addToPack={addToPack} />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <TabModal
+      isOpen={isOpen}
+      onClose={onClose}
+      tabs={[
+        {
+          title: "Inventory",
+          icon: FcList,
+          content: (
+            <PackAddInventoryItem type="INVENTORY" addToPack={addToPack} />
+          ),
+        },
+        {
+          title: "Wish List",
+          icon: FcRating,
+          content: (
+            <PackAddInventoryItem type="WISH_LIST" addToPack={addToPack} />
+          ),
+        },
+        {
+          title: "New",
+          icon: FcPlus,
+          content: (
+            <AddPackGearForm
+              categoryId={categoryId}
+              onClose={onClose}
+              onSuccess={handleSuccess}
+            />
+          ),
+        },
+        {
+          title: "Search",
+          icon: FcSearch,
+          content: (
+            <GlobalGearSearch
+              gearActions={(gear) => (
+                <Button
+                  isFullWidth
+                  onClick={async () => {
+                    if (categoryId) {
+                      await addToPack(gear.id);
+                      handleSuccess();
+                    }
+                  }}
+                >
+                  Add
+                </Button>
+              )}
+            />
+          ),
+        },
+      ]}
+    />
   );
 };
 

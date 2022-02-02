@@ -10,17 +10,15 @@ import { renderHook as defaultRenderHook } from "@testing-library/react-hooks";
 // This file customizes the render() and renderHook() test functions provided
 // by React testing library. It adds a router context wrapper with a mocked router.
 //
-// You should always import `render` and `renderHook` from this file
+// You should always import `render` and `renderHook` from this file when writing tests
 //
 // This is the place to add any other context providers you need while testing.
 // --------------------------------------------------------------------------------
 
 /* Export each of testing-library's exports so that we can import everything from here */
-
 export * from "@testing-library/react";
 
 /* A default mocked router for use in the router context */
-
 export const mockRouter: BlitzRouter = {
   basePath: "",
   pathname: "/",
@@ -45,13 +43,12 @@ export const mockRouter: BlitzRouter = {
   isFallback: false,
 };
 
-/* A default wrapper for tested components */
-
 type DefaultTestWrapperProps = {
   dehydratedState?: unknown;
   router?: Partial<BlitzRouter>;
 };
 
+/* A default wrapper for tested components */
 export const DefaultTestWrapper: FC<DefaultTestWrapperProps> = ({
   children,
   dehydratedState,
@@ -64,16 +61,15 @@ export const DefaultTestWrapper: FC<DefaultTestWrapperProps> = ({
   </BlitzProvider>
 );
 
-/* Override the default test render with our own */
-
 type DefaultParams = Parameters<typeof defaultRender>;
 type RenderUI = DefaultParams[0];
 type RenderOptions = DefaultParams[1] & DefaultTestWrapperProps;
 
-export function render(
+/* Override the default test render with our own */
+export const render = (
   ui: RenderUI,
   { wrapper, router, dehydratedState, ...options }: RenderOptions = {}
-) {
+) => {
   if (!wrapper) {
     wrapper = ({ children }) => (
       <DefaultTestWrapper
@@ -86,9 +82,7 @@ export function render(
   }
 
   return defaultRender(ui, { wrapper, ...options });
-}
-
-/* Override the default test renderHook with our own */
+};
 
 type DefaultHookParams = Parameters<typeof defaultRenderHook>;
 type RenderHook = DefaultHookParams[0];
@@ -97,10 +91,11 @@ type RenderHookOptions = DefaultHookParams[1] & {
   dehydratedState?: unknown;
 };
 
-export function renderHook(
+/* Override the default test renderHook with our own */
+export const renderHook = (
   hook: RenderHook,
   { wrapper, router, dehydratedState, ...options }: RenderHookOptions = {}
-) {
+) => {
   if (!wrapper) {
     wrapper = ({ children }) => (
       <DefaultTestWrapper
@@ -113,4 +108,4 @@ export function renderHook(
   }
 
   return defaultRenderHook(hook, { wrapper, ...options });
-}
+};

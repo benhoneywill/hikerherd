@@ -1,5 +1,3 @@
-import type { PromiseReturnType } from "blitz";
-
 import { resolver } from "blitz";
 
 import db from "db";
@@ -49,9 +47,5 @@ const forgotPasswordMutation = resolver.pipe(
     return { success: true };
   }
 );
-
-export type ForgotPasswordResult = PromiseReturnType<
-  typeof forgotPasswordMutation
->;
 
 export default forgotPasswordMutation;

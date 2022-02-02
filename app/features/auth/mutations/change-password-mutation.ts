@@ -1,5 +1,3 @@
-import type { PromiseReturnType } from "blitz";
-
 import { NotFoundError, SecurePassword, resolver } from "blitz";
 
 import db from "db";
@@ -31,9 +29,5 @@ const changePasswordMutation = resolver.pipe(
     return { success: true };
   }
 );
-
-export type ChangePasswordResult = PromiseReturnType<
-  typeof changePasswordMutation
->;
 
 export default changePasswordMutation;

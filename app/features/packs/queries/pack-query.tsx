@@ -1,30 +1,21 @@
-import type { PromiseReturnType } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
-import { NotFoundError, resolver } from "blitz";
+import idSchema from "app/modules/common/schemas/id-schema";
 
 import db from "db";
 
-import getPackSchema from "../schemas/get-pack-schema";
-
 const packQuery = resolver.pipe(
   resolver.authorize(),
-  resolver.zod(getPackSchema),
+  resolver.zod(idSchema),
 
   async ({ id }, ctx) => {
-    const pack = await db.pack.findFirst({
-      where: { userId: ctx.session.userId, id },
-      include: {
-        categories: {
-          orderBy: { index: "asc" },
-          include: {
-            items: {
-              orderBy: { index: "asc" },
-              include: {
-                gear: true,
-              },
-            },
-          },
-        },
+    const pack = await db.pack.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        userId: true,
+        notes: true,
+        name: true,
       },
     });
 
@@ -32,10 +23,12 @@ const packQuery = resolver.pipe(
       throw new NotFoundError();
     }
 
+    if (pack.userId !== ctx.session.userId) {
+      throw new AuthorizationError();
+    }
+
     return pack;
   }
 );
-
-export type PackResult = PromiseReturnType<typeof packQuery>;
 
 export default packQuery;

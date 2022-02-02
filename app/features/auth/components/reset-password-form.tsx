@@ -1,21 +1,20 @@
 import type { FC } from "react";
-import type { ResetPasswordResult } from "../mutations/reset-password-mutation";
-import type { ResetPasswordValues } from "../schemas/reset-password-schema";
+import type { PromiseReturnType } from "blitz";
 
+import { Fragment } from "react";
 import { useRouterQuery, useMutation } from "blitz";
 
-import { Button } from "@chakra-ui/button";
-import { Stack } from "@chakra-ui/layout";
+import { FORM_ERROR } from "final-form";
 
-import TextField from "app/common/components/text-field";
-import Form, { FORM_ERROR } from "app/common/components/form";
+import TextField from "app/modules/forms/components/text-field";
+import SimpleForm from "app/modules/forms/components/simple-form";
 
 import resetPasswordSchema from "../schemas/reset-password-schema";
 import resetPasswordMutation from "../mutations/reset-password-mutation";
 import ResetPasswordError from "../errors/reset-password-error";
 
 type ResetPasswordFormProps = {
-  onSuccess?: (user: ResetPasswordResult) => void;
+  onSuccess?: (user: PromiseReturnType<typeof resetPasswordMutation>) => void;
 };
 
 const ResetPasswordForm: FC<ResetPasswordFormProps> = ({ onSuccess }) => {
@@ -38,42 +37,31 @@ const ResetPasswordForm: FC<ResetPasswordFormProps> = ({ onSuccess }) => {
     }
   };
 
-  const handleSubmit = async (values: ResetPasswordValues) => {
-    try {
-      const result = await resetPassword(values);
-      if (onSuccess) onSuccess(result);
-    } catch (error) {
-      return handleError(error);
-    }
-  };
-
   return (
-    <Form
+    <SimpleForm
       schema={resetPasswordSchema}
       initialValues={initialValues}
-      onSubmit={handleSubmit}
-      render={(form) => (
-        <Stack spacing={6}>
-          <Stack spacing={4}>
-            <TextField name="password" label="New Password" type="password" />
-            <TextField
-              name="passwordConfirmation"
-              label="Confirm New Password"
-              type="password"
-            />
-          </Stack>
-
-          <Button
-            size="lg"
-            colorScheme="green"
-            isLoading={form.submitting}
-            type="submit"
-          >
-            Reset password
-          </Button>
-        </Stack>
+      submitText="Reset password"
+      large
+      onSubmit={async (values) => {
+        try {
+          const result = await resetPassword(values);
+          if (onSuccess) onSuccess(result);
+        } catch (error) {
+          return handleError(error);
+        }
+      }}
+      render={() => (
+        <Fragment>
+          <TextField name="password" label="New Password" type="password" />
+          <TextField
+            name="passwordConfirmation"
+            label="Confirm New Password"
+            type="password"
+          />
+        </Fragment>
       )}
-    ></Form>
+    ></SimpleForm>
   );
 };
 

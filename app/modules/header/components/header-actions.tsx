@@ -1,16 +1,28 @@
 import type { FC } from "react";
 
+import { useContext } from "react";
+
 import { HStack } from "@chakra-ui/layout";
-import { FaSun, FaMoon, FaBars, FaSearch } from "react-icons/fa";
+import {
+  FaSun,
+  FaMoon,
+  FaBars,
+  FaFlagUsa,
+  FaGlobeEurope,
+} from "react-icons/fa";
 import Icon from "@chakra-ui/icon";
 import { useColorMode } from "@chakra-ui/react";
 
-import useHeader from "../hooks/use-header";
+import userPreferencesContext from "app/features/users/contexts/user-preferences-context";
 
 import HeaderIconButton from "./header-icon-button";
 
-const HeaderActions: FC = () => {
-  const { toggleDrawer, toggleSearch } = useHeader();
+type HeaderActionsProps = {
+  toggleDrawer: () => void;
+};
+
+const HeaderActions: FC<HeaderActionsProps> = ({ toggleDrawer }) => {
+  const { toggleWeightUnits, weightUnit } = useContext(userPreferencesContext);
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -21,14 +33,22 @@ const HeaderActions: FC = () => {
         icon={<Icon as={FaBars} w={5} h={5} />}
       />
       <HeaderIconButton
-        label="Search"
-        onClick={toggleSearch}
-        icon={<Icon as={FaSearch} w={5} h={5} />}
-      />
-      <HeaderIconButton
         label={colorMode === "dark" ? "Day hike" : "Night hike"}
         onClick={toggleColorMode}
         icon={<Icon as={colorMode === "dark" ? FaSun : FaMoon} w={5} h={5} />}
+      />
+      <HeaderIconButton
+        label={
+          weightUnit === "METRIC" ? "Use imperial units" : "Use metric units"
+        }
+        onClick={toggleWeightUnits}
+        icon={
+          <Icon
+            as={weightUnit === "METRIC" ? FaFlagUsa : FaGlobeEurope}
+            w={5}
+            h={5}
+          />
+        }
       />
     </HStack>
   );

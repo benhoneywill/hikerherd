@@ -1,8 +1,6 @@
-import type { PromiseReturnType } from "blitz";
-
 import { resolver } from "blitz";
 
-import slugify from "app/common/helpers/slugify";
+import slugify from "app/modules/common/helpers/slugify";
 
 import db from "db";
 
@@ -23,7 +21,5 @@ const createPackMutation = resolver.pipe(
     });
   }
 );
-
-export type CreatePackResult = PromiseReturnType<typeof createPackMutation>;
 
 export default createPackMutation;

@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// learn more about this file: https://pris.ly/d/prisma-schema
 
 datasource db {
   provider = "postgres"
@@ -8,7 +7,7 @@ datasource db {
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["interactiveTransactions", "fullTextSearch"]
+  previewFeatures = ["interactiveTransactions"]
 }
 
 // ***** User *****
@@ -18,31 +17,48 @@ enum UserRole {
   USER
 }
 
+enum WeightUnit {
+  METRIC
+  IMPERIAL
+}
+
+enum Currency {
+  USD
+  GBP
+  EUR
+}
+
 model User {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email    String  @unique
-  username String  @unique
-  avatar   String? @unique
-
-  packs Pack[]
-  gear  Gear[]
-
+  email          String     @unique
+  username       String     @unique
   hashedPassword String?
+  avatar         String?    @unique
+  weightUnit     WeightUnit @default(METRIC)
+  currency       Currency   @default(USD)
   role           UserRole   @default(USER)
-  tokens         Token[]
-  sessions       Session[]
-  Category       Category[]
+
+  packs      Pack[]
+  gear       Gear[]
+  tokens     Token[]
+  sessions   Session[]
+  categories Category[]
 }
 
 // ***** Auth *****
 
+enum TokenType {
+  RESET_PASSWORD
+}
+
 model Session {
-  id                 String    @id @default(cuid())
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   expiresAt          DateTime?
   handle             String    @unique
   hashedSessionToken String?
@@ -54,14 +70,11 @@ model Session {
   userId String?
 }
 
-enum TokenType {
-  RESET_PASSWORD
-}
-
 model Token {
-  id          String    @id @default(cuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   hashedToken String
   type        TokenType
   expiresAt   DateTime
@@ -75,6 +88,11 @@ model Token {
 
 // ***** Gear ***** //
 
+enum CategoryType {
+  INVENTORY
+  WISH_LIST
+}
+
 model Gear {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -84,9 +102,10 @@ model Gear {
   imageUrl   String?
   link       String?
   notes      String?
-  consumable Boolean
-  weight     Int
+  consumable Boolean  @default(false)
+  weight     Float
   price      Int?
+  currency   Currency @default(USD)
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
@@ -97,11 +116,6 @@ model Gear {
 
   packCategoryItems PackCategoryItem[]
   categoryItems     CategoryItem[]
-}
-
-enum CategoryType {
-  INVENTORY
-  WISH_LIST
 }
 
 model Category {
@@ -170,13 +184,14 @@ model PackCategoryItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  index Int
-  notes String?
-  worn  Boolean
+  index    Int
+  notes    String?
+  worn     Boolean
+  quantity Int     @default(1)
 
   category   PackCategory @relation(fields: [categoryId], references: [id])
   categoryId String
 
   gear   Gear   @relation(fields: [gearId], references: [id])
-  gearId String @unique
+  gearId String
 }

@@ -7,6 +7,4 @@ const createPackSchema = z.object({
   notes: editorContentSchema.nullable(),
 });
 
-export type CreatePackValues = z.infer<typeof createPackSchema>;
-
 export default createPackSchema;
