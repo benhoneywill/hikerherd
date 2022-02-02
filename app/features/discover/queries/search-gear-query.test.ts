@@ -42,7 +42,7 @@ beforeEach(async () => {
 });
 
 describe("searchGearQuery", () => {
-  it("should nothing if the query is empty", async () => {
+  it("should return nothing if the query is empty", async () => {
     const { ctx } = await createMockContext();
 
     const result = await searchGearQuery({ query: "" }, ctx);
@@ -62,18 +62,6 @@ describe("searchGearQuery", () => {
 
     expect(result2.length).toEqual(1);
     expect(result2[0]?.name).toEqual("Sleeping bag");
-  });
-
-  it("should return gear that matches the query by notes", async () => {
-    const { ctx } = await createMockContext();
-
-    const result1 = await searchGearQuery({ query: "shelter" }, ctx);
-
-    expect(result1.length).toEqual(1);
-    expect(result1[0]?.name).toEqual("Tent");
-
-    const result2 = await searchGearQuery({ query: "this" }, ctx);
-    expect(result2.length).toEqual(2);
   });
 
   it("should allow small spelling mistakes", async () => {
