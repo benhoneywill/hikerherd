@@ -1,5 +1,8 @@
 import type { FC } from "react";
 
+import { useEffect } from "react";
+import { useRouter } from "blitz";
+
 import {
   Drawer,
   DrawerOverlay,
@@ -17,7 +20,12 @@ type HeaderDrawerProps = {
 };
 
 const HeaderDrawer: FC<HeaderDrawerProps> = ({ isOpen, onClose }) => {
+  const router = useRouter();
   const bg = useColorModeValue("white", "#242c3a");
+
+  useEffect(() => {
+    onClose();
+  }, [router.pathname, onClose]);
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose} placement="left">

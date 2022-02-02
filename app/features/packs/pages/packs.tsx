@@ -6,14 +6,12 @@ import { Fragment, useState } from "react";
 import { Button, IconButton } from "@chakra-ui/button";
 import { FcTimeline } from "react-icons/fc";
 import { Heading, SimpleGrid, HStack, Text, Stack } from "@chakra-ui/layout";
-import { Icon } from "@chakra-ui/icon";
 import { FaTrash } from "react-icons/fa";
 import { useToast } from "@chakra-ui/toast";
 import { Tooltip } from "@chakra-ui/tooltip";
 
 import SidebarLayout from "app/modules/common/layouts/sidebar-layout";
 import LinkCard from "app/modules/common/components/link-card";
-import Card from "app/modules/common/components/card";
 import ConfirmModal from "app/modules/common/components/confirm-modal";
 
 import packsQuery from "../queries/packs-query";
@@ -56,10 +54,9 @@ const PacksPage: BlitzPage = () => {
       />
 
       {packs.length === 0 && (
-        <Card>
-          <Stack alignItems="center" spacing={6}>
-            <Icon w={10} h={10} as={FcTimeline} />
-            <Text color="gray.500">You have not created any packs yet</Text>
+        <Stack spacing={4}>
+          <Text color="gray.500">You have not created any packs yet</Text>
+          <div>
             <Button
               as="a"
               colorScheme="green"
@@ -68,8 +65,8 @@ const PacksPage: BlitzPage = () => {
             >
               Create your first pack
             </Button>
-          </Stack>
-        </Card>
+          </div>
+        </Stack>
       )}
 
       {packs.length >= 1 && (
