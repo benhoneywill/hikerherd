@@ -9,7 +9,7 @@
 # Note: the urls use `http` not `https` because Render adds `https` at a higher layer
 
 http://${RENDER_EXTERNAL_HOSTNAME},
-http://admin.hikerherd.com {
+http://prisma.hikerherd.com {
   reverse_proxy 0.0.0.0:5555
   log
   basicauth {
