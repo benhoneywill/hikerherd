@@ -1,13 +1,23 @@
 import type { FC } from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Box, Text, Link, Container, HStack } from "@chakra-ui/layout";
 import { IconButton } from "@chakra-ui/react";
 import { FaTimes } from "react-icons/fa";
 
 const BetaBanner: FC = () => {
-  const [hidden, setHidden] = useState(false);
+  const [hidden, setHidden] = useState(true);
+
+  useEffect(() => {
+    const isHidden = window.sessionStorage.getItem("betaBannerHidden");
+    setHidden(!!isHidden);
+  }, []);
+
+  const hide = () => {
+    setHidden(true);
+    window.sessionStorage.setItem("betaBannerHidden", "true");
+  };
 
   if (hidden) return null;
 
@@ -40,7 +50,7 @@ const BetaBanner: FC = () => {
             color="blue.50"
             _hover={{ bg: "blue.500" }}
             icon={<FaTimes />}
-            onClick={() => setHidden(true)}
+            onClick={hide}
           />
         </HStack>
       </Container>

@@ -10,7 +10,7 @@ import Card from "app/modules/common/components/card";
 
 import UserPreferencesForm from "../components/user-preferences-form";
 
-const SettingsPage: BlitzPage = () => {
+const PreferencesPage: BlitzPage = () => {
   return (
     <Fragment>
       <Heading size="md" mb={6}>
@@ -24,10 +24,10 @@ const SettingsPage: BlitzPage = () => {
   );
 };
 
-SettingsPage.authenticate = { redirectTo: Routes.LoginPage() };
+PreferencesPage.authenticate = { redirectTo: Routes.LoginPage() };
 
-SettingsPage.getLayout = (page) => (
+PreferencesPage.getLayout = (page) => (
   <SidebarLayout title="My settings">{page}</SidebarLayout>
 );
 
-export default SettingsPage;
+export default PreferencesPage;

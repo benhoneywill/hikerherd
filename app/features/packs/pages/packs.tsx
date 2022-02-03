@@ -9,6 +9,7 @@ import { Heading, SimpleGrid, HStack, Text, Stack } from "@chakra-ui/layout";
 import { FaTrash } from "react-icons/fa";
 import { useToast } from "@chakra-ui/toast";
 import { Tooltip } from "@chakra-ui/tooltip";
+import { useColorModeValue } from "@chakra-ui/react";
 
 import SidebarLayout from "app/modules/common/layouts/sidebar-layout";
 import LinkCard from "app/modules/common/components/link-card";
@@ -21,6 +22,7 @@ import deletePackMutation from "../mutations/delete-pack-mutation";
 const PacksPage: BlitzPage = () => {
   const router = useRouter();
   const toast = useToast();
+  const textColor = useColorModeValue("gray.600", "gray.400");
   const [addingNewPack, setAddingNewPack] = useState(false);
   const [deletingPack, setDeletingPack] = useState<string | null>(null);
 
@@ -29,7 +31,7 @@ const PacksPage: BlitzPage = () => {
 
   return (
     <Fragment>
-      <HStack mb={6} justify="space-between">
+      <HStack mb={4} justify="space-between">
         <Heading size="md">Packs</Heading>
 
         {packs.length !== 0 && (
@@ -54,8 +56,8 @@ const PacksPage: BlitzPage = () => {
       />
 
       {packs.length === 0 && (
-        <Stack spacing={4}>
-          <Text color="gray.500">You have not created any packs yet</Text>
+        <Stack spacing={5}>
+          <Text color={textColor}>You have not created any packs yet</Text>
           <div>
             <Button
               as="a"
@@ -70,7 +72,7 @@ const PacksPage: BlitzPage = () => {
       )}
 
       {packs.length >= 1 && (
-        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4}>
+        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4} mt={2}>
           {packs.map((pack) => (
             <LinkCard
               key={pack.id}

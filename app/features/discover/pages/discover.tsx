@@ -6,8 +6,9 @@ import { Fragment, useState } from "react";
 
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/toast";
-import { Heading, HStack } from "@chakra-ui/layout";
+import { Heading, HStack, Text } from "@chakra-ui/layout";
 import { FcList, FcRating } from "react-icons/fc";
+import { useColorModeValue } from "@chakra-ui/react";
 
 import SidebarLayout from "app/modules/common/layouts/sidebar-layout";
 import Card from "app/modules/common/components/card";
@@ -18,6 +19,7 @@ import GlobalGearSearch from "../components/global-gear-search";
 const DiscoverPage: BlitzPage = () => {
   const session = useSession({ suspense: false });
   const toast = useToast();
+  const textColor = useColorModeValue("gray.600", "gray.400");
 
   const [adding, setAdding] = useState<{
     type: CategoryType;
@@ -41,9 +43,17 @@ const DiscoverPage: BlitzPage = () => {
         }}
       />
 
-      <Heading mb={6} size="md">
+      <Heading mb={4} size="md">
         Discover
       </Heading>
+
+      <Text mb={2} color={textColor}>
+        Whenever new gear is added to hikerherd it can be found here.
+      </Text>
+      <Text mb={5} color={textColor}>
+        The gear data is crowd-sourced by <strong>you</strong>, so the more you
+        use hikerherd the better it will get!
+      </Text>
 
       <Card>
         <GlobalGearSearch

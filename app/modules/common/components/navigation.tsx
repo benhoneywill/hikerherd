@@ -12,6 +12,7 @@ import {
   FcTimeline,
   FcSearch,
   FcSettings,
+  FcVoicePresentation,
 } from "react-icons/fc";
 import { Icon } from "@chakra-ui/icon";
 import { useColorModeValue } from "@chakra-ui/react";
@@ -91,9 +92,18 @@ const Navigation: FC = () => {
           </NavigationItem>
         </NavigationSection>
 
+        <NavigationSection title="User settings">
+          <NavigationItem route={Routes.PreferencesPage()} icon={FcSettings}>
+            Preferences
+          </NavigationItem>
+        </NavigationSection>
+
         <NavigationSection title="Other">
-          <NavigationItem route={Routes.SettingsPage()} icon={FcSettings}>
-            My Settings
+          <NavigationItem
+            route={Routes.ContactPage()}
+            icon={FcVoicePresentation}
+          >
+            Contact
           </NavigationItem>
         </NavigationSection>
       </Stack>

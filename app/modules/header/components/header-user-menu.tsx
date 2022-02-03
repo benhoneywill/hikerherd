@@ -54,9 +54,9 @@ const HeaderUserMenu: FC = () => {
 
         <Portal>
           <MenuList>
-            <Link href={Routes.SettingsPage()} passHref>
+            <Link href={Routes.PreferencesPage()} passHref>
               <MenuItem as="a" icon={<FaCog />}>
-                My settings
+                My preferences
               </MenuItem>
             </Link>
             <MenuItem

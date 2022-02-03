@@ -1,29 +1,19 @@
 # This file defines the deployment infrastructure for http://render.com
 
-# Create preview environments each time a PR is made (disabled for now)
-# previewsEnabled: true
-# previewsExpireAfterDays: 3
-
 # This gives us a Postgresql database
 databases:
   - name: hikerherd_db
     databaseName: hikerherd
     plan: starter
-    # previewPlan: free
 
 services:
-  # This is our web service, which runs the app itself
+  # This is our main web service, which runs the app itself
   - type: web
     name: hikerherd_web
     env: node
     plan: starter
-    # previewPlan: free
-
-    # Build and start commands
     buildCommand: yarn --frozen-lockfile --prod=false && yarn build && yarn migrate
     startCommand: yarn start
-
-    # Define all of the env vars for the app
     envVars:
       - key: NODE_ENV
         value: production
@@ -40,5 +30,24 @@ services:
         value: https://www.hikerherd.com
 
       - key: POSTMARK_API_TOKEN
-        previewValue: API_TEST_TOKEN
+        sync: false # (Keep secrets out of version control)
+
+  # This is a prisma studio service for production admin features
+  - type: web
+    name: prisma_studio
+    env: node
+    plan: free
+    buildCommand: yarn --frozen-lockfile && npm rebuild caddy-npm
+    startCommand: pm2 start "prisma studio" && caddy run
+
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hikerherd_db
+          property: connectionString
+
+      - key: STUDIO_USERNAME
+        value: hikerherd_admin
+
+      - key: STUDIO_PASSWORD_HASH
         sync: false # (Keep secrets out of version control)
