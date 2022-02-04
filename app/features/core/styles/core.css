@@ -1,0 +1,16 @@
+html,
+body {
+  height: 100%;
+}
+
+#__next {
+  min-height: 100%;
+}
+
+body.chakra-ui-light {
+  background: #edf2f7;
+}
+
+body.chakra-ui-dark {
+  background: #242c3a;
+}

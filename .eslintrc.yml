@@ -1,0 +1,38 @@
+extends:
+  - "blitz"
+  - "plugin:prettier/recommended"
+
+plugins:
+  - "@typescript-eslint"
+
+rules:
+  # Nextjs rules
+  "@next/next/no-img-element": off
+
+  # Typescript rules
+  "@typescript-eslint/consistent-type-imports": error
+  "@typescript-eslint/no-unused-vars": error
+
+  # import rules
+  import/prefer-default-export: error
+  import/no-duplicates: error
+  import/order:
+    - error
+    - groups:
+        [type, builtin, external, internal, parent, sibling, index, object]
+      newlines-between: always
+      pathGroupsExcludedImportTypes:
+        - type
+      pathGroups:
+        - pattern: "+(react|blitz)"
+          group: builtin
+          position: before
+        - pattern: "+(app|db|public|test|integrations)/**"
+          group: internal
+          position: before
+
+overrides:
+  # In tests you can be more loose with types
+  - files: "**/*.test.ts"
+    rules:
+      "@typescript-eslint/no-explicit-any": "off"

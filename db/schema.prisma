@@ -1,0 +1,197 @@
+// learn more about this file: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
+}
+
+// ***** User *****
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum WeightUnit {
+  METRIC
+  IMPERIAL
+}
+
+enum Currency {
+  USD
+  GBP
+  EUR
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email          String     @unique
+  username       String     @unique
+  hashedPassword String?
+  avatar         String?    @unique
+  weightUnit     WeightUnit @default(METRIC)
+  currency       Currency   @default(USD)
+  role           UserRole   @default(USER)
+
+  packs      Pack[]
+  gear       Gear[]
+  tokens     Token[]
+  sessions   Session[]
+  categories Category[]
+}
+
+// ***** Auth *****
+
+enum TokenType {
+  RESET_PASSWORD
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  expiresAt          DateTime?
+  handle             String    @unique
+  hashedSessionToken String?
+  antiCSRFToken      String?
+  publicData         String?
+  privateData        String?
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+}
+
+model Token {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  hashedToken String
+  type        TokenType
+  expiresAt   DateTime
+  sentTo      String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@unique([hashedToken, type])
+}
+
+// ***** Gear ***** //
+
+enum CategoryType {
+  INVENTORY
+  WISH_LIST
+}
+
+model Gear {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name       String
+  imageUrl   String?
+  link       String?
+  notes      String?
+  consumable Boolean  @default(false)
+  weight     Float
+  price      Int?
+  currency   Currency @default(USD)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  clonedFromId String?
+  clonedFrom   Gear?   @relation("ClonedFrom", fields: [clonedFromId], references: [id])
+  clones       Gear[]  @relation("ClonedFrom")
+
+  packCategoryItems PackCategoryItem[]
+  categoryItems     CategoryItem[]
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name  String
+  index Int
+  type  CategoryType
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  items CategoryItem[]
+}
+
+model CategoryItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  index Int
+
+  gear   Gear   @relation(fields: [gearId], references: [id])
+  gearId String
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+}
+
+// ***** Pack *****
+
+model Pack {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name    String
+  slug    String  @unique
+  notes   String?
+  private Boolean @default(false)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  categories PackCategory[]
+}
+
+model PackCategory {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name  String
+  index Int
+
+  pack   Pack   @relation(fields: [packId], references: [id])
+  packId String
+
+  items PackCategoryItem[]
+}
+
+model PackCategoryItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  index    Int
+  notes    String?
+  worn     Boolean
+  quantity Int     @default(1)
+
+  category   PackCategory @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  gear   Gear   @relation(fields: [gearId], references: [id])
+  gearId String
+}
