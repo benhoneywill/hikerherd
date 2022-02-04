@@ -13,6 +13,7 @@ import {
   FcSearch,
   FcSettings,
   FcVoicePresentation,
+  FcKindle,
 } from "react-icons/fc";
 import { Icon } from "@chakra-ui/icon";
 import { useColorModeValue } from "@chakra-ui/react";
@@ -46,6 +47,35 @@ const NavigationItem: FC<NavigationItemProps> = ({ children, icon, route }) => {
         </Text>
       </HStack>
     </Link>
+  );
+};
+
+type NavigationExternalItemProps = {
+  href: string;
+  icon: IconType;
+};
+
+const NavigationExternalItem: FC<NavigationExternalItemProps> = ({
+  children,
+  icon,
+  href,
+}) => {
+  const bgColor = useColorModeValue("gray.50", "gray.700");
+
+  return (
+    <HStack
+      as="a"
+      href={href}
+      _hover={{ bg: bgColor }}
+      borderRadius="md"
+      display="flex"
+      alignItems="center"
+      py={2}
+      px={3}
+    >
+      <Icon as={icon} w={5} h={5} mr={1} />
+      <Text fontWeight="bold">{children}</Text>
+    </HStack>
   );
 };
 
@@ -99,12 +129,18 @@ const Navigation: FC = () => {
         </NavigationSection>
 
         <NavigationSection title="Other">
-          <NavigationItem
-            route={Routes.ContactPage()}
+          <NavigationExternalItem
+            href="https://blog.hikerherd.com"
+            icon={FcKindle}
+          >
+            Newsletter
+          </NavigationExternalItem>
+          <NavigationExternalItem
+            href="https://blog.hikerherd.com/contact"
             icon={FcVoicePresentation}
           >
             Contact
-          </NavigationItem>
+          </NavigationExternalItem>
         </NavigationSection>
       </Stack>
     </Box>

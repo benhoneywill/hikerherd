@@ -1,9 +1,9 @@
 import type { BlitzPage } from "blitz";
 
-import { Link, Routes } from "blitz";
+import { Routes } from "blitz";
 import { Fragment } from "react";
 
-import { SimpleGrid, Heading, Text, Link as Anchor } from "@chakra-ui/layout";
+import { SimpleGrid, Heading, Text, Link } from "@chakra-ui/layout";
 import { FcList, FcRating, FcSearch, FcTimeline } from "react-icons/fc";
 import { useColorModeValue } from "@chakra-ui/react";
 
@@ -27,8 +27,12 @@ const HomePage: BlitzPage = () => {
       <Text mb={5} color={textColor}>
         hikerherd is still in <strong>beta</strong>, so if you have any feedback
         please{" "}
-        <Link href={Routes.ContactPage()}>
-          <Anchor textDecoration="underline">get in touch</Anchor>
+        <Link
+          href="https://blog.hikerherd.com/contact"
+          textDecoration="underline"
+          isExternal
+        >
+          get in touch
         </Link>
         .
       </Text>
