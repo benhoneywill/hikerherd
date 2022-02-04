@@ -26,7 +26,7 @@ const searchGearQuery = resolver.pipe(
       WHERE
         gear."clonedFromId" IS NULL
       AND
-        (SIMILARITY(gear.name, ${query}) > 0.1 OR COALESCE(SIMILARITY(gear.notes, ${query}), 0) > 0.05)
+        (SIMILARITY(gear.name, ${query}) > 0.15 OR COALESCE(SIMILARITY(gear.notes, ${query}), 0) > 0.1)
       GROUP BY
         gear.id
       ORDER BY
