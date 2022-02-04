@@ -30,7 +30,7 @@ const searchGearQuery = resolver.pipe(
       GROUP BY
         gear.id
       ORDER BY
-        SIMILARITY(gear.name, ${query}) + (COALESCE(SIMILARITY(gear.notes, ${query}), 0) * 0.3) + LEAST(0.1, (Count(clone."clonedFromId") / 100)) DESC
+        (SIMILARITY(gear.name, ${query}) + (COALESCE(SIMILARITY(gear.notes, ${query}), 0) * 0.3)) * (1 + LEAST(0.1, (Count(clone."clonedFromId") / 100))) DESC
       LIMIT
         20;
     `;
