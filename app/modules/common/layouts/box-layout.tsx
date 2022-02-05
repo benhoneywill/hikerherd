@@ -28,7 +28,7 @@ const BoxLayout: BlitzLayout<BoxLayoutProps> = ({
 
       <Flex
         w="100%"
-        minH="100%"
+        minH="100vh"
         align="center"
         justify="center"
         direction="column"
@@ -38,7 +38,7 @@ const BoxLayout: BlitzLayout<BoxLayoutProps> = ({
           as="main"
           w={{ base: "100%", md: "500px" }}
           minH={{ base: "100vh", md: "auto" }}
-          my={{ base: "0", md: 4 }}
+          my={{ base: "0", md: 12 }}
           p={10}
           maxW="100%"
           position="relative"

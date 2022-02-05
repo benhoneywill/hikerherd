@@ -1,10 +1,15 @@
-html,
-body {
+html {
   height: 100%;
 }
 
-#__next {
+body {
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#__next {
+  flex: 1;
 }
 
 body.chakra-ui-light {
