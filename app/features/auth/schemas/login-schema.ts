@@ -1,8 +1,10 @@
 import { z } from "zod";
 
+import requiredStringSchema from "app/modules/common/schemas/required-string-schema";
+
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1, "Password is required"),
+  email: requiredStringSchema().email(),
+  password: requiredStringSchema().min(1, "Password is required"),
 });
 
 export default loginSchema;

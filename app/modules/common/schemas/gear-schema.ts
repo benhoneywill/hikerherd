@@ -2,8 +2,10 @@ import { z } from "zod";
 
 import { Currency } from "db";
 
+import requiredStringSchema from "./required-string-schema";
+
 const gearSchema = z.object({
-  name: z.string(),
+  name: requiredStringSchema(),
   weight: z.number(),
   imageUrl: z.string().nullable().default(null),
   link: z.string().nullable().default(null),
