@@ -20,6 +20,7 @@ const EditorAddLink = () => {
       onSubmit={({ link }) => {
         if (!link || link === "") {
           editor.chain().focus().extendMarkRange("link").unsetLink().run();
+          toggleAddingLink();
           return;
         }
 
@@ -33,7 +34,7 @@ const EditorAddLink = () => {
         toggleAddingLink();
       }}
       render={() => (
-        <TextField name="link" label="Link" placeholder="Enter a URL" />
+        <TextField name="link" label="Link" placeholder="http://..." />
       )}
     />
   );
