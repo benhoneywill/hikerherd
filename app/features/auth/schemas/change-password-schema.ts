@@ -1,9 +1,11 @@
 import { z } from "zod";
 
+import requiredStringSchema from "app/modules/common/schemas/required-string-schema";
+
 import passwordSchema from "./password-schema";
 
 const changePasswordSchema = z.object({
-  currentPassword: z.string(),
+  currentPassword: requiredStringSchema(),
   newPassword: passwordSchema,
 });
 

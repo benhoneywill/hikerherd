@@ -63,7 +63,10 @@ const PackProvider: FC<PackProviderProps> = ({ id, share, children }) => {
           packId={id}
           isOpen={editingPack}
           onClose={() => setEditingPack(false)}
-          onSuccess={() => refetchPack()}
+          onSuccess={() => {
+            refetchPack();
+            setEditingPack(false);
+          }}
         />
       )}
 

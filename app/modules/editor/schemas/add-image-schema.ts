@@ -1,7 +1,9 @@
 import { z } from "zod";
 
+import requiredStringSchema from "app/modules/common/schemas/required-string-schema";
+
 const addImageSchema = z.object({
-  image: z.string().min(1, "An image url is required"),
+  image: requiredStringSchema(),
 });
 
 export default addImageSchema;
