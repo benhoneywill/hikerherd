@@ -14,6 +14,7 @@ const packOrganizerQuery = resolver.pipe(
         id: true,
         notes: true,
         name: true,
+        userId: true,
         categories: {
           orderBy: { index: "asc" },
           select: {
