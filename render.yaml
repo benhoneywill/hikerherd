@@ -11,7 +11,7 @@ services:
   - type: web
     name: hikerherd_web
     env: node
-    plan: starter plus
+    plan: starter
     buildCommand: yarn --frozen-lockfile --prod=false && yarn build && yarn migrate
     startCommand: yarn start
     envVars:

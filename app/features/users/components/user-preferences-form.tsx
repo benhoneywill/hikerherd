@@ -23,7 +23,7 @@ const UserPreferencesForm: BlitzPage = () => {
   return (
     <SimpleForm
       schema={updatePreferencesSchema}
-      initialValues={{ weightUnit: user?.weightUnit }}
+      initialValues={{ weightUnit: user?.weightUnit, currency: user?.currency }}
       submitText="Save preferences"
       onSubmit={async (values) => {
         try {
