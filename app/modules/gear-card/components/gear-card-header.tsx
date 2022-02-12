@@ -1,8 +1,9 @@
 import type { FC } from "react";
 
-import { useContext, Fragment } from "react";
+import { useContext } from "react";
 
-import { Heading, HStack, Link } from "@chakra-ui/layout";
+import { Heading, HStack } from "@chakra-ui/layout";
+import { Image } from "@chakra-ui/image";
 import { Avatar } from "@chakra-ui/avatar";
 import { Icon } from "@chakra-ui/icon";
 import { FaImage } from "react-icons/fa";
@@ -21,17 +22,17 @@ type GearCardHeaderProps = {
 };
 
 const GearCardHeader: FC<GearCardHeaderProps> = ({ menu }) => {
-  const { name, imageUrl, link } = useContext(gearCardContext);
+  const { name, imageUrl, onHeadingClick } = useContext(gearCardContext);
   const avatarColor = useColorModeValue("gray.200", "gray.600");
-
-  const HeadingWrapper: FC = link
-    ? (props) => <Link href={link} {...props} isExternal />
-    : ({ children }) => <Fragment>{children}</Fragment>;
 
   return (
     <HStack justify="space-between" p={2} pb={0}>
       <HStack width={menu ? "calc(100% - 35px)" : "100%"}>
         <Popover
+          maxH="250px"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
           hideContent={!imageUrl}
           trigger={
             <Avatar
@@ -42,14 +43,23 @@ const GearCardHeader: FC<GearCardHeaderProps> = ({ menu }) => {
             />
           }
         >
-          <img src={imageUrl || ""} alt={name} />
+          <Image
+            maxW="100%"
+            maxH="230px"
+            display="inline-block"
+            src={imageUrl || ""}
+            alt={name}
+          />
         </Popover>
 
-        <HeadingWrapper>
-          <Heading size="xs" noOfLines={2}>
-            {name}
-          </Heading>
-        </HeadingWrapper>
+        <Heading
+          size="xs"
+          noOfLines={2}
+          cursor={onHeadingClick ? "pointer" : "inherit"}
+          onClick={onHeadingClick}
+        >
+          {name}
+        </Heading>
       </HStack>
 
       {menu && (

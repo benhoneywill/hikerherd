@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "blitz";
 
 import Fuse from "fuse.js";
-import { SimpleGrid, Stack } from "@chakra-ui/layout";
+import { SimpleGrid, Stack, Heading, Box } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 
 import GearCard from "app/modules/gear-card/components/gear-card";
@@ -36,19 +36,26 @@ const PackAddInventoryItem: FC<PackAddInventoryItemProps> = ({
     if (!items) return [];
 
     if (!query) {
-      return items.map((item) => ({
-        item,
-        matches: [],
-        score: 1,
-      }));
+      return items;
     }
 
     const fuse = new Fuse(items, {
       keys: ["gear.name", "gear.notes"],
     });
 
-    return fuse.search(query);
+    return fuse.search(query).map(({ item }) => item);
   }, [items, query]);
+
+  const groupedItems = useMemo(() => {
+    return filteredItems.reduce((groups, item) => {
+      groups[item.category.index] = {
+        category: item.category.name,
+        index: item.category.index,
+        items: [...(groups[item.category.index]?.items || []), item],
+      };
+      return groups;
+    }, [] as { category: string; index: number; items: typeof filteredItems }[]);
+  }, [filteredItems]);
 
   const typeName = displayCategoryType(type);
 
@@ -62,36 +69,51 @@ const PackAddInventoryItem: FC<PackAddInventoryItemProps> = ({
         isLoading={isLoading}
         items={filteredItems}
       >
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
-          {filteredItems.map(({ item }) => (
-            <GearCard
-              key={item.id}
-              name={item.gear.name}
-              weight={item.gear.weight}
-              price={item.gear.price}
-              currency={item.gear.currency}
-              consumable={item.gear.consumable}
-              link={item.gear.link}
-              notes={item.gear.notes}
-              imageUrl={item.gear.imageUrl}
+        <Stack spacing={4} bg="gray.50" m={-4} mt={2} p={4}>
+          {groupedItems.map((group) => (
+            <Box
+              key={group.index}
+              border="1px solid"
+              borderColor="gray.200"
+              bg="white"
+              borderRadius="md"
             >
-              <Button
-                size="sm"
-                colorScheme="green"
-                isFullWidth
-                isLoading={isAddingTo === item.id}
-                onClick={() => {
-                  setIsAddingTo(item.id);
-                  addToPack(item.gear.id).then(() => {
-                    setIsAddingTo(null);
-                  });
-                }}
-              >
-                Add to pack
-              </Button>
-            </GearCard>
+              <Heading size="sm" p={3} pb={1}>
+                {group.category}
+              </Heading>
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3} p={2}>
+                {group.items.map((item) => (
+                  <GearCard
+                    key={item.id}
+                    name={item.gear.name}
+                    weight={item.gear.weight}
+                    price={item.gear.price}
+                    currency={item.gear.currency}
+                    consumable={item.gear.consumable}
+                    link={item.gear.link}
+                    notes={item.gear.notes}
+                    imageUrl={item.gear.imageUrl}
+                  >
+                    <Button
+                      size="sm"
+                      colorScheme="green"
+                      isFullWidth
+                      isLoading={isAddingTo === item.id}
+                      onClick={() => {
+                        setIsAddingTo(item.id);
+                        addToPack(item.gear.id).then(() => {
+                          setIsAddingTo(null);
+                        });
+                      }}
+                    >
+                      Add to pack
+                    </Button>
+                  </GearCard>
+                ))}
+              </SimpleGrid>
+            </Box>
           ))}
-        </SimpleGrid>
+        </Stack>
       </SearchResults>
     </Stack>
   );

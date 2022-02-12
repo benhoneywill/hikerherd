@@ -24,6 +24,10 @@ const EditorAddLink = () => {
           return;
         }
 
+        if (!link.match(/^https?\:\/\//)) {
+          link = "https://" + link;
+        }
+
         editor
           .chain()
           .focus()
@@ -34,7 +38,11 @@ const EditorAddLink = () => {
         toggleAddingLink();
       }}
       render={() => (
-        <TextField name="link" label="Link" placeholder="http://..." />
+        <TextField
+          name="link"
+          label="Link"
+          placeholder="Enter the URL to link"
+        />
       )}
     />
   );

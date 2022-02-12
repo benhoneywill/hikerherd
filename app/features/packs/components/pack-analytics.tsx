@@ -14,17 +14,23 @@ import PackTable from "./pack-table";
 const PackAnalytics: FC = () => {
   const theme = useTheme();
   const { categories } = useContext(packContext);
-
+  console.log(theme.colors);
   const colors: ColorHues[] = [
     theme.colors.blue,
     theme.colors.purple,
     theme.colors.teal,
     theme.colors.cyan,
     theme.colors.pink,
+    theme.colors.telegram,
     theme.colors.green,
     theme.colors.red,
+    theme.colors.facebook,
     theme.colors.orange,
     theme.colors.yellow,
+    theme.colors.linkedin,
+    theme.colors.gray,
+    theme.colors.messenger,
+    theme.colors.whatsapp,
   ];
 
   const rootColorScale = colors.map(

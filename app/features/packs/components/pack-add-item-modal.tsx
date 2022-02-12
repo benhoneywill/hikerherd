@@ -1,5 +1,6 @@
 import type { FC } from "react";
 
+import { useState } from "react";
 import { useMutation } from "blitz";
 
 import { FcPlus, FcList, FcRating, FcSearch } from "react-icons/fc";
@@ -30,6 +31,10 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
   const [addGearToPack] = useMutation(addGearToPackMutation);
   const toast = useToast();
 
+  const [isAddingFromSearch, setIsAddingFromSearch] = useState<string | null>(
+    null
+  );
+
   const handleSuccess = () => {
     onSuccess();
     toast({
@@ -37,7 +42,6 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
       description: "The item has been added to your pack.",
       status: "success",
     });
-    onClose();
   };
 
   const addToPack = async (gearId: string) => {
@@ -73,7 +77,10 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
             <AddPackGearForm
               categoryId={categoryId}
               onClose={onClose}
-              onSuccess={handleSuccess}
+              onSuccess={() => {
+                handleSuccess();
+                onClose();
+              }}
             />
           ),
         },
@@ -85,10 +92,14 @@ const PackAddItemModal: FC<PackAddItemModalProps> = ({
               gearActions={(gear) => (
                 <Button
                   isFullWidth
+                  size="sm"
+                  colorScheme="green"
+                  isLoading={isAddingFromSearch === gear.id}
                   onClick={async () => {
                     if (categoryId) {
+                      setIsAddingFromSearch(gear.id);
                       await addToPack(gear.id);
-                      handleSuccess();
+                      setIsAddingFromSearch(null);
                     }
                   }}
                 >

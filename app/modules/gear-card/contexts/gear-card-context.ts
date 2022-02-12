@@ -13,6 +13,7 @@ export type GearCardContext = {
   link?: string | null;
   notes?: string | null;
   quantity?: number;
+  onHeadingClick?: () => void;
 };
 
 const gearCardContext = createContext<GearCardContext>({} as GearCardContext);
