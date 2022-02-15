@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import type { PopoverBodyProps } from "@chakra-ui/popover";
 
 import { Portal } from "@chakra-ui/portal";
 import {
@@ -14,19 +15,20 @@ type PopoverProps = {
   hideContent?: boolean;
 };
 
-const Popover: FC<PopoverProps> = ({
+const Popover: FC<PopoverProps & PopoverBodyProps> = ({
   trigger,
   children,
   hideContent = false,
+  ...props
 }) => {
   return (
-    <UiPopover trigger="hover">
+    <UiPopover trigger="hover" flip>
       <PopoverTrigger>{trigger}</PopoverTrigger>
       {!hideContent && (
         <Portal>
           <PopoverContent>
             <PopoverArrow />
-            <PopoverBody>{children}</PopoverBody>
+            <PopoverBody {...props}>{children}</PopoverBody>
           </PopoverContent>
         </Portal>
       )}

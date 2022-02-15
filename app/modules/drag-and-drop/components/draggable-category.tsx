@@ -23,7 +23,7 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
   category,
   index,
 }) => {
-  const { categoryMenu, addItemToCategory, readonly } =
+  const { categoryMenu, addItemToCategory, readonly, editCategory } =
     useContext(dragAndDropContext);
 
   const bg = useColorModeValue("white", "gray.700");
@@ -44,6 +44,7 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
           ref={provided.innerRef}
           style={provided.draggableProps.style}
           userSelect="none"
+          pointerEvents="all"
           px={2}
           pb={2}
           borderStyle="solid"
@@ -64,7 +65,13 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
             py={3}
             pb={2}
           >
-            <Heading size="sm">{category.name}</Heading>
+            <Heading
+              size="sm"
+              cursor={editCategory && "pointer"}
+              onClick={editCategory && (() => editCategory(category.id))}
+            >
+              {category.name}
+            </Heading>
             {categoryMenu && (
               <Menu>
                 <MenuButton

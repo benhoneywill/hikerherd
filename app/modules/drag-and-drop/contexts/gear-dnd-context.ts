@@ -33,9 +33,11 @@ export type DragAndDropContext = {
 
   addCategory?: () => void;
   addItemToCategory?: (categoryId: string) => void;
+  editCategory?: (id: string) => void;
 
   categoryMenu?: (item: DragAndDropState[number]) => JSX.Element;
   itemMenu?: (item: DragAndDropState[number]["items"][number]) => JSX.Element;
+  editItem?: (id: string) => void;
 };
 
 const dragAndDropContext = createContext<DragAndDropContext>(

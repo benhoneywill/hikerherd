@@ -37,6 +37,12 @@ const PackPieChart: FC<PackPieChartProps> = ({ rootColors, colors }) => {
   const [active, setActive] = useState<number>(0);
 
   const nonZeroCategories = categories.filter(({ weight }) => weight > 0);
+  const nonZeroRootColors = rootColors.filter(
+    (_, index) => (categories[index]?.weight || 0) > 0
+  );
+  const nonZeroColors = colors.filter(
+    (_, index) => (categories[index]?.weight || 0) > 0
+  );
 
   return (
     <Box
@@ -55,7 +61,7 @@ const PackPieChart: FC<PackPieChartProps> = ({ rootColors, colors }) => {
           data={nonZeroCategories}
           x="name"
           y="weight"
-          colorScale={rootColors}
+          colorScale={nonZeroRootColors}
           padAngle={1}
           labelComponent={
             <VictoryTooltip
@@ -92,7 +98,9 @@ const PackPieChart: FC<PackPieChartProps> = ({ rootColors, colors }) => {
                 weight: item.gear.weight * (item.quantity || 1),
               }))}
             animate={{ duration: 200 }}
-            colorScale={Object.values(colors[active] || {}).slice(1)}
+            colorScale={Object.values(
+              nonZeroColors[active % nonZeroColors.length] || {}
+            ).slice(1)}
             standalone={false}
             width={200}
             height={200}

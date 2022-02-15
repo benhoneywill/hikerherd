@@ -16,7 +16,7 @@ type DraggableGearProps = {
 };
 
 const DraggableGear: BlitzPage<DraggableGearProps> = ({ item, index }) => {
-  const { itemMenu, readonly } = useContext(dragAndDropContext);
+  const { itemMenu, readonly, editItem } = useContext(dragAndDropContext);
 
   return (
     <Draggable draggableId={item.id} index={index} isDragDisabled={readonly}>
@@ -42,6 +42,7 @@ const DraggableGear: BlitzPage<DraggableGearProps> = ({ item, index }) => {
             quantity={item.quantity}
             menu={itemMenu && itemMenu(item)}
             imageUrl={item.gear.imageUrl}
+            onHeadingClick={editItem && (() => editItem(item.id))}
           />
         </Box>
       )}

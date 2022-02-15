@@ -2,7 +2,7 @@ import type { FC } from "react";
 
 import { useContext } from "react";
 
-import { Box, HStack } from "@chakra-ui/layout";
+import { Box } from "@chakra-ui/layout";
 import { Droppable } from "react-beautiful-dnd";
 import { Button } from "@chakra-ui/button";
 import { useColorModeValue } from "@chakra-ui/react";
@@ -10,6 +10,7 @@ import { useColorModeValue } from "@chakra-ui/react";
 import dragAndDropContext from "../contexts/gear-dnd-context";
 
 import DraggableCategory from "./draggable-category";
+import HorizontalScroller from "./horizontal-scroller";
 
 const CategoryDropZone: FC = () => {
   const { addCategory, state, readonly } = useContext(dragAndDropContext);
@@ -31,17 +32,9 @@ const CategoryDropZone: FC = () => {
           width="100%"
           height="100%"
         >
-          <HStack
-            spacing={0}
-            overflowX="auto"
-            alignItems="flex-start"
-            width="100%"
-            height="100%"
-            px={3}
-            py={6}
-          >
+          <HorizontalScroller>
             {state.map((category, index) => (
-              <Box key={category.id} height="100%">
+              <Box key={category.id} height="100%" pointerEvents="none">
                 <DraggableCategory category={category} index={index} />
               </Box>
             ))}
@@ -66,7 +59,7 @@ const CategoryDropZone: FC = () => {
                 </Button>
               </Box>
             )}
-          </HStack>
+          </HorizontalScroller>
         </Box>
       )}
     </Droppable>

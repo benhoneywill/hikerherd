@@ -21,10 +21,16 @@ const PackAnalytics: FC = () => {
     theme.colors.teal,
     theme.colors.cyan,
     theme.colors.pink,
+    theme.colors.telegram,
     theme.colors.green,
     theme.colors.red,
+    theme.colors.facebook,
     theme.colors.orange,
     theme.colors.yellow,
+    theme.colors.linkedin,
+    theme.colors.gray,
+    theme.colors.messenger,
+    theme.colors.whatsapp,
   ];
 
   const rootColorScale = colors.map(

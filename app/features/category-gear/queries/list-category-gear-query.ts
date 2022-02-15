@@ -18,6 +18,12 @@ const listCategoryGearQuery = resolver.pipe(
       },
       select: {
         id: true,
+        category: {
+          select: {
+            name: true,
+            index: true,
+          },
+        },
         gear: {
           select: {
             id: true,
