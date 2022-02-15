@@ -7,7 +7,6 @@ import { Draggable } from "react-beautiful-dnd";
 import { Box } from "@chakra-ui/layout";
 
 import GearCard from "app/modules/gear-card/components/gear-card";
-import gearOrganizerContext from "app/features/inventory/contexts/gear-organizer-context";
 
 import dragAndDropContext from "../contexts/gear-dnd-context";
 
@@ -17,8 +16,7 @@ type DraggableGearProps = {
 };
 
 const DraggableGear: BlitzPage<DraggableGearProps> = ({ item, index }) => {
-  const { itemMenu, readonly } = useContext(dragAndDropContext);
-  const { editItem } = useContext(gearOrganizerContext);
+  const { itemMenu, readonly, editItem } = useContext(dragAndDropContext);
 
   return (
     <Draggable draggableId={item.id} index={index} isDragDisabled={readonly}>
@@ -44,7 +42,7 @@ const DraggableGear: BlitzPage<DraggableGearProps> = ({ item, index }) => {
             quantity={item.quantity}
             menu={itemMenu && itemMenu(item)}
             imageUrl={item.gear.imageUrl}
-            onHeadingClick={() => editItem(item.id)}
+            onHeadingClick={editItem && (() => editItem(item.id))}
           />
         </Box>
       )}

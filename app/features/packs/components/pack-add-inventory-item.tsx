@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import type { CategoryType } from "db";
+import type { PromiseReturnType } from "blitz";
 
 import { useMemo, useState } from "react";
 import { useQuery } from "blitz";
@@ -14,6 +15,12 @@ import listCategoryGearQuery from "app/features/category-gear/queries/list-categ
 import displayCategoryType from "app/features/categories/helpers/display-category-type";
 import SearchResults from "app/features/discover/components/search-results";
 
+type GroupedItems = {
+  category: string;
+  index: number;
+  items: PromiseReturnType<typeof listCategoryGearQuery>;
+};
+
 type PackAddInventoryItemProps = {
   type: CategoryType;
   addToPack: (gearId: string) => Promise<void>;
@@ -26,35 +33,39 @@ const PackAddInventoryItem: FC<PackAddInventoryItemProps> = ({
   const [query, setQuery] = useState("");
   const [isAddingTo, setIsAddingTo] = useState<string | null>(null);
 
-  const [items, { isLoading }] = useQuery(
+  const [categoryGear, { isLoading }] = useQuery(
     listCategoryGearQuery,
     { type },
     { suspense: false }
   );
 
   const filteredItems = useMemo(() => {
-    if (!items) return [];
+    if (!categoryGear) return [];
 
     if (!query) {
-      return items;
+      return categoryGear;
     }
 
-    const fuse = new Fuse(items, {
+    const fuse = new Fuse(categoryGear, {
       keys: ["gear.name", "gear.notes"],
     });
 
     return fuse.search(query).map(({ item }) => item);
-  }, [items, query]);
+  }, [categoryGear, query]);
 
   const groupedItems = useMemo(() => {
     return filteredItems.reduce((groups, item) => {
+      const items: GroupedItems["items"] =
+        groups[item.category.index]?.items || [];
+
       groups[item.category.index] = {
         category: item.category.name,
         index: item.category.index,
-        items: [...(groups[item.category.index]?.items || []), item],
+        items: [...items, item],
       };
+
       return groups;
-    }, [] as { category: string; index: number; items: typeof filteredItems }[]);
+    }, [] as GroupedItems[]);
   }, [filteredItems]);
 
   const typeName = displayCategoryType(type);

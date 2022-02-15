@@ -32,7 +32,7 @@ const EditorAddLink = () => {
           .chain()
           .focus()
           .extendMarkRange("link")
-          .setLink({ href: link })
+          .setLink({ href: encodeURI(link) })
           .run();
 
         toggleAddingLink();

@@ -21,7 +21,7 @@ const gearSchema = z.object({
         link = "https://" + link;
       }
 
-      return link;
+      return link ? encodeURI(link) : null;
     }),
 });
 

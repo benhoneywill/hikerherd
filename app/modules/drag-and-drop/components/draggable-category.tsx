@@ -10,8 +10,6 @@ import { useColorModeValue } from "@chakra-ui/react";
 import { Menu, MenuButton } from "@chakra-ui/menu";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
-import gearOrganizerContext from "app/features/inventory/contexts/gear-organizer-context";
-
 import dragAndDropContext from "../contexts/gear-dnd-context";
 
 import DraggableGear from "./draggable-gear";
@@ -25,9 +23,8 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
   category,
   index,
 }) => {
-  const { categoryMenu, addItemToCategory, readonly } =
+  const { categoryMenu, addItemToCategory, readonly, editCategory } =
     useContext(dragAndDropContext);
-  const { editCategory } = useContext(gearOrganizerContext);
 
   const bg = useColorModeValue("white", "gray.700");
   const innerBg = useColorModeValue("", "gray.700");
@@ -70,8 +67,8 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
           >
             <Heading
               size="sm"
-              cursor="pointer"
-              onClick={() => editCategory(category.id)}
+              cursor={editCategory && "pointer"}
+              onClick={editCategory && (() => editCategory(category.id))}
             >
               {category.name}
             </Heading>

@@ -14,7 +14,7 @@ import PackTable from "./pack-table";
 const PackAnalytics: FC = () => {
   const theme = useTheme();
   const { categories } = useContext(packContext);
-  console.log(theme.colors);
+
   const colors: ColorHues[] = [
     theme.colors.blue,
     theme.colors.purple,

@@ -15,8 +15,15 @@ import PackOrganizerItemMenu from "./pack-organizer-item-menu";
 import PackOrganizerCategoryMenu from "./pack-organizer-category-menu";
 
 const PackOrganizerDragAndDrop: FC = () => {
-  const { state, setState, refetch, addCategory, addItemToCategory } =
-    useContext(gearOrganizerContext);
+  const {
+    state,
+    setState,
+    refetch,
+    addCategory,
+    addItemToCategory,
+    editCategory,
+    editItem,
+  } = useContext(gearOrganizerContext);
 
   const [movePackCategory] = useMutation(movePackCategoryMutation);
   const [movePackGear] = useMutation(movePackGearMutation);
@@ -76,7 +83,9 @@ const PackOrganizerDragAndDrop: FC = () => {
       handleDrop={handleDrop}
       state={state}
       addCategory={addCategory}
+      editCategory={editCategory}
       addItemToCategory={addItemToCategory}
+      editItem={editItem}
       categoryMenu={(category) => (
         <PackOrganizerCategoryMenu category={category} />
       )}

@@ -23,8 +23,15 @@ type GearOrganizerDragAndDropProps = {
 const GearOrganizerDragAndDrop: FC<GearOrganizerDragAndDropProps> = ({
   type,
 }) => {
-  const { state, setState, refetch, addCategory, addItemToCategory } =
-    useContext(gearOrganizerContext);
+  const {
+    state,
+    setState,
+    refetch,
+    addCategory,
+    addItemToCategory,
+    editCategory,
+    editItem,
+  } = useContext(gearOrganizerContext);
 
   const [moveCategory] = useMutation(moveCategoryMutation);
   const [moveGear] = useMutation(moveCategoryGearMutation);
@@ -82,7 +89,9 @@ const GearOrganizerDragAndDrop: FC<GearOrganizerDragAndDropProps> = ({
       handleDrop={handleDrop}
       state={state}
       addCategory={addCategory}
+      editCategory={editCategory}
       addItemToCategory={addItemToCategory}
+      editItem={editItem}
       categoryMenu={(category) => (
         <GearOrganizerCategoryMenu category={category} />
       )}
