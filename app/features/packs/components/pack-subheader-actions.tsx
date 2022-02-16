@@ -3,18 +3,14 @@ import type { FC } from "react";
 import { useContext } from "react";
 
 import { HStack } from "@chakra-ui/layout";
-import { Button, IconButton } from "@chakra-ui/button";
+import { Button } from "@chakra-ui/button";
 import { Icon } from "@chakra-ui/icon";
 import { useToast } from "@chakra-ui/toast";
-import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/menu";
-import {
-  FaArrowRight,
-  FaChevronDown,
-  FaCog,
-  FaEdit,
-  FaShare,
-} from "react-icons/fa";
+import { MenuItem, MenuList } from "@chakra-ui/menu";
+import { FaArrowRight, FaEdit, FaShare } from "react-icons/fa";
 import { FcDoughnutChart } from "react-icons/fc";
+
+import SettingsMenuButton from "app/modules/common/components/settings-menu-button";
 
 import packShareLink from "../helpers/pack-share-link";
 import packContext from "../contexts/pack-context";
@@ -38,19 +34,7 @@ const PackSubheaderActions: FC = () => {
   return (
     <HStack>
       {!share && (
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            aria-label="actions"
-            size="sm"
-            variant="outline"
-            px={2}
-            rightIcon={<Icon as={FaChevronDown} pr={1} mr={1} />}
-            icon={
-              <Icon as={FaCog} color="gray.500" w={5} h={5} pl={1} ml={1} />
-            }
-          />
-
+        <SettingsMenuButton>
           <MenuList>
             <MenuItem icon={<FaEdit />} onClick={editPack}>
               Edit
@@ -59,7 +43,7 @@ const PackSubheaderActions: FC = () => {
               Share
             </MenuItem>
           </MenuList>
-        </Menu>
+        </SettingsMenuButton>
       )}
 
       <Button

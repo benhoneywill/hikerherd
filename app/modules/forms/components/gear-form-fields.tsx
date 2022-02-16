@@ -82,14 +82,14 @@ const GearFormFields: FC<GearFormFieldsProps> = ({ includeWorn }) => {
       <TextField
         name="link"
         label="Link"
-        placeholder="Link to somewhere"
+        placeholder="https://..."
         icon={<Icon color="gray.400" as={FaLink} />}
       />
 
       <TextField
         name="imageUrl"
         label="Image"
-        placeholder="Enter an image url"
+        placeholder="https://..."
         icon={<Icon color="gray.400" as={FaImage} />}
       />
 

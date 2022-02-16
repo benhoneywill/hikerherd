@@ -9,8 +9,8 @@ const createPackGearMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ categoryId, ...values }, ctx) => {
-    return db.$transaction(async () => {
-      const packCategory = await db.packCategory.findUnique({
+    return db.$transaction(async (prisma) => {
+      const packCategory = await prisma.packCategory.findUnique({
         where: {
           id: categoryId,
         },
@@ -35,7 +35,7 @@ const createPackGearMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      return db.packCategoryItem.create({
+      return prisma.packCategoryItem.create({
         data: {
           worn: values.worn,
           index: packCategory._count?.items || 0,

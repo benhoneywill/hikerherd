@@ -9,8 +9,8 @@ const deletePackGearMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id }, ctx) => {
-    return db.$transaction(async () => {
-      const item = await db.packCategoryItem.findUnique({
+    return db.$transaction(async (prisma) => {
+      const item = await prisma.packCategoryItem.findUnique({
         where: { id },
         select: {
           gearId: true,
@@ -36,20 +36,20 @@ const deletePackGearMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      const inventoryItem = await db.categoryItem.findFirst({
+      const inventoryItem = await prisma.categoryItem.findFirst({
         where: {
           gearId: item.gearId,
         },
       });
 
-      const clone = await db.gear.findFirst({
+      const clone = await prisma.gear.findFirst({
         where: {
           clonedFromId: item.gearId,
         },
       });
 
       // Decrement the index of all items after this one in the category
-      await db.packCategoryItem.updateMany({
+      await prisma.packCategoryItem.updateMany({
         where: {
           categoryId: item.category.id,
           index: { gt: item.index },
@@ -59,14 +59,14 @@ const deletePackGearMutation = resolver.pipe(
         },
       });
 
-      const result = await db.packCategoryItem.delete({
+      const result = await prisma.packCategoryItem.delete({
         where: {
           id,
         },
       });
 
       if (!inventoryItem && !clone) {
-        await db.gear.delete({ where: { id: item.gearId } });
+        await prisma.gear.delete({ where: { id: item.gearId } });
       }
 
       return result;

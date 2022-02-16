@@ -21,15 +21,15 @@ const createPackCategoryMutation = resolver.pipe(
       throw new AuthorizationError();
     }
 
-    return db.$transaction(async () => {
-      const lastCategory = await db.packCategory.findFirst({
+    return db.$transaction(async (prisma) => {
+      const lastCategory = await prisma.packCategory.findFirst({
         where: { packId },
         orderBy: { index: "desc" },
       });
 
       const index = lastCategory ? lastCategory.index + 1 : 0;
 
-      return await db.packCategory.create({
+      return await prisma.packCategory.create({
         data: {
           name,
           index,

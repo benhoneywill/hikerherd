@@ -9,8 +9,8 @@ const moveCategoryMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id, index }, ctx) => {
-    return db.$transaction(async () => {
-      const category = await db.category.findUnique({
+    return db.$transaction(async (prisma) => {
+      const category = await prisma.category.findUnique({
         where: { id },
         select: {
           type: true,
@@ -28,7 +28,7 @@ const moveCategoryMutation = resolver.pipe(
       }
 
       // First, every category after this one has it's index decremented
-      await db.category.updateMany({
+      await prisma.category.updateMany({
         where: {
           userId: ctx.session.userId,
           type: category.type,
@@ -41,7 +41,7 @@ const moveCategoryMutation = resolver.pipe(
 
       // Then, every category after or equal to the new index
       // has their indexes incremented
-      await db.category.updateMany({
+      await prisma.category.updateMany({
         where: {
           userId: ctx.session.userId,
           type: category.type,
@@ -55,7 +55,7 @@ const moveCategoryMutation = resolver.pipe(
       });
 
       // Save the category in it's new index
-      return await db.category.update({
+      return await prisma.category.update({
         where: { id },
         data: { index },
       });

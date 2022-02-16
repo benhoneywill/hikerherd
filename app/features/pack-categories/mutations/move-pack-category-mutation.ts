@@ -9,8 +9,8 @@ const movePackCategoryMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id, index }, ctx) => {
-    return db.$transaction(async () => {
-      const category = await db.packCategory.findUnique({
+    return db.$transaction(async (prisma) => {
+      const category = await prisma.packCategory.findUnique({
         where: { id },
         select: {
           index: true,
@@ -29,7 +29,7 @@ const movePackCategoryMutation = resolver.pipe(
       }
 
       // First, every category after this one has it's index decremented
-      await db.packCategory.updateMany({
+      await prisma.packCategory.updateMany({
         where: {
           packId: category.pack.id,
           index: { gt: category.index },
@@ -41,7 +41,7 @@ const movePackCategoryMutation = resolver.pipe(
 
       // Then, every category after or equal to the new index
       // has their indexes incremented
-      await db.packCategory.updateMany({
+      await prisma.packCategory.updateMany({
         where: {
           packId: category.pack.id,
           pack: { userId: ctx.session.userId },
@@ -55,7 +55,7 @@ const movePackCategoryMutation = resolver.pipe(
       });
 
       // Save the category in it's new index
-      return await db.packCategory.update({
+      return await prisma.packCategory.update({
         where: { id },
         data: {
           index,

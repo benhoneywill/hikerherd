@@ -13,7 +13,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/modal";
 import { Form as FinalForm } from "react-final-form";
-import { HStack, Stack } from "@chakra-ui/layout";
+import { HStack, Stack, UnorderedList, ListItem } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { Alert, AlertIcon } from "@chakra-ui/alert";
 
@@ -59,7 +59,15 @@ const ModalForm: FormComponent<ModalFormProps> = ({
                 {form.submitError && (
                   <Alert status="error" mb={6}>
                     <AlertIcon />
-                    {form.submitError}
+                    {Array.isArray(form.submitError) ? (
+                      <UnorderedList>
+                        {form.submitError.map((error, i) => (
+                          <ListItem key={i}>{error}</ListItem>
+                        ))}
+                      </UnorderedList>
+                    ) : (
+                      form.submitError
+                    )}
                   </Alert>
                 )}
 

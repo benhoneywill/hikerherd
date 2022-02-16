@@ -17,8 +17,8 @@ export const ozTog = (ounces: number) => {
 };
 
 export const withDecimalPlaces = (weight: number, length: number = 2) => {
-  if (weight.toString().indexOf(".") != -1) {
-    return weight.toFixed(length);
+  if (weight.toString().indexOf(".") !== -1) {
+    return Number(weight.toFixed(length));
   } else {
     return weight;
   }
