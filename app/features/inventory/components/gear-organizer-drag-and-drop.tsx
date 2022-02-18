@@ -5,6 +5,8 @@ import type { CategoryType } from "db";
 import { useContext } from "react";
 import { useMutation } from "blitz";
 
+import { useToast } from "@chakra-ui/react";
+
 import DragAndDrop from "app/modules/drag-and-drop/components/drag-and-drop";
 import reorder from "app/modules/drag-and-drop/helpers/reorder";
 import reorderNested from "app/modules/drag-and-drop/helpers/reorder-nested";
@@ -32,6 +34,7 @@ const GearOrganizerDragAndDrop: FC<GearOrganizerDragAndDropProps> = ({
     editCategory,
     editItem,
   } = useContext(gearOrganizerContext);
+  const toast = useToast();
 
   const [moveCategory] = useMutation(moveCategoryMutation);
   const [moveGear] = useMutation(moveCategoryGearMutation);
@@ -73,15 +76,22 @@ const GearOrganizerDragAndDrop: FC<GearOrganizerDragAndDropProps> = ({
   };
 
   const handleDrop = async (drop: DropResult) => {
-    if (drop.type === "category") {
-      await handleCategoryDrop(drop);
-    }
+    try {
+      if (drop.type === "category") {
+        await handleCategoryDrop(drop);
+      }
 
-    if (drop.type === "item") {
-      await handleItemDrop(drop);
+      if (drop.type === "item") {
+        await handleItemDrop(drop);
+      }
+    } catch (err) {
+      refetch();
+      toast({
+        title: "Something went wrong",
+        description: "There was a problem moving that item.",
+        status: "error",
+      });
     }
-
-    refetch();
   };
 
   return (
@@ -92,6 +102,7 @@ const GearOrganizerDragAndDrop: FC<GearOrganizerDragAndDropProps> = ({
       editCategory={editCategory}
       addItemToCategory={addItemToCategory}
       editItem={editItem}
+      hideCategoryTotals
       categoryMenu={(category) => (
         <GearOrganizerCategoryMenu category={category} />
       )}

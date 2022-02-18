@@ -1,22 +1,39 @@
 import type { FC } from "react";
 
-import { useContext } from "react";
+import { useState, Fragment, useContext } from "react";
+import { invalidateQuery, useMutation } from "blitz";
 
 import { HStack } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { Icon } from "@chakra-ui/icon";
 import { useToast } from "@chakra-ui/toast";
 import { MenuItem, MenuList } from "@chakra-ui/menu";
-import { FaArrowRight, FaEdit, FaShare } from "react-icons/fa";
+import {
+  FaArrowRight,
+  FaEdit,
+  FaFileExport,
+  FaFileImport,
+  FaShare,
+} from "react-icons/fa";
 import { FcDoughnutChart } from "react-icons/fc";
 
 import SettingsMenuButton from "app/modules/common/components/settings-menu-button";
+import downloadCsv from "app/modules/common/helpers/download-csv";
+import userPreferencesContext from "app/features/users/contexts/user-preferences-context";
+import displayWeight from "app/modules/common/helpers/display-weight";
 
 import packShareLink from "../helpers/pack-share-link";
 import packContext from "../contexts/pack-context";
+import packExportCsvMutation from "../mutations/pack-export-csv-mutation";
+import packOrganizerQuery from "../queries/pack-organizer-query";
+
+import ImportPackCsvForm from "./import-pack-csv-form";
 
 const PackSubheaderActions: FC = () => {
   const toast = useToast();
+  const [importing, setImporting] = useState(false);
+  const { baseWeight } = useContext(packContext);
+  const { weightUnit } = useContext(userPreferencesContext);
 
   const { pack, showDetails, editPack, share } = useContext(packContext);
 
@@ -31,33 +48,64 @@ const PackSubheaderActions: FC = () => {
     });
   };
 
-  return (
-    <HStack>
-      {!share && (
-        <SettingsMenuButton>
-          <MenuList>
-            <MenuItem icon={<FaEdit />} onClick={editPack}>
-              Edit
-            </MenuItem>
-            <MenuItem icon={<FaShare />} onClick={copyShareLink}>
-              Share
-            </MenuItem>
-          </MenuList>
-        </SettingsMenuButton>
-      )}
+  const [exportCsv] = useMutation(packExportCsvMutation);
 
-      <Button
-        size="sm"
-        leftIcon={<Icon w={6} h={6} as={FcDoughnutChart} />}
-        rightIcon={<Icon w={3} h={3} as={FaArrowRight} />}
-        fontWeight="bold"
-        variant="outline"
-        colorScheme="blue"
-        onClick={showDetails}
-      >
-        Details
-      </Button>
-    </HStack>
+  const exportToCsv = async () => {
+    const csv = await exportCsv({ id: pack.id });
+    downloadCsv(pack.name || "pack", csv);
+  };
+
+  return (
+    <Fragment>
+      <ImportPackCsvForm
+        packId={pack.id}
+        isOpen={importing}
+        onClose={() => setImporting(false)}
+        onSuccess={() => {
+          invalidateQuery(packOrganizerQuery);
+          toast({
+            title: "Your gear has been imported",
+            status: "success",
+          });
+        }}
+      />
+
+      <HStack>
+        {!share && (
+          <SettingsMenuButton>
+            <MenuList>
+              <MenuItem icon={<FaEdit />} onClick={editPack}>
+                Edit
+              </MenuItem>
+              <MenuItem icon={<FaShare />} onClick={copyShareLink}>
+                Share
+              </MenuItem>
+              <MenuItem icon={<FaFileExport />} onClick={exportToCsv}>
+                Export CSV
+              </MenuItem>
+              <MenuItem
+                icon={<FaFileImport />}
+                onClick={() => setImporting(true)}
+              >
+                Import CSV
+              </MenuItem>
+            </MenuList>
+          </SettingsMenuButton>
+        )}
+
+        <Button
+          size="sm"
+          leftIcon={<Icon w={5} h={5} as={FcDoughnutChart} />}
+          rightIcon={<Icon w={3} h={3} as={FaArrowRight} />}
+          fontWeight="bold"
+          variant="outline"
+          colorScheme="blue"
+          onClick={showDetails}
+        >
+          {displayWeight(baseWeight, weightUnit, true)}
+        </Button>
+      </HStack>
+    </Fragment>
   );
 };
 

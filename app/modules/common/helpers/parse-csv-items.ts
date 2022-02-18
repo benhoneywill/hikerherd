@@ -9,14 +9,14 @@ const csvItemSchema = z.object({
   name: z.string().min(1),
   category: z.string().min(1),
   weight: z.number().min(0),
-  unit: z.enum(["g", "oz"]),
+  unit: z.enum(["gram", "ounce"]),
   notes: z.string().min(1).nullable().optional(),
   price: z.number().min(0).nullable().optional(),
   currency: z.enum(["$", "£", "€"]).nullable().optional(),
   link: z.string().url().nullable().optional(),
   image: z.string().url().nullable().optional(),
-  consumable: z.boolean().nullable().optional(),
-  worn: z.boolean().nullable().optional(),
+  consumable: z.union([z.string(), z.boolean()]).nullable().optional(),
+  worn: z.union([z.string(), z.boolean()]).nullable().optional(),
   quantity: z.number().min(0).nullable().optional(),
 });
 
@@ -28,12 +28,12 @@ const parseCsvItems = (
 
     return {
       category: valid.category,
-      worn: valid.worn || null,
+      worn: !!valid.worn || null,
       quantity: valid.quantity || 1,
       notes: valid.notes || null,
       gear: {
         name: valid.name,
-        weight: valid.unit === "g" ? valid.weight : ozTog(valid.weight),
+        weight: valid.unit === "gram" ? valid.weight : ozTog(valid.weight),
         price: valid.price ? valid.price * 100 : null,
         currency: signToCurrency(valid.currency),
         consumable: !!valid.consumable,

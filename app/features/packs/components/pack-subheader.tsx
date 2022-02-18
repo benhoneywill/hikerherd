@@ -20,7 +20,7 @@ const SubheaderPackPicker: FC = () => {
 
   if (share) {
     return (
-      <HStack pl={1} isTruncated>
+      <HStack pl={1}>
         <Icon as={FcTimeline} w={5} h={5} />
         <Heading size="sm" isTruncated>
           {pack.name}

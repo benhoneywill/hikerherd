@@ -29,6 +29,7 @@ export type DragAndDropState = DragAndDropCategory[];
 
 export type DragAndDropContext = {
   readonly?: boolean;
+  hideCategoryTotals?: boolean;
   state: DragAndDropState;
 
   addCategory?: () => void;

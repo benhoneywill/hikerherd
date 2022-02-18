@@ -15,7 +15,7 @@ import Subheader from "app/modules/common/components/subheader";
 import SettingsMenuButton from "app/modules/common/components/settings-menu-button";
 import downloadCsv from "app/modules/common/helpers/download-csv";
 
-import inventoryCsvMutation from "../mutations/inventory-csv-mutation";
+import inventoryCsvMutation from "../mutations/inventory-export-csv-mutation";
 import inventoryQuery from "../queries/inventory-query";
 
 import ImportInventoryCsvForm from "./import-inventory-csv-form";

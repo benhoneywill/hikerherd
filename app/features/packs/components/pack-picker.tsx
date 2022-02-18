@@ -34,6 +34,7 @@ const PackPicker: FC<PackPickerProps> = ({ icon, title }) => {
         variant="ghost"
         px={1}
         rightIcon={<Icon pr={1} as={FaChevronDown} />}
+        isTruncated
       >
         <HStack>
           <Icon as={icon} w={5} h={5} />

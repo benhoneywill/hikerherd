@@ -10,7 +10,7 @@ import db from "db";
 
 import getInventorySchema from "../schemas/get-inventory-schema";
 
-const importInventoryMutation = resolver.pipe(
+const inventoryExportCsvMutation = resolver.pipe(
   resolver.authorize(),
   resolver.zod(getInventorySchema),
 
@@ -24,6 +24,7 @@ const importInventoryMutation = resolver.pipe(
           orderBy: { index: "asc" },
           include: {
             items: {
+              orderBy: { index: "asc" },
               include: {
                 gear: true,
               },
@@ -47,4 +48,4 @@ const importInventoryMutation = resolver.pipe(
   }
 );
 
-export default importInventoryMutation;
+export default inventoryExportCsvMutation;

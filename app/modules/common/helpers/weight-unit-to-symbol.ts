@@ -1,13 +1,13 @@
 import type { WeightUnit } from "db";
 
-export type WeightSymbol = "g" | "oz";
+export type WeightSymbol = "gram" | "ounce";
 
 const weightUnitToSymbol = (unit: WeightUnit) => {
   switch (unit) {
     case "METRIC":
-      return "g";
+      return "gram";
     case "IMPERIAL":
-      return "oz";
+      return "ounce";
   }
 };
 

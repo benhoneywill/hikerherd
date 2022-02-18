@@ -4,6 +4,8 @@ import type { FC } from "react";
 import { useContext } from "react";
 import { useMutation } from "blitz";
 
+import { useToast } from "@chakra-ui/react";
+
 import reorder from "app/modules/drag-and-drop/helpers/reorder";
 import reorderNested from "app/modules/drag-and-drop/helpers/reorder-nested";
 import DragAndDrop from "app/modules/drag-and-drop/components/drag-and-drop";
@@ -24,6 +26,7 @@ const PackOrganizerDragAndDrop: FC = () => {
     editCategory,
     editItem,
   } = useContext(gearOrganizerContext);
+  const toast = useToast();
 
   const [movePackCategory] = useMutation(movePackCategoryMutation);
   const [movePackGear] = useMutation(movePackGearMutation);
@@ -42,8 +45,6 @@ const PackOrganizerDragAndDrop: FC = () => {
         id: drop.draggableId,
         index: drop.destination.index,
       });
-
-      await refetch();
     }
   };
 
@@ -63,18 +64,25 @@ const PackOrganizerDragAndDrop: FC = () => {
         categoryId: drop.destination.droppableId,
         index: drop.destination.index,
       });
-
-      refetch();
     }
   };
 
   const handleDrop = async (drop: DropResult) => {
-    if (drop.type === "category") {
-      await handleCategoryDrop(drop);
-    }
+    try {
+      if (drop.type === "category") {
+        await handleCategoryDrop(drop);
+      }
 
-    if (drop.type === "item") {
-      await handleItemDrop(drop);
+      if (drop.type === "item") {
+        await handleItemDrop(drop);
+      }
+    } catch (err) {
+      refetch();
+      toast({
+        title: "Something went wrong",
+        description: "There was a problem moving that item.",
+        status: "error",
+      });
     }
   };
 

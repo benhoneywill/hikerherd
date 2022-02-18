@@ -1,32 +1,35 @@
 import type { FC } from "react";
-import type { CategoryType } from "db";
 
 import { useMutation } from "blitz";
 
 import { FORM_ERROR } from "final-form";
 import { z } from "zod";
-import { Stack, Text, Link } from "@chakra-ui/layout";
+import { Stack, Text, Link, HStack } from "@chakra-ui/layout";
+import { FaList } from "react-icons/fa";
+import { Tag, TagLabel, TagLeftIcon } from "@chakra-ui/tag";
 
 import ModalForm from "app/modules/forms/components/modal-form";
 import FileField from "app/modules/forms/components/file-field";
+import CsvImportError from "app/features/inventory/errors/csv-import-error";
+import CheckboxField from "app/modules/forms/components/checkbox-field";
 
-import inventoryImportCsvMutation from "../mutations/inventory-import-csv-mutation";
-import CsvImportError from "../errors/csv-import-error";
+import packImportCsvMutation from "../mutations/pack-import-csv-mutation";
+import packImportCsvSchema from "../schemas/pack-import-csv-schema";
 
-type ImportInventoryCsvFormProps = {
-  type: CategoryType;
+type ImportPackCsvFormProps = {
+  packId: string;
   onSuccess?: () => void;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const ImportInventoryCsvForm: FC<ImportInventoryCsvFormProps> = ({
-  type,
+const ImportPackCsvForm: FC<ImportPackCsvFormProps> = ({
+  packId,
   onSuccess,
   isOpen,
   onClose,
 }) => {
-  const [importCsv] = useMutation(inventoryImportCsvMutation);
+  const [importCsv] = useMutation(packImportCsvMutation);
 
   return (
     <ModalForm
@@ -34,10 +37,11 @@ const ImportInventoryCsvForm: FC<ImportInventoryCsvFormProps> = ({
       onClose={onClose}
       size="xl"
       title="Import from CSV"
-      schema={z.object({ file: z.any() })}
+      schema={packImportCsvSchema.extend({ file: z.any() })}
       submitText="Import"
-      initialValues={{}}
-      onSubmit={({ file }) => {
+      initialValues={{ id: packId, addToInventory: false }}
+      onSubmit={({ file, addToInventory }) => {
+        console.log(file);
         if (!file) {
           return {
             [FORM_ERROR]: "A file is required.",
@@ -51,7 +55,11 @@ const ImportInventoryCsvForm: FC<ImportInventoryCsvFormProps> = ({
           reader.addEventListener("load", async ({ target }) => {
             if (target?.result) {
               try {
-                await importCsv({ file: target.result, type });
+                await importCsv({
+                  file: target.result,
+                  id: packId,
+                  addToInventory,
+                });
 
                 onClose();
 
@@ -95,10 +103,21 @@ const ImportInventoryCsvForm: FC<ImportInventoryCsvFormProps> = ({
             for more details.
           </Text>
           <FileField name="file" label="CSV file" accept="text/csv" />
+          <HStack>
+            <Tag colorScheme="blue" flexShrink="0">
+              <TagLeftIcon as={FaList} />
+              <TagLabel>Add to inventory?</TagLabel>
+            </Tag>
+            <CheckboxField name="addToInventory" />
+          </HStack>
+          <Text>
+            If you already have these items in your inventory this option will
+            create duplicates
+          </Text>
         </Stack>
       )}
     />
   );
 };
 
-export default ImportInventoryCsvForm;
+export default ImportPackCsvForm;

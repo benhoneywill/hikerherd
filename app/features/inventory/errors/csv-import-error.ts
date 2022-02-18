@@ -13,7 +13,9 @@ class CsvImportError extends Error {
         this.errors.push(
           `All ${path} values ${issue.message
             .toLowerCase()
-            .replace("boolean", "true or false")}`
+            .replace("boolean", "true or false")
+            .replace("invalid enum value. expected", "must be")
+            .replace("|", "or")}`
         );
       });
     });

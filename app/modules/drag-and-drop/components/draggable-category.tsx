@@ -5,17 +5,21 @@ import { useContext } from "react";
 
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import { Button, IconButton } from "@chakra-ui/button";
+import { Tag, TagLabel } from "@chakra-ui/tag";
 import { HStack, Heading, Box, Flex } from "@chakra-ui/layout";
 import { useColorModeValue } from "@chakra-ui/react";
 import { Menu, MenuButton } from "@chakra-ui/menu";
 import { BsThreeDotsVertical } from "react-icons/bs";
+
+import displayWeight from "app/modules/common/helpers/display-weight";
+import userPreferencesContext from "app/features/users/contexts/user-preferences-context";
 
 import dragAndDropContext from "../contexts/gear-dnd-context";
 
 import DraggableGear from "./draggable-gear";
 
 type DraggableCategoryProps = {
-  category: DragAndDropState[number];
+  category: DragAndDropState[number] & { weight: number };
   index: number;
 };
 
@@ -23,8 +27,14 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
   category,
   index,
 }) => {
-  const { categoryMenu, addItemToCategory, readonly, editCategory } =
-    useContext(dragAndDropContext);
+  const {
+    categoryMenu,
+    addItemToCategory,
+    readonly,
+    editCategory,
+    hideCategoryTotals,
+  } = useContext(dragAndDropContext);
+  const { weightUnit } = useContext(userPreferencesContext);
 
   const bg = useColorModeValue("white", "gray.700");
   const innerBg = useColorModeValue("", "gray.700");
@@ -69,21 +79,32 @@ const DraggableCategory: BlitzPage<DraggableCategoryProps> = ({
               size="sm"
               cursor={editCategory && "pointer"}
               onClick={editCategory && (() => editCategory(category.id))}
+              noOfLines={2}
             >
               {category.name}
             </Heading>
-            {categoryMenu && (
-              <Menu>
-                <MenuButton
-                  as={IconButton}
-                  borderRadius="full"
-                  icon={<BsThreeDotsVertical />}
-                  size="xs"
-                  aria-label="actions"
-                />
-                {categoryMenu(category)}
-              </Menu>
-            )}
+
+            <HStack>
+              {!hideCategoryTotals && (
+                <Tag colorScheme="teal" size="sm">
+                  <TagLabel>
+                    {displayWeight(category.weight, weightUnit, true)}
+                  </TagLabel>
+                </Tag>
+              )}
+              {categoryMenu && (
+                <Menu>
+                  <MenuButton
+                    as={IconButton}
+                    borderRadius="full"
+                    icon={<BsThreeDotsVertical />}
+                    size="xs"
+                    aria-label="actions"
+                  />
+                  {categoryMenu(category)}
+                </Menu>
+              )}
+            </HStack>
           </HStack>
 
           <Box overflowY="auto" mr="-8px" pr="8px">

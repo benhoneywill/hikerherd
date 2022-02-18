@@ -32,8 +32,8 @@ export type CsvItem = {
   currency: CurrencySign;
   link: string | null;
   image: string | null;
-  consumable: boolean;
-  worn: boolean;
+  consumable: string | null;
+  worn: string | null;
   quantity: number;
 };
 
@@ -58,8 +58,8 @@ const itemToCsvFormat = ({
     currency: currencyToSign(item.gear.currency),
     link: item.gear.link,
     image: item.gear.imageUrl,
-    consumable: item.gear.consumable,
-    worn: item.worn || false,
+    consumable: item.gear.consumable ? "consumable" : null,
+    worn: item.worn ? "worn" : null,
     quantity: item.quantity || 1,
   };
 };

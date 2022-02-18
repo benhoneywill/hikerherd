@@ -1,22 +1,27 @@
 import type { ParsedCsvItem } from "app/modules/common/helpers/item-to-csv-format";
 
-import { resolver } from "blitz";
+import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import papaparse from "papaparse";
 import { ZodError } from "zod";
 
+import inventoryImportCsvMutation from "app/features/inventory/mutations/inventory-import-csv-mutation";
 import parseCsvItems from "app/modules/common/helpers/parse-csv-items";
+import CsvImportError from "app/features/inventory/errors/csv-import-error";
 
 import db from "db";
 
-import inventoryImportSchema from "../schemas/inventory-import-schema";
-import CsvImportError from "../errors/csv-import-error";
+import packImportCsvSchema from "../schemas/pack-import-csv-schema";
 
-const inventoryImportMutation = resolver.pipe(
+const packImportCsvMutation = resolver.pipe(
   resolver.authorize(),
-  resolver.zod(inventoryImportSchema),
+  resolver.zod(packImportCsvSchema),
 
-  async ({ file, type }, ctx) => {
+  async ({ id, file, addToInventory }, ctx) => {
+    if (addToInventory) {
+      await inventoryImportCsvMutation({ file, type: "INVENTORY" }, ctx);
+    }
+
     const { data } = papaparse.parse(file, {
       header: true,
       dynamicTyping: {
@@ -43,11 +48,11 @@ const inventoryImportMutation = resolver.pipe(
       }, {} as { [name: string]: ParsedCsvItem[] });
 
       await db.$transaction(async (prisma) => {
-        const user = await prisma.user.findUnique({
-          where: { id: ctx.session.userId },
+        const pack = await prisma.pack.findUnique({
+          where: { id },
           select: {
+            userId: true,
             categories: {
-              where: { type },
               orderBy: { index: "desc" },
               take: 1,
               select: { index: true },
@@ -55,15 +60,22 @@ const inventoryImportMutation = resolver.pipe(
           },
         });
 
-        let highestCategoryIndex = user?.categories[0]?.index || -1;
+        if (!pack) {
+          throw new NotFoundError();
+        }
+
+        if (pack.userId !== ctx.session.userId) {
+          throw new AuthorizationError();
+        }
+
+        let highestCategoryIndex = pack?.categories[0]?.index || -1;
 
         await Promise.all(
           Object.entries(groupedItems).map(async ([categoryName, items]) => {
-            let category = await prisma.category.findFirst({
+            let category = await prisma.packCategory.findFirst({
               where: {
-                userId: ctx.session.userId,
+                packId: id,
                 name: { equals: categoryName, mode: "insensitive" },
-                type,
               },
             });
 
@@ -71,18 +83,17 @@ const inventoryImportMutation = resolver.pipe(
               const index = highestCategoryIndex + 1;
               highestCategoryIndex = index;
 
-              category = await prisma.category.create({
+              category = await prisma.packCategory.create({
                 data: {
-                  userId: ctx.session.userId,
+                  packId: id,
                   name: categoryName,
-                  type,
                   index: index,
                 },
               });
             }
 
-            const lastItem = await prisma.categoryItem.findFirst({
-              where: { id: category.id },
+            const lastItem = await prisma.packCategoryItem.findFirst({
+              where: { categoryId: category.id },
               orderBy: { index: "desc" },
               take: 1,
               select: { index: true },
@@ -95,9 +106,12 @@ const inventoryImportMutation = resolver.pipe(
                 const index = highestItemIndex + 1;
                 highestItemIndex = index;
 
-                return prisma.categoryItem.create({
+                return prisma.packCategoryItem.create({
                   data: {
                     index,
+                    worn: !!item.worn,
+                    notes: item.notes,
+                    quantity: item.quantity || 1,
 
                     category: {
                       connect: {
@@ -135,4 +149,4 @@ const inventoryImportMutation = resolver.pipe(
   }
 );
 
-export default inventoryImportMutation;
+export default packImportCsvMutation;

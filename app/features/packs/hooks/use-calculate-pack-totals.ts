@@ -5,8 +5,8 @@ import { useMemo } from "react";
 const useCalculatePackTotals = (categories: DragAndDropState) => {
   return useMemo(() => {
     let totalWeight = 0;
-    let packWeight = 0;
-    let baseWeight = 0;
+    let wornWeight = 0;
+    let consumableWeight = 0;
 
     const weightedCategories = categories.map((category) => {
       return {
@@ -15,11 +15,11 @@ const useCalculatePackTotals = (categories: DragAndDropState) => {
           const itemWeight = item.gear.weight * (item.quantity || 1);
 
           totalWeight += itemWeight;
-          if (!item.worn) {
-            packWeight += itemWeight;
-            if (!item.gear.consumable) {
-              baseWeight += itemWeight;
-            }
+          if (item.worn) {
+            wornWeight += itemWeight;
+          }
+          if (item.gear.consumable) {
+            consumableWeight += itemWeight;
           }
 
           return acc + itemWeight;
@@ -30,8 +30,10 @@ const useCalculatePackTotals = (categories: DragAndDropState) => {
     return {
       categories: weightedCategories,
       totalWeight,
-      packWeight,
-      baseWeight,
+      packWeight: totalWeight - wornWeight,
+      baseWeight: totalWeight - wornWeight - consumableWeight,
+      wornWeight,
+      consumableWeight,
     };
   }, [categories]);
 };
