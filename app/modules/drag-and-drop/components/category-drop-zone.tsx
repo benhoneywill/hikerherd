@@ -35,20 +35,23 @@ const CategoryDropZone: FC = () => {
           bg={snapshot.isDraggingOver ? dragColor : ""}
           width="100%"
           height="100%"
+          userSelect="none"
         >
           <HorizontalScroller>
             {categories.map((category, index) => (
-              <Box key={category.id} height="100%" pointerEvents="none">
-                <DraggableCategory category={category} index={index} />
-              </Box>
+              <DraggableCategory
+                key={category.id}
+                category={category}
+                index={index}
+              />
             ))}
 
             {provided.placeholder}
 
             {addCategory && (
               <Box
-                width="280px"
-                flex="0 0 280px"
+                width="290px"
+                flex="0 0 290px"
                 padding={2}
                 borderRadius="md"
                 mx={1}
