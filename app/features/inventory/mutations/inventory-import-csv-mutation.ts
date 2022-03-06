@@ -2,10 +2,9 @@ import type { ParsedCsvItem } from "app/modules/common/helpers/item-to-csv-forma
 
 import { resolver } from "blitz";
 
-import papaparse from "papaparse";
 import { ZodError } from "zod";
 
-import parseCsvItems from "app/modules/common/helpers/parse-csv-items";
+import parseCsvFile from "app/modules/common/helpers/parse-csv-file";
 
 import db from "db";
 
@@ -17,23 +16,8 @@ const inventoryImportCsvMutation = resolver.pipe(
   resolver.zod(inventoryImportSchema),
 
   async ({ file, type }, ctx) => {
-    const { data } = papaparse.parse(file, {
-      header: true,
-      dynamicTyping: {
-        weight: true,
-        price: true,
-        currency: true,
-        consumable: true,
-        worn: true,
-        quantity: true,
-        notes: true,
-        link: true,
-        image: true,
-      },
-    });
-
     try {
-      const gearItems = parseCsvItems(data);
+      const gearItems = parseCsvFile(file);
 
       const groupedItems = gearItems.reduce((groups, item) => {
         return {

@@ -1,6 +1,7 @@
 import type { ParsedCsvItem } from "./item-to-csv-format";
 
 import { z } from "zod";
+import papaparse from "papaparse";
 
 import { ozTog } from "./display-weight";
 import { signToCurrency } from "./currency-to-sign";
@@ -20,9 +21,24 @@ const csvItemSchema = z.object({
   quantity: z.number().min(0).nullable().optional(),
 });
 
-const parseCsvItems = (
-  data: unknown[]
+const parseCsvFile = (
+  file: string
 ): (ParsedCsvItem & { category: string })[] => {
+  const { data } = papaparse.parse(file, {
+    header: true,
+    dynamicTyping: {
+      weight: true,
+      price: true,
+      currency: true,
+      consumable: true,
+      worn: true,
+      quantity: true,
+      notes: true,
+      link: true,
+      image: true,
+    },
+  });
+
   return data.map((item) => {
     const valid = csvItemSchema.parse(item);
 
@@ -45,4 +61,4 @@ const parseCsvItems = (
   });
 };
 
-export default parseCsvItems;
+export default parseCsvFile;

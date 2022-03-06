@@ -2,11 +2,10 @@ import type { ParsedCsvItem } from "app/modules/common/helpers/item-to-csv-forma
 
 import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
-import papaparse from "papaparse";
 import { ZodError } from "zod";
 
 import inventoryImportCsvMutation from "app/features/inventory/mutations/inventory-import-csv-mutation";
-import parseCsvItems from "app/modules/common/helpers/parse-csv-items";
+import parseCsvFile from "app/modules/common/helpers/parse-csv-file";
 import CsvImportError from "app/features/inventory/errors/csv-import-error";
 
 import db from "db";
@@ -22,23 +21,8 @@ const packImportCsvMutation = resolver.pipe(
       await inventoryImportCsvMutation({ file, type: "INVENTORY" }, ctx);
     }
 
-    const { data } = papaparse.parse(file, {
-      header: true,
-      dynamicTyping: {
-        weight: true,
-        price: true,
-        currency: true,
-        consumable: true,
-        worn: true,
-        quantity: true,
-        notes: true,
-        link: true,
-        image: true,
-      },
-    });
-
     try {
-      const gearItems = parseCsvItems(data);
+      const gearItems = parseCsvFile(file);
 
       const groupedItems = gearItems.reduce((groups, item) => {
         return {

@@ -106,14 +106,10 @@ const ImportPackCsvForm: FC<ImportPackCsvFormProps> = ({
           <HStack>
             <Tag colorScheme="blue" flexShrink="0">
               <TagLeftIcon as={FaList} />
-              <TagLabel>Add to inventory?</TagLabel>
+              <TagLabel>Also import to inventory?</TagLabel>
             </Tag>
             <CheckboxField name="addToInventory" />
           </HStack>
-          <Text>
-            If you already have these items in your inventory this option will
-            create duplicates
-          </Text>
         </Stack>
       )}
     />

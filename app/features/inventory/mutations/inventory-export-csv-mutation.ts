@@ -1,6 +1,6 @@
 import type { CsvItem } from "app/modules/common/helpers/item-to-csv-format";
 
-import { resolver } from "blitz";
+import { AuthenticationError, resolver } from "blitz";
 
 import papaparse from "papaparse";
 
@@ -34,9 +34,11 @@ const inventoryExportCsvMutation = resolver.pipe(
       },
     });
 
-    const categories = user?.categories || [];
+    if (!user) {
+      throw new AuthenticationError();
+    }
 
-    const items: CsvItem[] = categories
+    const items: CsvItem[] = user.categories
       .map(({ name: category, items }) =>
         items.map((item) =>
           itemToCsvFormat({ category, item, weightUnit: user?.weightUnit })
