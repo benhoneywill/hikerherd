@@ -276,5 +276,12 @@ describe("packImportCsvMutation", () => {
 
     expect(category0?.index).toEqual(0);
     expect(category0?.items.length).toEqual(3);
+
+    expect(category0?.items[0]?.gear.name).toEqual("Existing gear");
+    expect(category0?.items[1]?.gear.name).toEqual("Gear 0");
+    expect(category0?.items[2]?.gear.name).toEqual("Gear 1");
+
+    expect(category0?.items[1]?.index).toEqual(1);
+    expect(category0?.items[2]?.index).toEqual(2);
   });
 });

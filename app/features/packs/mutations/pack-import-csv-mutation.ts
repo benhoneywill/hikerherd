@@ -52,7 +52,9 @@ const packImportCsvMutation = resolver.pipe(
           throw new AuthorizationError();
         }
 
-        let highestCategoryIndex = pack?.categories[0]?.index || -1;
+        let highestCategoryIndex = pack?.categories[0]
+          ? pack?.categories[0]?.index
+          : -1;
 
         await Promise.all(
           Object.entries(groupedItems).map(async ([categoryName, items]) => {
@@ -83,7 +85,7 @@ const packImportCsvMutation = resolver.pipe(
               select: { index: true },
             });
 
-            let highestItemIndex = lastItem?.index || -1;
+            let highestItemIndex = lastItem ? lastItem?.index : -1;
 
             return Promise.all(
               items.map(async (item) => {

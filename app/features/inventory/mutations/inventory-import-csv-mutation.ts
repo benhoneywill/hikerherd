@@ -39,7 +39,9 @@ const inventoryImportCsvMutation = resolver.pipe(
           },
         });
 
-        let highestCategoryIndex = user?.categories[0]?.index || -1;
+        let highestCategoryIndex = user?.categories[0]
+          ? user?.categories[0]?.index
+          : -1;
 
         await Promise.all(
           Object.entries(groupedItems).map(async ([categoryName, items]) => {
@@ -66,22 +68,19 @@ const inventoryImportCsvMutation = resolver.pipe(
             }
 
             const lastItem = await prisma.categoryItem.findFirst({
-              where: { id: category.id },
+              where: { categoryId: category.id },
               orderBy: { index: "desc" },
               take: 1,
               select: { index: true },
             });
 
-            let highestItemIndex = lastItem?.index || -1;
+            let highestItemIndex = lastItem ? lastItem?.index : -1;
 
             return Promise.all(
-              items.map(async (item) => {
-                const index = highestItemIndex + 1;
-                highestItemIndex = index;
-
+              items.map(async (item, index) => {
                 return prisma.categoryItem.create({
                   data: {
-                    index,
+                    index: highestItemIndex + index + 1,
 
                     category: {
                       connect: {
