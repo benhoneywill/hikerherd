@@ -18,7 +18,7 @@ const csvItemSchema = z.object({
   image: z.string().url().nullable().optional(),
   consumable: z.union([z.string(), z.boolean()]).nullable().optional(),
   worn: z.union([z.string(), z.boolean()]).nullable().optional(),
-  quantity: z.number().min(0).nullable().optional(),
+  quantity: z.number().int().min(0).nullable().optional(),
 });
 
 const parseCsvFile = (
