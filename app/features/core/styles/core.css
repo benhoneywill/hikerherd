@@ -23,8 +23,3 @@ body.chakra-ui-dark {
 body.is-fixed {
   overflow: hidden;
 }
-
-.height-preserving-container:empty {
-  min-height: calc(var(--child-height));
-  box-sizing: border-box;
-}
