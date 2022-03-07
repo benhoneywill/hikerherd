@@ -9,8 +9,8 @@ const deleteCategoryGearMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id }, ctx) => {
-    return db.$transaction(async () => {
-      const item = await db.categoryItem.findUnique({
+    return db.$transaction(async (prisma) => {
+      const item = await prisma.categoryItem.findUnique({
         where: { id },
         select: {
           gearId: true,
@@ -29,7 +29,7 @@ const deleteCategoryGearMutation = resolver.pipe(
       }
 
       // Decrement the index of all items after this one in the category
-      await db.categoryItem.updateMany({
+      await prisma.categoryItem.updateMany({
         where: {
           categoryId: item.categoryId,
           index: { gt: item.index },
@@ -39,24 +39,24 @@ const deleteCategoryGearMutation = resolver.pipe(
         },
       });
 
-      const packItem = await db.packCategoryItem.findFirst({
+      const packItem = await prisma.packCategoryItem.findFirst({
         where: { gearId: item.gearId },
         select: { id: true },
       });
 
-      const clone = await db.gear.findFirst({
+      const clone = await prisma.gear.findFirst({
         where: { clonedFromId: item.gearId },
         select: { id: true },
       });
 
-      const deletedItem = await db.categoryItem.delete({
+      const deletedItem = await prisma.categoryItem.delete({
         where: { id },
       });
 
       // If the gear is not used in any packs, and has no clones
       // then it should be deleted as well.
       if (!packItem && !clone) {
-        await db.gear.delete({ where: { id: item.gearId } });
+        await prisma.gear.delete({ where: { id: item.gearId } });
       }
 
       return deletedItem;

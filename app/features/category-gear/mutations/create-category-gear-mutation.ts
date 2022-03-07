@@ -9,8 +9,8 @@ const createGearMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ categoryId, ...values }, ctx) => {
-    return db.$transaction(async () => {
-      const category = await db.category.findUnique({
+    return db.$transaction(async (prisma) => {
+      const category = await prisma.category.findUnique({
         where: { id: categoryId },
         select: {
           id: true,
@@ -31,7 +31,7 @@ const createGearMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      return db.categoryItem.create({
+      return prisma.categoryItem.create({
         data: {
           // add the new item last in the category
           index: category._count?.items || 0,

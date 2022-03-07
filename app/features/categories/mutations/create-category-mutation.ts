@@ -9,10 +9,10 @@ const createCategoryMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ name, type }, ctx) => {
-    return db.$transaction(async () => {
+    return db.$transaction(async (prisma) => {
       // Find the current user along with the category
       // with the highest index in the current type
-      const user = await db.user.findUnique({
+      const user = await prisma.user.findUnique({
         where: { id: ctx.session.userId },
         select: {
           categories: {
@@ -33,7 +33,7 @@ const createCategoryMutation = resolver.pipe(
       const highestCategoryIndex = user.categories[0]?.index;
       const index = highestCategoryIndex ? highestCategoryIndex + 1 : 0;
 
-      return await db.category.create({
+      return await prisma.category.create({
         data: {
           name,
           type,

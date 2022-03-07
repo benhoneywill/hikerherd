@@ -9,8 +9,8 @@ const movePackGearMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id, categoryId, index }, ctx) => {
-    return db.$transaction(async () => {
-      const packItem = await db.packCategoryItem.findUnique({
+    return db.$transaction(async (prisma) => {
+      const packItem = await prisma.packCategoryItem.findUnique({
         where: { id },
         select: {
           gearId: true,
@@ -36,7 +36,7 @@ const movePackGearMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      const category = await db.packCategory.findUnique({
+      const category = await prisma.packCategory.findUnique({
         where: { id: categoryId },
         select: {
           id: true,
@@ -56,7 +56,7 @@ const movePackGearMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      await db.packCategoryItem.updateMany({
+      await prisma.packCategoryItem.updateMany({
         where: {
           categoryId: packItem.category.id,
           index: { gt: packItem.index },
@@ -68,7 +68,7 @@ const movePackGearMutation = resolver.pipe(
         },
       });
 
-      await db.packCategoryItem.updateMany({
+      await prisma.packCategoryItem.updateMany({
         where: { categoryId: categoryId, index: { gte: index } },
         data: {
           index: {
@@ -77,7 +77,7 @@ const movePackGearMutation = resolver.pipe(
         },
       });
 
-      return await db.packCategoryItem.update({
+      return await prisma.packCategoryItem.update({
         where: { id },
         data: {
           categoryId,

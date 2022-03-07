@@ -1,53 +1,42 @@
-import type { BlitzPage } from "blitz";
 import type { DragAndDropState } from "../contexts/gear-dnd-context";
+import type { FC } from "react";
 
-import { useContext } from "react";
+import { useContext, memo } from "react";
 
 import { Draggable } from "react-beautiful-dnd";
-import { Box } from "@chakra-ui/layout";
-
-import GearCard from "app/modules/gear-card/components/gear-card";
 
 import dragAndDropContext from "../contexts/gear-dnd-context";
 
+import Gear from "./gear";
+
 type DraggableGearProps = {
-  item: DragAndDropState[number]["items"][number];
+  data: DragAndDropState[number]["items"];
   index: number;
 };
 
-const DraggableGear: BlitzPage<DraggableGearProps> = ({ item, index }) => {
-  const { itemMenu, readonly, editItem } = useContext(dragAndDropContext);
+const DraggableGear: FC<DraggableGearProps> = memo(({ data, index }) => {
+  const { readonly } = useContext(dragAndDropContext);
+
+  const item = data[index];
+
+  if (!item) return null;
 
   return (
-    <Draggable draggableId={item.id} index={index} isDragDisabled={readonly}>
+    <Draggable
+      draggableId={item.id}
+      index={index}
+      isDragDisabled={readonly}
+      key={item.id}
+    >
       {(provided, snapshot) => (
-        <Box
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          style={provided.draggableProps.style}
-          userSelect="none"
-          py={1}
-        >
-          <GearCard
-            name={item.gear.name}
-            weight={item.gear.weight}
-            price={item.gear.price}
-            currency={item.gear.currency}
-            worn={item.worn}
-            consumable={item.gear.consumable}
-            link={item.gear.link}
-            notes={item.notes || item.gear.notes}
-            dragging={snapshot.isDragging}
-            quantity={item.quantity}
-            menu={itemMenu && itemMenu(item)}
-            imageUrl={item.gear.imageUrl}
-            onHeadingClick={editItem && (() => editItem(item.id))}
-          />
-        </Box>
+        <Gear
+          item={item}
+          isDragging={snapshot.isDragging}
+          provided={provided}
+        />
       )}
     </Draggable>
   );
-};
+});
 
 export default DraggableGear;

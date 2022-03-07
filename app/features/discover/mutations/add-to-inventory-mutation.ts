@@ -9,8 +9,8 @@ const addToInventoryMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ categoryId, gearId }, ctx) => {
-    return db.$transaction(async () => {
-      const category = await db.category.findUnique({
+    return db.$transaction(async (prisma) => {
+      const category = await prisma.category.findUnique({
         where: { id: categoryId },
         select: {
           id: true,
@@ -31,14 +31,14 @@ const addToInventoryMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      const gear = await db.gear.findUnique({ where: { id: gearId } });
+      const gear = await prisma.gear.findUnique({ where: { id: gearId } });
 
       if (!gear) {
         throw new NotFoundError();
       }
 
       // Clone the gear so that it belongs to the user
-      const clone = await db.gear.create({
+      const clone = await prisma.gear.create({
         data: {
           name: gear.name,
           imageUrl: gear.imageUrl,
@@ -53,7 +53,7 @@ const addToInventoryMutation = resolver.pipe(
         },
       });
 
-      return db.categoryItem.create({
+      return prisma.categoryItem.create({
         data: {
           gearId: clone.id,
           categoryId: category.id,

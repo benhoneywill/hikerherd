@@ -9,8 +9,8 @@ const deletePackCategoryMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id }, ctx) => {
-    return db.$transaction(async () => {
-      const category = await db.packCategory.findUnique({
+    return db.$transaction(async (prisma) => {
+      const category = await prisma.packCategory.findUnique({
         where: { id },
         select: {
           index: true,
@@ -28,7 +28,7 @@ const deletePackCategoryMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      const item = await db.packCategoryItem.findFirst({
+      const item = await prisma.packCategoryItem.findFirst({
         where: { categoryId: id },
       });
 
@@ -38,7 +38,7 @@ const deletePackCategoryMutation = resolver.pipe(
 
       // Decrement the indexes of all the categories with
       // a higher index than this category
-      await db.packCategory.updateMany({
+      await prisma.packCategory.updateMany({
         where: {
           packId: category.pack.id,
           index: { gt: category.index },
@@ -50,7 +50,7 @@ const deletePackCategoryMutation = resolver.pipe(
         },
       });
 
-      return db.packCategory.delete({
+      return prisma.packCategory.delete({
         where: { id },
       });
     });

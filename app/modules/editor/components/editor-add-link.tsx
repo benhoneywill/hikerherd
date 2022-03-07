@@ -38,11 +38,7 @@ const EditorAddLink = () => {
         toggleAddingLink();
       }}
       render={() => (
-        <TextField
-          name="link"
-          label="Link"
-          placeholder="Enter the URL to link"
-        />
+        <TextField name="link" label="Link" placeholder="https://..." />
       )}
     />
   );

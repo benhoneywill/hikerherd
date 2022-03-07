@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { HStack } from "@chakra-ui/layout";
 import {
@@ -40,6 +40,35 @@ const HorizontalScroller: FC = ({ children }) => {
     },
   };
 
+  useEffect(() => {
+    const handleDragEnd = () => {
+      setIsDown(false);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (scroller.current && isDown) {
+        e.preventDefault();
+        const x = e.pageX - scroller.current.offsetLeft;
+        const walk = x - startX;
+        scroller.current.scrollLeft = scrollLeft - walk;
+      }
+    };
+
+    if (bgDragEnabled) {
+      document.addEventListener("mouseleave", handleDragEnd);
+      document.addEventListener("mouseup", handleDragEnd);
+      document.addEventListener("mousemove", handleMouseMove);
+    }
+
+    return () => {
+      if (bgDragEnabled) {
+        document.removeEventListener("mouseleave", handleDragEnd);
+        document.removeEventListener("mouseup", handleDragEnd);
+        document.removeEventListener("mousemove", handleMouseMove);
+      }
+    };
+  }, [isDown, bgDragEnabled, scrollLeft, startX]);
+
   return (
     <HStack
       spacing={0}
@@ -61,37 +90,6 @@ const HorizontalScroller: FC = ({ children }) => {
           setIsDown(true);
           setStartX(e.pageX - scroller.current?.offsetLeft);
           setScrollLeft(scroller.current?.scrollLeft);
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (
-          scroller.current &&
-          e.target === scroller.current &&
-          bgDragEnabled
-        ) {
-          setIsDown(false);
-        }
-      }}
-      onMouseUp={(e) => {
-        if (
-          scroller.current &&
-          e.target === scroller.current &&
-          bgDragEnabled
-        ) {
-          setIsDown(false);
-        }
-      }}
-      onMouseMove={(e) => {
-        if (
-          scroller.current &&
-          e.target === scroller.current &&
-          bgDragEnabled &&
-          isDown
-        ) {
-          e.preventDefault();
-          const x = e.pageX - scroller.current.offsetLeft;
-          const walk = x - startX;
-          scroller.current.scrollLeft = scrollLeft - walk;
         }
       }}
     >

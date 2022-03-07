@@ -9,8 +9,8 @@ const updatePackGearQuantityMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id, type }, ctx) => {
-    return db.$transaction(async () => {
-      const item = await db.packCategoryItem.findUnique({
+    return db.$transaction(async (prisma) => {
+      const item = await prisma.packCategoryItem.findUnique({
         where: { id },
         select: {
           quantity: true,
@@ -42,7 +42,7 @@ const updatePackGearQuantityMutation = resolver.pipe(
         throw new Error("Can not increment above 99");
       }
 
-      return db.packCategoryItem.update({
+      return prisma.packCategoryItem.update({
         where: { id },
         data: { quantity: { [type]: 1 } },
       });

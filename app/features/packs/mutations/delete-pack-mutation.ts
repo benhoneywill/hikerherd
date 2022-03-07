@@ -22,42 +22,42 @@ const deletePackMutation = resolver.pipe(
       throw new AuthorizationError();
     }
 
-    return db.$transaction(async () => {
-      const packItems = await db.packCategoryItem.findMany({
+    return db.$transaction(async (prisma) => {
+      const packItems = await prisma.packCategoryItem.findMany({
         where: { category: { packId: id } },
       });
 
       await Promise.all(
         packItems.map(async (item) => {
-          const inventoryItem = await db.categoryItem.findFirst({
+          const inventoryItem = await prisma.categoryItem.findFirst({
             where: {
               gearId: item.gearId,
             },
           });
 
-          const clone = await db.gear.findFirst({
+          const clone = await prisma.gear.findFirst({
             where: {
               clonedFromId: item.gearId,
             },
           });
 
-          await db.packCategoryItem.delete({
+          await prisma.packCategoryItem.delete({
             where: {
               id: item.id,
             },
           });
 
           if (!inventoryItem && !clone) {
-            await db.gear.delete({ where: { id: item.gearId } });
+            await prisma.gear.delete({ where: { id: item.gearId } });
           }
         })
       );
 
-      await db.packCategory.deleteMany({
+      await prisma.packCategory.deleteMany({
         where: { packId: id },
       });
 
-      return db.pack.delete({
+      return prisma.pack.delete({
         where: { id },
       });
     });

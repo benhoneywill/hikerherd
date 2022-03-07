@@ -9,8 +9,8 @@ const addGearToPackMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ categoryId, gearId }, ctx) => {
-    return db.$transaction(async () => {
-      const category = await db.packCategory.findUnique({
+    return db.$transaction(async (prisma) => {
+      const category = await prisma.packCategory.findUnique({
         where: { id: categoryId },
         select: {
           id: true,
@@ -35,7 +35,7 @@ const addGearToPackMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      const gear = await db.gear.findUnique({ where: { id: gearId } });
+      const gear = await prisma.gear.findUnique({ where: { id: gearId } });
 
       if (!gear) {
         throw new NotFoundError();
@@ -44,7 +44,7 @@ const addGearToPackMutation = resolver.pipe(
       let itemGearId = gear.id;
 
       if (gear.userId !== ctx.session.userId) {
-        const clone = await db.gear.create({
+        const clone = await prisma.gear.create({
           data: {
             name: gear.name,
             imageUrl: gear.imageUrl,
@@ -63,7 +63,7 @@ const addGearToPackMutation = resolver.pipe(
         itemGearId = clone.id;
       }
 
-      return db.packCategoryItem.create({
+      return prisma.packCategoryItem.create({
         data: {
           categoryId,
           gearId: itemGearId,

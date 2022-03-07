@@ -9,8 +9,8 @@ const moveCategoryGearMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id, categoryId, index }, ctx) => {
-    return db.$transaction(async () => {
-      const categoryItem = await db.categoryItem.findUnique({
+    return db.$transaction(async (prisma) => {
+      const categoryItem = await prisma.categoryItem.findUnique({
         where: { id },
         select: {
           index: true,
@@ -32,7 +32,7 @@ const moveCategoryGearMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      const category = await db.category.findUnique({
+      const category = await prisma.category.findUnique({
         where: { id: categoryId },
         select: { id: true, userId: true },
       });
@@ -47,7 +47,7 @@ const moveCategoryGearMutation = resolver.pipe(
 
       // Decrement the indexes of all the items after the current item
       // that are in the source category
-      await db.categoryItem.updateMany({
+      await prisma.categoryItem.updateMany({
         where: {
           categoryId: categoryItem.category.id,
           index: { gt: categoryItem.index },
@@ -59,7 +59,7 @@ const moveCategoryGearMutation = resolver.pipe(
 
       // Increment the indexes of all items after the new location
       // within the destination category
-      await db.categoryItem.updateMany({
+      await prisma.categoryItem.updateMany({
         where: {
           categoryId,
           index: { gte: index },
@@ -70,7 +70,7 @@ const moveCategoryGearMutation = resolver.pipe(
       });
 
       // Finally set the new index and category ID on the target item
-      return await db.categoryItem.update({
+      return await prisma.categoryItem.update({
         where: { id },
         data: {
           categoryId,

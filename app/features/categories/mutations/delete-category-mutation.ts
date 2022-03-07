@@ -9,8 +9,8 @@ const deleteCategoryMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id }, ctx) => {
-    return db.$transaction(async () => {
-      const category = await db.category.findUnique({
+    return db.$transaction(async (prisma) => {
+      const category = await prisma.category.findUnique({
         where: { id },
         select: {
           type: true,
@@ -34,7 +34,7 @@ const deleteCategoryMutation = resolver.pipe(
 
       // Decrement the indexes of all the categories with
       // a higher index than this category
-      await db.category.updateMany({
+      await prisma.category.updateMany({
         where: {
           userId: ctx.session.userId,
           type: category.type,
@@ -48,7 +48,7 @@ const deleteCategoryMutation = resolver.pipe(
       });
 
       // Delete the category
-      return db.category.delete({
+      return prisma.category.delete({
         where: { id },
       });
     });
