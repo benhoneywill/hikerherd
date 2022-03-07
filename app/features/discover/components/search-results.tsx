@@ -28,7 +28,7 @@ const SearchResults: FC<SearchResultsProps> = ({
         </Center>
       )}
 
-      {!query && !items.length && (
+      {!query && !items.length && !isLoading && (
         <Text pl={3} fontSize="lg" color={textColor}>
           {message}
         </Text>

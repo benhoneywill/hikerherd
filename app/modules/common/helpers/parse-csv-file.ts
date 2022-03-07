@@ -26,6 +26,7 @@ const parseCsvFile = (
 ): (ParsedCsvItem & { category: string })[] => {
   const { data } = papaparse.parse(file, {
     header: true,
+    transformHeader: (header) => header.toLowerCase(),
     dynamicTyping: {
       weight: true,
       price: true,

@@ -32,15 +32,23 @@ const BetaBanner: FC = () => {
       <Container maxW="100%">
         <HStack justify="space-between">
           <Text color="white">
-            hikerherd is in <strong>beta</strong>. Your{" "}
+            hikerherd is in <strong>beta</strong>.{" "}
+            <Link
+              textDecoration="underline"
+              isExternal
+              href="https://blog.hikerherd.com/#/portal/signup"
+            >
+              Subscribe
+            </Link>{" "}
+            to the hikerherd newsletter to stay up to date with the beta or{" "}
             <Link
               textDecoration="underline"
               isExternal
               href="https://docs.google.com/forms/d/e/1FAIpQLSd488niomGdU4Cd96hLGTakK5isfE5Ajzy4HTMOjchQ6ZdFcQ/viewform"
             >
-              feedback
+              leave feedback
             </Link>{" "}
-            will help improve it!
+            to help me improve hikerherd.
           </Text>
 
           <IconButton

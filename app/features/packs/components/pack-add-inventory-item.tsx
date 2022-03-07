@@ -8,6 +8,7 @@ import { useQuery } from "blitz";
 import Fuse from "fuse.js";
 import { SimpleGrid, Stack, Heading, Box } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
+import { useColorModeValue } from "@chakra-ui/react";
 
 import GearCard from "app/modules/gear-card/components/gear-card";
 import SearchInput from "app/features/discover/components/search-input";
@@ -32,6 +33,10 @@ const PackAddInventoryItem: FC<PackAddInventoryItemProps> = ({
 }) => {
   const [query, setQuery] = useState("");
   const [isAddingTo, setIsAddingTo] = useState<string | null>(null);
+
+  const bg = useColorModeValue("gray.50", "gray.600");
+  const fg = useColorModeValue("white", "gray.700");
+  const border = useColorModeValue("gray.200", "gray.800");
 
   const [categoryGear, { isLoading }] = useQuery(
     listCategoryGearQuery,
@@ -80,13 +85,13 @@ const PackAddInventoryItem: FC<PackAddInventoryItemProps> = ({
         isLoading={isLoading}
         items={filteredItems}
       >
-        <Stack spacing={4} bg="gray.50" m={-4} mt={2} p={4}>
+        <Stack spacing={4} bg={bg} m={-4} mt={2} p={4}>
           {groupedItems.map((group) => (
             <Box
               key={group.index}
               border="1px solid"
-              borderColor="gray.200"
-              bg="white"
+              borderColor={border}
+              bg={fg}
               borderRadius="md"
             >
               <Heading size="sm" p={3} pb={1}>

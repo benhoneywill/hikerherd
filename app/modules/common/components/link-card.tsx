@@ -33,7 +33,9 @@ const LinkCard: FC<LinkCardProps> = ({ href, title, text, icon, actions }) => {
           >
             <Stack align="center" textAlign="center">
               <Icon mt={1} as={icon} w={8} h={8} />
-              <Heading size="md">{title}</Heading>
+              <Heading size="md" noOfLines={1}>
+                {title}
+              </Heading>
               {text && <Text opacity="0.6">{text}</Text>}
             </Stack>
           </Card>

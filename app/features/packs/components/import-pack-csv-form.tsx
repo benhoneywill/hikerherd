@@ -97,7 +97,11 @@ const ImportPackCsvForm: FC<ImportPackCsvFormProps> = ({
           </Text>
           <Text>
             <strong>Your CSV file must be in the correct format.</strong>{" "}
-            <Link href="#" isExternal textDecoration="underline">
+            <Link
+              href="https://blog.hikerherd.com/the-csv-import-guide/"
+              isExternal
+              textDecoration="underline"
+            >
               Read the importing guide
             </Link>{" "}
             for more details.
