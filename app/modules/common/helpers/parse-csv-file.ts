@@ -51,7 +51,7 @@ const parseCsvFile = (
       gear: {
         name: valid.name,
         weight: valid.unit === "gram" ? valid.weight : ozTog(valid.weight),
-        price: valid.price ? valid.price * 100 : null,
+        price: valid.price ? Math.round(valid.price * 100) : null,
         currency: signToCurrency(valid.currency),
         consumable: !!valid.consumable,
         link: valid.link || null,

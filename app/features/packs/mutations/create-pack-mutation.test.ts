@@ -2,7 +2,8 @@ import type { User } from "db";
 
 import { AuthenticationError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
 
 import db from "db";
 
@@ -11,13 +12,7 @@ import createPackMutation from "./create-pack-mutation";
 let user: User;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
 });
 
 describe("createPackMutation", () => {

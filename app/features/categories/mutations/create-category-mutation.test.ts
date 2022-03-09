@@ -2,22 +2,18 @@ import type { User } from "db";
 
 import { AuthenticationError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import faker from "@faker-js/faker";
 
-import db from "db";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
+import createCategory from "test/helpers/create-category";
 
 import createCategoryMutation from "./create-category-mutation";
 
 let user: User;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
 });
 
 describe("createCategoryMutation", () => {
@@ -25,7 +21,10 @@ describe("createCategoryMutation", () => {
     const { ctx } = await createMockContext();
 
     await expect(
-      createCategoryMutation({ name: "My category", type: "INVENTORY" }, ctx)
+      createCategoryMutation(
+        { name: faker.random.word(), type: "INVENTORY" },
+        ctx
+      )
     ).rejects.toThrow(AuthenticationError);
   });
 
@@ -33,7 +32,7 @@ describe("createCategoryMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     const category = await createCategoryMutation(
-      { name: "My category", type: "INVENTORY" },
+      { name: faker.random.word(), type: "INVENTORY" },
       ctx
     );
 
@@ -43,51 +42,36 @@ describe("createCategoryMutation", () => {
   it("should create subsequent categories with the correct index", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await db.category.createMany({
-      data: [
-        { name: "0", type: "INVENTORY", index: 0, userId: user.id },
-        { name: "1", type: "INVENTORY", index: 1, userId: user.id },
-        { name: "2", type: "INVENTORY", index: 2, userId: user.id },
-      ],
-    });
+    await createCategory({ userId: user.id, index: 0 });
+    await createCategory({ userId: user.id, index: 1 });
 
     const category = await createCategoryMutation(
-      { name: "3", type: "INVENTORY" },
+      { name: faker.random.word(), type: "INVENTORY" },
       ctx
     );
 
-    expect(category?.index).toEqual(3);
+    expect(category?.index).toEqual(2);
   });
 
   it("should track different types with different indexes", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await db.category.createMany({
-      data: [
-        { name: "0", type: "INVENTORY", index: 0, userId: user.id },
-        { name: "1", type: "INVENTORY", index: 1, userId: user.id },
-      ],
-    });
+    await createCategory({ userId: user.id, index: 0 });
 
-    await db.category.createMany({
-      data: [
-        { name: "0", type: "WISH_LIST", index: 0, userId: user.id },
-        { name: "1", type: "WISH_LIST", index: 1, userId: user.id },
-        { name: "2", type: "WISH_LIST", index: 2, userId: user.id },
-      ],
-    });
+    await createCategory({ userId: user.id, index: 0, type: "WISH_LIST" });
+    await createCategory({ userId: user.id, index: 1, type: "WISH_LIST" });
 
     const inventoryCategory = await createCategoryMutation(
-      { name: "inventory", type: "INVENTORY" },
+      { name: faker.random.word(), type: "INVENTORY" },
       ctx
     );
 
     const wishListCategory = await createCategoryMutation(
-      { name: "wishlist", type: "WISH_LIST" },
+      { name: faker.random.word(), type: "WISH_LIST" },
       ctx
     );
 
-    expect(inventoryCategory?.index).toEqual(2);
-    expect(wishListCategory?.index).toEqual(3);
+    expect(inventoryCategory?.index).toEqual(1);
+    expect(wishListCategory?.index).toEqual(2);
   });
 });

@@ -1,16 +1,14 @@
-import type { User } from "db";
-
 import { ZodError } from "zod";
+import faker from "@faker-js/faker";
 
-import createMockContext from "test/create-mock-context";
+import createMockContext from "test/helpers/create-mock-context";
+import getUserData from "test/data/get-user-data";
 
 import db from "db";
 
 import signupMutation from "./signup-mutation";
 
-const EMAIL = "example@example.com";
-const PASSWORD = "password12345";
-const USERNAME = "example";
+const { email, username, password } = getUserData();
 
 describe("signupMutation", () => {
   it("should error if the username is invalid", async () => {
@@ -19,9 +17,9 @@ describe("signupMutation", () => {
     await expect(
       signupMutation(
         {
-          email: EMAIL,
-          password: PASSWORD,
-          username: "invalid username",
+          email,
+          password,
+          username: faker.lorem.words(3),
         },
         ctx
       )
@@ -36,9 +34,9 @@ describe("signupMutation", () => {
     await expect(
       signupMutation(
         {
-          email: "not_an_email",
-          password: PASSWORD,
-          username: USERNAME,
+          email: faker.internet.userName(),
+          password,
+          username,
         },
         ctx
       )
@@ -53,9 +51,9 @@ describe("signupMutation", () => {
     await expect(
       signupMutation(
         {
-          email: EMAIL,
-          password: "short",
-          username: USERNAME,
+          email,
+          password: faker.internet.password(5),
+          username,
         },
         ctx
       )
@@ -70,26 +68,28 @@ describe("signupMutation", () => {
     await expect(
       signupMutation(
         {
-          email: EMAIL,
-          password: PASSWORD,
-          username: USERNAME,
+          email,
+          password,
+          username,
         },
         ctx
       )
     ).resolves.toMatchObject({
-      email: EMAIL,
-      username: USERNAME,
+      email,
+      username,
     });
 
     expect(ctx.session.userId).toBeDefined();
 
-    const user = (await db.user.findUnique({
+    const user = await db.user.findUnique({
       where: { id: ctx.session.userId as string },
-    })) as User;
+    });
 
-    expect(user.email).toEqual(EMAIL);
+    if (!user) throw new Error("User not found");
+
+    expect(user.email).toEqual(email);
 
     // The password should have been hashed
-    expect(user.hashedPassword).not.toEqual(PASSWORD);
+    expect(user.hashedPassword).not.toEqual(password);
   });
 });

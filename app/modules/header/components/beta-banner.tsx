@@ -3,7 +3,7 @@ import type { FC } from "react";
 import { useEffect, useState } from "react";
 
 import { Box, Text, Link, Container, HStack } from "@chakra-ui/layout";
-import { IconButton } from "@chakra-ui/react";
+import { IconButton } from "@chakra-ui/button";
 import { FaTimes } from "react-icons/fa";
 
 const BetaBanner: FC = () => {

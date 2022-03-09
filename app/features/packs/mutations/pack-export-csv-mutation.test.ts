@@ -4,7 +4,8 @@ import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
 import papaparse from "papaparse";
 
-import createMockContext from "test/create-mock-context";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
 
 import db from "db";
 
@@ -14,13 +15,7 @@ let user: User;
 let pack: Pack;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
 
   pack = await db.pack.create({
     data: {
@@ -49,13 +44,7 @@ describe("packExportCsvMutation", () => {
   });
 
   it("should error if the pack does not belong to the user", async () => {
-    const otherUser = await db.user.create({
-      data: {
-        email: "example2@hikerherd.com",
-        username: "testuser2",
-        hashedPassword: "fakehash",
-      },
-    });
+    const otherUser = await createUser();
 
     const { ctx } = await createMockContext({ user: otherUser });
 

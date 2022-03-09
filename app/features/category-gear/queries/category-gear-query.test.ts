@@ -2,9 +2,13 @@ import type { User, Category, CategoryItem } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import faker from "@faker-js/faker";
 
-import db from "db";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
+import createCategory from "test/helpers/create-category";
+import createGear from "test/helpers/create-gear";
+import createCategoryItem from "test/helpers/create-category-item";
 
 import categoryGearQuery from "./category-gear-query";
 
@@ -12,50 +16,14 @@ let user: User;
 let category: Category;
 let item: CategoryItem;
 
-const GEAR_VALUES = {
-  name: "My gear",
-  weight: 100,
-  imageUrl: "https://example.com/example.png",
-  link: "https://example.com/",
-  notes: "Nice gear, use it a lot",
-  consumable: false,
-  price: 10000,
-  currency: "GBP",
-} as const;
-
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
+  category = await createCategory({ userId: user.id });
 
-  category = await db.category.create({
-    data: {
-      name: "Category",
-      index: 0,
-      type: "INVENTORY",
-      userId: user.id,
-    },
-  });
-
-  item = await db.categoryItem.create({
-    data: {
-      index: 0,
-      category: {
-        connect: {
-          id: category.id,
-        },
-      },
-      gear: {
-        create: {
-          ...GEAR_VALUES,
-          userId: user.id,
-        },
-      },
-    },
+  const gear = await createGear({ userId: user.id });
+  item = await createCategoryItem({
+    categoryId: category.id,
+    gearId: gear.id,
   });
 });
 
@@ -71,19 +39,13 @@ describe("categoryGearQuery", () => {
   it("should error if the item does not exist", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await expect(categoryGearQuery({ id: "abc123" }, ctx)).rejects.toThrow(
-      NotFoundError
-    );
+    await expect(
+      categoryGearQuery({ id: faker.datatype.uuid() }, ctx)
+    ).rejects.toThrow(NotFoundError);
   });
 
   it("should error if the item does not belong to the user", async () => {
-    const otherUser = await db.user.create({
-      data: {
-        email: "example2@hikerherd.com",
-        username: "testuser2",
-        hashedPassword: "fakehash",
-      },
-    });
+    const otherUser = await createUser();
 
     const { ctx } = await createMockContext({ user: otherUser });
 
@@ -100,7 +62,7 @@ describe("categoryGearQuery", () => {
     expect(result).toMatchObject({
       id: item.id,
       gear: {
-        name: GEAR_VALUES.name,
+        id: item.gearId,
       },
     });
   });

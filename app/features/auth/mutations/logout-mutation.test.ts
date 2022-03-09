@@ -1,18 +1,18 @@
-import createMockContext from "test/create-mock-context";
+import type { User } from "db";
 
-import db from "db";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
 
 import logoutMutation from "./logout-mutation";
 
+let user: User;
+
+beforeEach(async () => {
+  user = await createUser();
+});
+
 describe("logoutMutation", () => {
   it("should revoke the session", async () => {
-    const user = await db.user.create({
-      data: {
-        username: "example",
-        email: "example@example.com",
-      },
-    });
-
     const { ctx } = await createMockContext({ user });
     await expect(logoutMutation({}, ctx)).resolves.toEqual(undefined);
     expect(ctx.session.userId).toEqual(null);

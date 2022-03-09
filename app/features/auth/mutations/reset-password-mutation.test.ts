@@ -1,6 +1,11 @@
+import type { User } from "db";
+
 import { hash256, SecurePassword } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import faker from "@faker-js/faker";
+
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
 
 import db from "db";
 
@@ -8,62 +13,47 @@ import ResetPasswordError from "../errors/reset-password-error";
 
 import resetPasswordMutation from "./reset-password-mutation";
 
+let user: User;
+
 beforeEach(async () => {
-  await db.$reset();
+  user = await createUser();
 });
 
 describe("resetPasswordMutation", () => {
-  it("works correctly", async () => {
-    // Create test user
-    const goodToken = "randomPasswordResetToken";
-    const expiredToken = "expiredRandomPasswordResetToken";
-    const future = new Date();
-    future.setHours(future.getHours() + 4);
-    const past = new Date();
-    past.setHours(past.getHours() - 4);
-
-    const user = await db.user.create({
-      data: {
-        email: "user@example.com",
-        username: "example_username",
-        tokens: {
-          // Create old token to ensure it's deleted
-          create: [
-            {
-              type: "RESET_PASSWORD",
-              hashedToken: hash256(expiredToken),
-              expiresAt: past,
-              sentTo: "user@example.com",
-            },
-            {
-              type: "RESET_PASSWORD",
-              hashedToken: hash256(goodToken),
-              expiresAt: future,
-              sentTo: "user@example.com",
-            },
-          ],
-        },
-      },
-      include: { tokens: true },
-    });
-
+  it("should fail when the provided token does not exist", async () => {
     const { ctx: mockContext } = await createMockContext();
 
-    const newPassword = "newPassword12345";
+    const newPassword = faker.internet.password();
 
-    // Non-existent token
     await expect(
       resetPasswordMutation(
         {
-          token: "no-token",
+          token: faker.random.alphaNumeric(),
           password: newPassword,
           passwordConfirmation: newPassword,
         },
         mockContext
       )
     ).rejects.toThrow(ResetPasswordError);
+  });
 
-    // Expired token
+  it("should fail when the provided token is expired", async () => {
+    const { ctx: mockContext } = await createMockContext();
+
+    const expiredToken = faker.random.alphaNumeric();
+
+    await db.token.create({
+      data: {
+        type: "RESET_PASSWORD",
+        hashedToken: hash256(expiredToken),
+        expiresAt: new Date(Date.now() - 3600000),
+        sentTo: user.email,
+        userId: user.id,
+      },
+    });
+
+    const newPassword = faker.internet.password();
+
     await expect(
       resetPasswordMutation(
         {
@@ -75,7 +65,27 @@ describe("resetPasswordMutation", () => {
       )
     ).rejects.toThrow(ResetPasswordError);
 
-    // Good token
+    const numberOfTokens = await db.token.count({ where: { userId: user.id } });
+    expect(numberOfTokens).toBe(0);
+  });
+
+  it("Should correctly update the user's password with a valid token", async () => {
+    const { ctx: mockContext } = await createMockContext();
+
+    const goodToken = faker.random.alphaNumeric();
+
+    await db.token.create({
+      data: {
+        type: "RESET_PASSWORD",
+        hashedToken: hash256(goodToken),
+        expiresAt: new Date(Date.now() + 3600000),
+        sentTo: user.email,
+        userId: user.id,
+      },
+    });
+
+    const newPassword = faker.internet.password();
+
     await resetPasswordMutation(
       {
         token: goodToken,
@@ -85,12 +95,11 @@ describe("resetPasswordMutation", () => {
       mockContext
     );
 
-    // Delete's the token
     const numberOfTokens = await db.token.count({ where: { userId: user.id } });
     expect(numberOfTokens).toBe(0);
 
-    // Updates user's password
     const updatedUser = await db.user.findFirst({ where: { id: user.id } });
+
     expect(
       await SecurePassword.verify(updatedUser?.hashedPassword, newPassword)
     ).toBe(SecurePassword.VALID);

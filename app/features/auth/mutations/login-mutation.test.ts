@@ -1,36 +1,29 @@
-import { AuthenticationError, SecurePassword } from "blitz";
+import type { User } from "db";
 
-import createMockContext from "test/create-mock-context";
+import { AuthenticationError } from "blitz";
 
-import db from "db";
+import faker from "@faker-js/faker";
+
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
 
 import loginMutation from "./login-mutation";
 
-const EMAIL = "example@example.com";
-const USERNAME = "username";
-const PASSWORD = "password12345";
-
-let userId: string = "";
+let user: User;
+const password = faker.internet.password();
 
 beforeEach(async () => {
-  const hashedPassword = await SecurePassword.hash(PASSWORD);
-
-  const user = await db.user.create({
-    data: {
-      email: EMAIL,
-      username: USERNAME,
-      hashedPassword,
-    },
-  });
-
-  userId = user.id;
+  user = await createUser({ password });
 });
 
 describe("loginMutation", () => {
   it("should error if the password is incorrect", async () => {
     const { ctx } = await createMockContext();
     await expect(
-      loginMutation({ email: EMAIL, password: "wrong12345" }, ctx)
+      loginMutation(
+        { email: user.email, password: faker.internet.password() },
+        ctx
+      )
     ).rejects.toThrow(AuthenticationError);
 
     expect(ctx.session.userId).toBe(null);
@@ -39,12 +32,12 @@ describe("loginMutation", () => {
   it("should return the user and create a session if the password is correct", async () => {
     const { ctx } = await createMockContext();
     await expect(
-      loginMutation({ email: EMAIL, password: PASSWORD }, ctx)
+      loginMutation({ email: user.email, password }, ctx)
     ).resolves.toMatchObject({
-      email: EMAIL,
-      username: USERNAME,
+      email: user.email,
+      username: user.username,
     });
 
-    expect(ctx.session.userId).toEqual(userId);
+    expect(ctx.session.userId).toEqual(user.id);
   });
 });

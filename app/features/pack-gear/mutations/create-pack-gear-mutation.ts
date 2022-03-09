@@ -92,8 +92,7 @@ const createPackGearMutation = resolver.pipe(
           },
         });
 
-        const highestCategoryIndex = user?.categories[0]?.index;
-        const index = highestCategoryIndex ? highestCategoryIndex + 1 : 0;
+        const index = user?.categories[0] ? user?.categories[0]?.index + 1 : 0;
 
         await prisma.category.create({
           data: {
