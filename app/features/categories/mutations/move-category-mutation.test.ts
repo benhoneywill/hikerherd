@@ -1,37 +1,28 @@
-import type { User } from "db";
+import type { User, Category } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import faker from "@faker-js/faker";
+
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
+import createCategory from "test/helpers/create-category";
 
 import db from "db";
 
 import moveCategoryMutation from "./move-category-mutation";
 
 let user: User;
+let category: Category;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
+  category = await createCategory({ userId: user.id });
 });
 
 describe("moveCategoryMutation", () => {
   it("should error if not logged in", async () => {
     const { ctx } = await createMockContext();
-
-    const category = await db.category.create({
-      data: {
-        name: "My category",
-        index: 0,
-        type: "INVENTORY",
-        userId: user.id,
-      },
-    });
 
     await expect(
       moveCategoryMutation({ id: category.id, index: 0 }, ctx)
@@ -42,29 +33,13 @@ describe("moveCategoryMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      moveCategoryMutation({ id: "abc123", index: 0 }, ctx)
+      moveCategoryMutation({ id: faker.datatype.uuid(), index: 0 }, ctx)
     ).rejects.toThrow(NotFoundError);
   });
 
   it("should error if the category does not belong to the user", async () => {
-    const { ctx } = await createMockContext({ user });
-
-    const otherUser = await db.user.create({
-      data: {
-        email: "example2@hikerherd.com",
-        username: "testuser2",
-        hashedPassword: "fakehash",
-      },
-    });
-
-    const category = await db.category.create({
-      data: {
-        name: "My category",
-        index: 0,
-        type: "INVENTORY",
-        userId: otherUser.id,
-      },
-    });
+    const otherUser = await createUser();
+    const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(
       moveCategoryMutation({ id: category.id, index: 0 }, ctx)
@@ -74,48 +49,69 @@ describe("moveCategoryMutation", () => {
   it("Should correctly update the indexes of all categories", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await db.category.createMany({
-      data: [
-        { name: "wl0", type: "WISH_LIST", index: 0, userId: user.id },
-        { name: "wl1", type: "WISH_LIST", index: 1, userId: user.id },
-        { name: "wl2", type: "WISH_LIST", index: 2, userId: user.id },
-        { name: "wl3", type: "WISH_LIST", index: 3, userId: user.id },
-
-        { name: "inv0", type: "INVENTORY", index: 0, userId: user.id },
-        { name: "inv1", type: "INVENTORY", index: 1, userId: user.id },
-        { name: "inv2", type: "INVENTORY", index: 2, userId: user.id },
-        { name: "inv3", type: "INVENTORY", index: 3, userId: user.id },
-      ],
+    const wl0 = await createCategory({
+      userId: user.id,
+      type: "WISH_LIST",
+      index: 0,
     });
 
-    const moveWl = await db.category.findFirst({ where: { name: "wl2" } });
+    const wl1 = await createCategory({
+      userId: user.id,
+      type: "WISH_LIST",
+      index: 1,
+    });
 
-    await moveCategoryMutation({ id: moveWl?.id as string, index: 0 }, ctx);
+    const wl2 = await createCategory({
+      userId: user.id,
+      type: "WISH_LIST",
+      index: 2,
+    });
 
-    const wl0 = await db.category.findFirst({ where: { name: "wl0" } });
-    const wl1 = await db.category.findFirst({ where: { name: "wl1" } });
-    const wl2 = await db.category.findFirst({ where: { name: "wl2" } });
-    const wl3 = await db.category.findFirst({ where: { name: "wl3" } });
+    const inv0 = await createCategory({
+      userId: user.id,
+      index: 0,
+    });
 
-    expect(wl0?.index).toEqual(1);
-    expect(wl1?.index).toEqual(2);
-    expect(wl2?.index).toEqual(0);
-    expect(wl3?.index).toEqual(3);
+    const inv1 = await createCategory({
+      userId: user.id,
+      index: 1,
+    });
 
-    const moveInv = await db.category.findFirst({ where: { name: "inv0" } });
+    const inv2 = await createCategory({
+      userId: user.id,
+      index: 2,
+    });
 
-    expect(moveInv?.index).toEqual(0);
+    await moveCategoryMutation({ id: wl2.id, index: 0 }, ctx);
 
-    await moveCategoryMutation({ id: moveInv?.id as string, index: 2 }, ctx);
+    const fetchedWl0 = await db.category.findUnique({ where: { id: wl0.id } });
+    const fetchedWl1 = await db.category.findUnique({ where: { id: wl1.id } });
+    const fetchedWl2 = await db.category.findUnique({ where: { id: wl2.id } });
 
-    const inv0 = await db.category.findFirst({ where: { name: "inv0" } });
-    const inv1 = await db.category.findFirst({ where: { name: "inv1" } });
-    const inv2 = await db.category.findFirst({ where: { name: "inv2" } });
-    const inv3 = await db.category.findFirst({ where: { name: "inv3" } });
+    expect(fetchedWl0?.index).toEqual(1);
+    expect(fetchedWl1?.index).toEqual(2);
+    expect(fetchedWl2?.index).toEqual(0);
 
-    expect(inv0?.index).toEqual(2);
-    expect(inv1?.index).toEqual(0);
-    expect(inv2?.index).toEqual(1);
-    expect(inv3?.index).toEqual(3);
+    const fetchedInv0 = await db.category.findUnique({
+      where: { id: inv0.id },
+    });
+
+    expect(fetchedInv0?.index).toEqual(0);
+
+    await moveCategoryMutation({ id: inv0.id, index: 1 }, ctx);
+
+    const refetchedInv0 = await db.category.findUnique({
+      where: { id: inv0.id },
+    });
+    const fetchedInv1 = await db.category.findUnique({
+      where: { id: inv1.id },
+    });
+    const fetchedInv2 = await db.category.findUnique({
+      where: { id: inv2.id },
+    });
+
+    expect(refetchedInv0?.index).toEqual(1);
+    expect(fetchedInv1?.index).toEqual(0);
+    expect(fetchedInv2?.index).toEqual(2);
   });
 });

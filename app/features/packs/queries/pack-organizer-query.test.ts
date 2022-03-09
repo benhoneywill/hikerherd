@@ -2,7 +2,8 @@ import type { User, PackCategory, CategoryItem, Pack } from "db";
 
 import { NotFoundError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
 
 import db from "db";
 
@@ -25,13 +26,7 @@ const GEAR_VALUES = {
 } as const;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
 
   pack = await db.pack.create({
     data: {

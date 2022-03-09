@@ -1,31 +1,21 @@
 import type { User } from "db";
 
-import { AuthenticationError, SecurePassword } from "blitz";
+import { AuthenticationError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import faker from "@faker-js/faker";
 
-import db from "db";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
 
 import authenticateOrError from "../helpers/authenticate-or-error";
 
 import changePasswordMutation from "./change-password-mutation";
 
-const EMAIL = "example@example.com";
-const USERNAME = "username";
-const ORIGINAL_PASSWORD = "password12345";
-
 let user: User;
+const originalPassword = faker.internet.password(12);
 
 beforeEach(async () => {
-  const hashedPassword = await SecurePassword.hash(ORIGINAL_PASSWORD);
-
-  user = await db.user.create({
-    data: {
-      email: EMAIL,
-      username: USERNAME,
-      hashedPassword,
-    },
-  });
+  user = await createUser({ password: originalPassword });
 });
 
 describe("changePasswordMutation", () => {
@@ -34,7 +24,10 @@ describe("changePasswordMutation", () => {
 
     await expect(
       changePasswordMutation(
-        { currentPassword: ORIGINAL_PASSWORD, newPassword: "newPassword12345" },
+        {
+          currentPassword: originalPassword,
+          newPassword: faker.internet.password(12),
+        },
         ctx
       )
     ).rejects.toThrow(AuthenticationError);
@@ -45,27 +38,33 @@ describe("changePasswordMutation", () => {
 
     await expect(
       changePasswordMutation(
-        { currentPassword: "wrong12345", newPassword: "newPassword12345" },
+        {
+          currentPassword: faker.internet.password(12),
+          newPassword: faker.internet.password(12),
+        },
         ctx
       )
     ).rejects.toThrow(AuthenticationError);
   });
 
   it("should succeed and hash the password, if the password is correct", async () => {
-    const NEW_PASSWORD = "newPassword12345";
+    const NEW_PASSWORD = faker.internet.password(12);
 
     const { ctx } = await createMockContext({ user });
 
     await expect(
       changePasswordMutation(
-        { currentPassword: ORIGINAL_PASSWORD, newPassword: NEW_PASSWORD },
+        { currentPassword: originalPassword, newPassword: NEW_PASSWORD },
         ctx
       )
     ).resolves.toMatchObject({ success: true });
 
-    const authenticatedUser = await authenticateOrError(EMAIL, NEW_PASSWORD);
+    const authenticatedUser = await authenticateOrError(
+      user.email,
+      NEW_PASSWORD
+    );
 
-    expect(authenticatedUser.email).toEqual(EMAIL);
-    expect(authenticatedUser.username).toEqual(USERNAME);
+    expect(authenticatedUser.email).toEqual(user.email);
+    expect(authenticatedUser.username).toEqual(user.username);
   });
 });

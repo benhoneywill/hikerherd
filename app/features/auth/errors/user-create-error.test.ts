@@ -1,17 +1,17 @@
+import type { User } from "db";
+
+import faker from "@faker-js/faker";
+
+import createUser from "test/helpers/create-user";
+
 import db from "db";
 
 import UserCreateError from "./user-create-error";
 
-const TAKEN_EMAIL = "taken@example.com";
-const TAKEN_USERNAME = "taken";
+let user: User;
 
 beforeEach(async () => {
-  await db.user.create({
-    data: {
-      email: TAKEN_EMAIL,
-      username: TAKEN_USERNAME,
-    },
-  });
+  user = await createUser();
 });
 
 describe("UserCreateError", () => {
@@ -19,8 +19,8 @@ describe("UserCreateError", () => {
     try {
       await db.user.create({
         data: {
-          email: "unique@example.com",
-          username: TAKEN_USERNAME,
+          email: faker.internet.email(),
+          username: user.username,
         },
       });
 
@@ -36,8 +36,8 @@ describe("UserCreateError", () => {
     try {
       await db.user.create({
         data: {
-          email: TAKEN_EMAIL,
-          username: "unique",
+          email: user.email,
+          username: faker.internet.userName(),
         },
       });
 

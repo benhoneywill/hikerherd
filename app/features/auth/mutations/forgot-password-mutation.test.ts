@@ -1,6 +1,11 @@
+import type { User } from "db";
+
 import { hash256 } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import faker from "@faker-js/faker";
+
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
 
 import db from "db";
 
@@ -8,7 +13,7 @@ import * as sendPasswordResetMailer from "../mailers/send-password-reset";
 
 import forgotPasswordMutation from "./forgot-password-mutation";
 
-const generatedToken = "plain-token";
+const generatedToken = "a1b2c3d4e5";
 
 const sendPasswordReset = jest.spyOn(sendPasswordResetMailer, "default");
 
@@ -17,8 +22,11 @@ jest.mock("blitz", () => ({
   generateToken: () => generatedToken,
 }));
 
-beforeEach(() => {
+let user: User;
+
+beforeEach(async () => {
   sendPasswordReset.mockReset();
+  user = await createUser();
 });
 
 describe("forgotPasswordMutation", () => {
@@ -26,42 +34,33 @@ describe("forgotPasswordMutation", () => {
     const { ctx } = await createMockContext();
 
     await expect(
-      forgotPasswordMutation({ email: "no-user@email.com" }, ctx)
+      forgotPasswordMutation({ email: faker.internet.email() }, ctx)
     ).resolves.not.toThrow();
   });
 
   it("works correctly", async () => {
-    // Create test user
-    const user = await db.user.create({
+    const oldToken = await db.token.create({
       data: {
-        email: "user@example.com",
-        username: "example_username",
-        tokens: {
-          // Create old token to ensure it's deleted
-          create: {
-            type: "RESET_PASSWORD",
-            hashedToken: "token",
-            expiresAt: new Date(),
-            sentTo: "user@example.com",
-          },
-        },
+        type: "RESET_PASSWORD",
+        hashedToken: faker.random.alphaNumeric(),
+        expiresAt: new Date(),
+        sentTo: user.email,
+        userId: user.id,
       },
-      include: { tokens: true },
     });
 
-    // Invoke the mutation
     const { ctx } = await createMockContext();
     await forgotPasswordMutation({ email: user.email }, ctx);
 
     const tokens = await db.token.findMany({ where: { userId: user.id } });
     const token = tokens[0];
-    if (!user.tokens[0]) throw new Error("Missing user token");
+
     if (!token) throw new Error("Missing token");
 
-    // delete's existing tokens
+    // deletes the old token
     expect(tokens.length).toBe(1);
 
-    expect(token.id).not.toBe(user.tokens[0].id);
+    expect(token.id).not.toBe(oldToken.id);
     expect(token.type).toBe("RESET_PASSWORD");
     expect(token.sentTo).toBe(user.email);
     expect(token.hashedToken).toBe(hash256(generatedToken));

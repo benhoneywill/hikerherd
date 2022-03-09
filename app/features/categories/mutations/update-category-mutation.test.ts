@@ -1,40 +1,34 @@
-import type { User } from "db";
+import type { User, Category } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import faker from "@faker-js/faker";
+
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
+import createCategory from "test/helpers/create-category";
 
 import db from "db";
 
 import updateCategoryMutation from "./update-category-mutation";
 
 let user: User;
+let category: Category;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
+  category = await createCategory({ userId: user.id });
 });
 
 describe("updateCategoryMutation", () => {
   it("should error if not logged in", async () => {
     const { ctx } = await createMockContext();
 
-    const category = await db.category.create({
-      data: {
-        name: "My category",
-        index: 0,
-        type: "INVENTORY",
-        userId: user.id,
-      },
-    });
-
     await expect(
-      updateCategoryMutation({ id: category.id, name: "updated" }, ctx)
+      updateCategoryMutation(
+        { id: category.id, name: faker.random.word() },
+        ctx
+      )
     ).rejects.toThrow(AuthenticationError);
   });
 
@@ -42,53 +36,36 @@ describe("updateCategoryMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      updateCategoryMutation({ id: "abc123", name: "updated" }, ctx)
+      updateCategoryMutation(
+        { id: faker.datatype.uuid(), name: faker.random.word() },
+        ctx
+      )
     ).rejects.toThrow(NotFoundError);
   });
 
   it("should error if the category does not belong to the user", async () => {
-    const { ctx } = await createMockContext({ user });
-
-    const otherUser = await db.user.create({
-      data: {
-        email: "example2@hikerherd.com",
-        username: "testuser2",
-        hashedPassword: "fakehash",
-      },
-    });
-
-    const category = await db.category.create({
-      data: {
-        name: "My category",
-        index: 0,
-        type: "INVENTORY",
-        userId: otherUser.id,
-      },
-    });
+    const otherUser = await createUser();
+    const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(
-      updateCategoryMutation({ id: category.id, name: "updated" }, ctx)
+      updateCategoryMutation(
+        { id: category.id, name: faker.random.word() },
+        ctx
+      )
     ).rejects.toThrow(AuthorizationError);
   });
 
   it("Should correctly update the category name", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const category = await db.category.create({
-      data: {
-        name: "My category",
-        index: 0,
-        type: "INVENTORY",
-        userId: user.id,
-      },
-    });
+    const newName = faker.random.word();
 
-    await updateCategoryMutation({ id: category.id, name: "updated" }, ctx);
+    await updateCategoryMutation({ id: category.id, name: newName }, ctx);
 
     const updated = await db.category.findUnique({
       where: { id: category.id },
     });
 
-    expect(updated?.name).toEqual("updated");
+    expect(updated?.name).toEqual(newName);
   });
 });

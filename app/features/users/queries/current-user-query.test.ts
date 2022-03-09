@@ -1,21 +1,14 @@
 import type { User } from "db";
 
-import createMockContext from "test/create-mock-context";
-
-import db from "db";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
 
 import currentUserQuery from "./current-user-query";
 
 let user: User;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
 });
 
 describe("currentUserQuery", () => {

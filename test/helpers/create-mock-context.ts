@@ -10,7 +10,7 @@ import { getSession } from "blitz";
 import httpMocks from "node-mocks-http";
 
 // This import is important, it sets the isAuthorized method in global.sessionConfig
-import "../blitz.config";
+import "../../blitz.config";
 
 interface CreateMockContextOptions {
   user?: User;

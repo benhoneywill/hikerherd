@@ -2,7 +2,8 @@ import type { User, PackCategory, Pack, Gear } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
 
 import db from "db";
 
@@ -25,13 +26,7 @@ let category: PackCategory;
 let gear: Gear;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
 
   pack = await db.pack.create({
     data: {
@@ -84,13 +79,7 @@ describe("addGearToPackMutation", () => {
   });
 
   it("should error if the category does not belong to the user", async () => {
-    const otherUser = await db.user.create({
-      data: {
-        email: "example2@hikerherd.com",
-        username: "testuser2",
-        hashedPassword: "fakehash",
-      },
-    });
+    const otherUser = await createUser();
 
     const { ctx } = await createMockContext({ user: otherUser });
 
@@ -102,13 +91,7 @@ describe("addGearToPackMutation", () => {
   it("should clone the gear and add it to the pack category", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const otherUser = await db.user.create({
-      data: {
-        email: "other@hikerherd.com",
-        username: "otheruser",
-        hashedPassword: "fakehash",
-      },
-    });
+    const otherUser = await createUser();
 
     const otherGear = await db.gear.create({
       data: {

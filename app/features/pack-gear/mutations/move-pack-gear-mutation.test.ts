@@ -2,7 +2,8 @@ import type { User, Pack, PackCategory, PackCategoryItem } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
 
 import db from "db";
 
@@ -26,13 +27,7 @@ let category2: PackCategory;
 let item: PackCategoryItem;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
 
   pack = await db.pack.create({
     data: {
@@ -102,13 +97,7 @@ describe("movePackGearMutation", () => {
   });
 
   it("should error if the item does not belong to the user", async () => {
-    const otherUser = await db.user.create({
-      data: {
-        email: "example2@hikerherd.com",
-        username: "testuser2",
-        hashedPassword: "fakehash",
-      },
-    });
+    const otherUser = await createUser();
 
     const { ctx } = await createMockContext({ user: otherUser });
 
@@ -129,13 +118,7 @@ describe("movePackGearMutation", () => {
   });
 
   it("should error if the destination category does not belong to the user", async () => {
-    const otherUser = await db.user.create({
-      data: {
-        email: "example2@hikerherd.com",
-        username: "testuser2",
-        hashedPassword: "fakehash",
-      },
-    });
+    const otherUser = await createUser();
 
     const { ctx } = await createMockContext({ user: otherUser });
 

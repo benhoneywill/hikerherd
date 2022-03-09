@@ -2,7 +2,16 @@ import type { User, Category, CategoryItem } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import faker from "@faker-js/faker";
+
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
+import createCategory from "test/helpers/create-category";
+import createGear from "test/helpers/create-gear";
+import createCategoryItem from "test/helpers/create-category-item";
+import createPack from "test/helpers/create-pack";
+import createPackCategory from "test/helpers/create-pack-category";
+import createPackCategoryItem from "test/helpers/create-pack-category-item";
 
 import db from "db";
 
@@ -12,51 +21,11 @@ let user: User;
 let category: Category;
 let item: CategoryItem;
 
-const GEAR_VALUES = {
-  name: "My gear",
-  weight: 100,
-  imageUrl: "https://example.com/example.png",
-  link: "https://example.com/",
-  notes: "Nice gear, use it a lot",
-  consumable: false,
-  price: 10000,
-  currency: "GBP",
-} as const;
-
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
-
-  category = await db.category.create({
-    data: {
-      name: "My category",
-      index: 0,
-      type: "INVENTORY",
-      userId: user.id,
-    },
-  });
-
-  item = await db.categoryItem.create({
-    data: {
-      index: 0,
-      category: {
-        connect: {
-          id: category.id,
-        },
-      },
-      gear: {
-        create: {
-          ...GEAR_VALUES,
-          userId: user.id,
-        },
-      },
-    },
-  });
+  user = await createUser();
+  category = await createCategory({ userId: user.id });
+  const gear = await createGear({ userId: user.id });
+  item = await createCategoryItem({ categoryId: category.id, gearId: gear.id });
 });
 
 describe("deleteCategoryGearMutation", () => {
@@ -72,49 +41,16 @@ describe("deleteCategoryGearMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      deleteCategoryGearMutation({ id: "abc123" }, ctx)
+      deleteCategoryGearMutation({ id: faker.datatype.uuid() }, ctx)
     ).rejects.toThrow(NotFoundError);
   });
 
   it("should error if the item does not belong to the user", async () => {
-    const { ctx } = await createMockContext({ user });
-
-    const otherUser = await db.user.create({
-      data: {
-        email: "example2@hikerherd.com",
-        username: "testuser2",
-        hashedPassword: "fakehash",
-      },
-    });
-
-    const otherCategory = await db.category.create({
-      data: {
-        name: "My category",
-        index: 0,
-        type: "INVENTORY",
-        userId: otherUser.id,
-      },
-    });
-
-    const otherItem = await db.categoryItem.create({
-      data: {
-        index: 0,
-        category: {
-          connect: {
-            id: otherCategory.id,
-          },
-        },
-        gear: {
-          create: {
-            ...GEAR_VALUES,
-            userId: otherUser.id,
-          },
-        },
-      },
-    });
+    const otherUser = await createUser();
+    const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(
-      deleteCategoryGearMutation({ id: otherItem.id }, ctx)
+      deleteCategoryGearMutation({ id: item.id }, ctx)
     ).rejects.toThrow(AuthorizationError);
   });
 
@@ -133,38 +69,18 @@ describe("deleteCategoryGearMutation", () => {
   it("should change the indexes of the other items correctly", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const item2 = await db.categoryItem.create({
-      data: {
-        index: 1,
-        category: {
-          connect: {
-            id: category.id,
-          },
-        },
-        gear: {
-          create: {
-            ...GEAR_VALUES,
-            userId: user.id,
-          },
-        },
-      },
+    const gear2 = await createGear({ userId: user.id });
+    const item2 = await createCategoryItem({
+      index: 1,
+      categoryId: category.id,
+      gearId: gear2.id,
     });
 
-    const item3 = await db.categoryItem.create({
-      data: {
-        index: 2,
-        category: {
-          connect: {
-            id: category.id,
-          },
-        },
-        gear: {
-          create: {
-            ...GEAR_VALUES,
-            userId: user.id,
-          },
-        },
-      },
+    const gear3 = await createGear({ userId: user.id });
+    const item3 = await createCategoryItem({
+      index: 2,
+      categoryId: category.id,
+      gearId: gear3.id,
     });
 
     await deleteCategoryGearMutation({ id: item2.id }, ctx);
@@ -193,13 +109,7 @@ describe("deleteCategoryGearMutation", () => {
   it("should not delete the associated gear if there are clones", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await db.gear.create({
-      data: {
-        ...GEAR_VALUES,
-        userId: user.id,
-        clonedFromId: item.gearId,
-      },
-    });
+    await createGear({ userId: user.id, clonedFromId: item.gearId });
 
     await deleteCategoryGearMutation({ id: item.id }, ctx);
 
@@ -211,30 +121,11 @@ describe("deleteCategoryGearMutation", () => {
   it("should not delete the associated gear if there are pack items", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const pack = await db.pack.create({
-      data: {
-        name: "My pack",
-        slug: "my-pack",
-        userId: user.id,
-      },
-    });
-
-    const packCategory = await db.packCategory.create({
-      data: {
-        packId: pack.id,
-        index: 0,
-        name: "My Pack Category",
-      },
-    });
-
-    await db.packCategoryItem.create({
-      data: {
-        index: 0,
-        gearId: item.gearId,
-        worn: false,
-        quantity: 1,
-        categoryId: packCategory.id,
-      },
+    const pack = await createPack({ userId: user.id });
+    const packCategory = await createPackCategory({ packId: pack.id });
+    await createPackCategoryItem({
+      categoryId: packCategory.id,
+      gearId: item.gearId,
     });
 
     await deleteCategoryGearMutation({ id: item.id }, ctx);

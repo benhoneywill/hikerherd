@@ -30,8 +30,7 @@ const createCategoryMutation = resolver.pipe(
 
       // Find out what the index of the new category should be
       // based on the index of the current highest-index category
-      const highestCategoryIndex = user.categories[0]?.index;
-      const index = highestCategoryIndex ? highestCategoryIndex + 1 : 0;
+      const index = user.categories[0] ? user.categories[0]?.index + 1 : 0;
 
       return await prisma.category.create({
         data: {

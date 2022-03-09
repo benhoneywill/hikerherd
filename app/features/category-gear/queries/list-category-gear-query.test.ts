@@ -2,75 +2,32 @@ import type { User } from "db";
 
 import { AuthenticationError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
-
-import db from "db";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
+import createCategory from "test/helpers/create-category";
+import createCategoryItem from "test/helpers/create-category-item";
+import createGear from "test/helpers/create-gear";
 
 import listCategoryGearQuery from "./list-category-gear-query";
 
 let user: User;
 
-const GEAR_VALUES = {
-  name: "My gear",
-  weight: 100,
-  imageUrl: "https://example.com/example.png",
-  link: "https://example.com/",
-  notes: "Nice gear, use it a lot",
-  consumable: false,
-  price: 10000,
-  currency: "GBP",
-} as const;
-
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
+  user = await createUser();
+
+  const category = await createCategory({ userId: user.id });
+
+  const gear = await createGear({ userId: user.id });
+
+  await createCategoryItem({
+    categoryId: category.id,
+    gearId: gear.id,
   });
 
-  const category = await db.category.create({
-    data: {
-      name: "Category",
-      index: 0,
-      type: "INVENTORY",
-      userId: user.id,
-    },
-  });
-
-  await db.categoryItem.create({
-    data: {
-      index: 0,
-      category: {
-        connect: {
-          id: category.id,
-        },
-      },
-      gear: {
-        create: {
-          ...GEAR_VALUES,
-          userId: user.id,
-        },
-      },
-    },
-  });
-
-  await db.categoryItem.create({
-    data: {
-      index: 1,
-      category: {
-        connect: {
-          id: category.id,
-        },
-      },
-      gear: {
-        create: {
-          ...GEAR_VALUES,
-          userId: user.id,
-        },
-      },
-    },
+  await createCategoryItem({
+    index: 1,
+    categoryId: category.id,
+    gearId: gear.id,
   });
 });
 

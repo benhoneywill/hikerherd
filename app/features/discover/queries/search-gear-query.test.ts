@@ -1,43 +1,22 @@
-import createMockContext from "test/create-mock-context";
-
-import db from "db";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
+import createGear from "test/helpers/create-gear";
 
 import searchGearQuery from "./search-gear-query";
 
-const GEAR_VALUES = {
-  weight: 100,
-  imageUrl: "https://example.com/example.png",
-  link: "https://example.com/",
-  consumable: false,
-  price: 10000,
-  currency: "GBP",
-} as const;
-
 beforeEach(async () => {
-  const user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
+  const user = await createUser();
+
+  await createGear({
+    name: "Tent",
+    notes: "This tent shelters me",
+    userId: user.id,
   });
 
-  await db.gear.create({
-    data: {
-      ...GEAR_VALUES,
-      name: "Tent",
-      notes: "This tent shelters me",
-      userId: user.id,
-    },
-  });
-
-  await db.gear.create({
-    data: {
-      ...GEAR_VALUES,
-      name: "Sleeping bag",
-      notes: "This bag keeps me warm",
-      userId: user.id,
-    },
+  await createGear({
+    name: "Sleeping bag",
+    notes: "This bag keeps me warm",
+    userId: user.id,
   });
 });
 

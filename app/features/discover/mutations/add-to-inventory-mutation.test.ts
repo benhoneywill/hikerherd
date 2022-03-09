@@ -2,7 +2,13 @@ import type { User, Category, Gear } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
+import faker from "@faker-js/faker";
+
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
+import createCategory from "test/helpers/create-category";
+import createGear from "test/helpers/create-gear";
+import createCategoryItem from "test/helpers/create-category-item";
 
 import db from "db";
 
@@ -13,49 +19,11 @@ let otherUser: User;
 let category: Category;
 let gear: Gear;
 
-const GEAR_VALUES = {
-  name: "My gear",
-  weight: 100,
-  imageUrl: "https://example.com/example.png",
-  link: "https://example.com/",
-  notes: "Nice gear, use it a lot",
-  consumable: false,
-  price: 10000,
-  currency: "GBP",
-} as const;
-
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
-
-  otherUser = await db.user.create({
-    data: {
-      email: "other@hikerherd.com",
-      username: "otheruser",
-      hashedPassword: "fakehash",
-    },
-  });
-
-  category = await db.category.create({
-    data: {
-      name: "My category",
-      index: 0,
-      userId: user.id,
-      type: "INVENTORY",
-    },
-  });
-
-  gear = await db.gear.create({
-    data: {
-      ...GEAR_VALUES,
-      userId: otherUser.id,
-    },
-  });
+  user = await createUser();
+  otherUser = await createUser();
+  category = await createCategory({ userId: user.id });
+  gear = await createGear({ userId: user.id });
 });
 
 describe("addToInventoryMutation", () => {
@@ -71,27 +39,18 @@ describe("addToInventoryMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      addToInventoryMutation({ gearId: gear.id, categoryId: "abc123" }, ctx)
+      addToInventoryMutation(
+        { gearId: gear.id, categoryId: faker.datatype.uuid() },
+        ctx
+      )
     ).rejects.toThrow(NotFoundError);
   });
 
   it("should error if the category does not belong to the user", async () => {
-    const { ctx } = await createMockContext({ user });
-
-    const otherCategory = await db.category.create({
-      data: {
-        name: "My category",
-        index: 0,
-        userId: otherUser.id,
-        type: "INVENTORY",
-      },
-    });
+    const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(
-      addToInventoryMutation(
-        { gearId: gear.id, categoryId: otherCategory.id },
-        ctx
-      )
+      addToInventoryMutation({ gearId: gear.id, categoryId: category.id }, ctx)
     ).rejects.toThrow(AuthorizationError);
   });
 
@@ -99,7 +58,10 @@ describe("addToInventoryMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      addToInventoryMutation({ gearId: "abc123", categoryId: category.id }, ctx)
+      addToInventoryMutation(
+        { gearId: faker.datatype.uuid(), categoryId: category.id },
+        ctx
+      )
     ).rejects.toThrow(NotFoundError);
   });
 
@@ -117,19 +79,21 @@ describe("addToInventoryMutation", () => {
     });
 
     expect(fetched?.index).toEqual(0);
-    expect(fetched?.gear).toMatchObject(GEAR_VALUES);
+    expect(fetched?.gear).toMatchObject({
+      name: gear.name,
+      weight: gear.weight,
+      clonedFromId: gear.id,
+    });
     expect(fetched?.categoryId).toEqual(category.id);
   });
 
   it("should correctly set the item's index", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await db.categoryItem.create({
-      data: {
-        categoryId: category.id,
-        gearId: gear.id,
-        index: 0,
-      },
+    await createCategoryItem({
+      categoryId: category.id,
+      gearId: gear.id,
+      index: 0,
     });
 
     const item = await addToInventoryMutation(

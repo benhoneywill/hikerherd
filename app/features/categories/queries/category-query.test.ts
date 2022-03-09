@@ -1,37 +1,24 @@
-import type { User } from "db";
+import type { User, Category } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
-
-import db from "db";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
+import createCategory from "test/helpers/create-category";
 
 import categoryQuery from "./category-query";
 
 let user: User;
+let category: Category;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
+  category = await createCategory({ userId: user.id });
 });
 
 describe("categoryQuery", () => {
   it("should error if not logged in", async () => {
     const { ctx } = await createMockContext();
-
-    const category = await db.category.create({
-      data: {
-        name: "My category",
-        index: 0,
-        type: "INVENTORY",
-        userId: user.id,
-      },
-    });
 
     await expect(categoryQuery({ id: category.id }, ctx)).rejects.toThrow(
       AuthenticationError
@@ -47,24 +34,8 @@ describe("categoryQuery", () => {
   });
 
   it("should error if the category does not belong to the user", async () => {
-    const { ctx } = await createMockContext({ user });
-
-    const otherUser = await db.user.create({
-      data: {
-        email: "example2@hikerherd.com",
-        username: "testuser2",
-        hashedPassword: "fakehash",
-      },
-    });
-
-    const category = await db.category.create({
-      data: {
-        name: "My category",
-        index: 0,
-        type: "INVENTORY",
-        userId: otherUser.id,
-      },
-    });
+    const otherUser = await createUser();
+    const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(categoryQuery({ id: category.id }, ctx)).rejects.toThrow(
       AuthorizationError
@@ -74,21 +45,12 @@ describe("categoryQuery", () => {
   it("Should return the category", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const category = await db.category.create({
-      data: {
-        name: "My category",
-        index: 0,
-        type: "INVENTORY",
-        userId: user.id,
-      },
-    });
-
     const result = await categoryQuery({ id: category.id }, ctx);
 
     expect(result).toMatchObject({
       id: category.id,
-      name: "My category",
-      index: 0,
+      name: category.name,
+      index: category.index,
       userId: user.id,
     });
   });

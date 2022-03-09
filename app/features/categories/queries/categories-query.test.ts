@@ -2,22 +2,16 @@ import type { User } from "db";
 
 import { AuthenticationError } from "blitz";
 
-import createMockContext from "test/create-mock-context";
-
-import db from "db";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
+import createCategory from "test/helpers/create-category";
 
 import categoriesQuery from "./categories-query";
 
 let user: User;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
 });
 
 describe("categoriesQuery", () => {
@@ -32,52 +26,34 @@ describe("categoriesQuery", () => {
   it("should fetch the current users categories by type", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const otherUser = await db.user.create({
-      data: {
-        email: "example2@hikerherd.com",
-        username: "testuser2",
-        hashedPassword: "fakehash",
-      },
-    });
+    const otherUser = await createUser();
 
-    await db.category.createMany({
-      data: [
-        { name: "wl0", type: "WISH_LIST", index: 0, userId: user.id },
-        { name: "wl1", type: "WISH_LIST", index: 1, userId: user.id },
-        { name: "wl2", type: "WISH_LIST", index: 2, userId: user.id },
+    await createCategory({ userId: user.id, index: 0 });
+    await createCategory({ userId: user.id, index: 1 });
+    await createCategory({ userId: user.id, index: 2 });
+    await createCategory({ userId: user.id, type: "WISH_LIST", index: 0 });
+    await createCategory({ userId: user.id, type: "WISH_LIST", index: 1 });
 
-        { name: "inv0", type: "INVENTORY", index: 0, userId: user.id },
-        { name: "inv1", type: "INVENTORY", index: 1, userId: user.id },
-        { name: "inv2", type: "INVENTORY", index: 2, userId: user.id },
-        { name: "inv3", type: "INVENTORY", index: 3, userId: user.id },
-
-        { name: "wl", type: "WISH_LIST", index: 0, userId: otherUser.id },
-        { name: "inv", type: "INVENTORY", index: 0, userId: otherUser.id },
-      ],
-    });
+    await createCategory({ userId: otherUser.id, index: 0 });
+    await createCategory({ userId: otherUser.id, index: 1 });
 
     const wishListCategories = await categoriesQuery(
       { type: "WISH_LIST" },
       ctx
     );
 
-    expect(wishListCategories.length).toEqual(3);
-    expect(wishListCategories[0]).toMatchObject({
-      name: "wl0",
-      index: 0,
-      userId: user.id,
-    });
+    expect(wishListCategories.length).toEqual(2);
+    expect(wishListCategories[0]?.index).toEqual(0);
+    expect(wishListCategories[1]?.index).toEqual(1);
 
     const inventoryCategories = await categoriesQuery(
       { type: "INVENTORY" },
       ctx
     );
 
-    expect(inventoryCategories.length).toEqual(4);
-    expect(inventoryCategories[1]).toMatchObject({
-      name: "inv1",
-      index: 1,
-      userId: user.id,
-    });
+    expect(inventoryCategories.length).toEqual(3);
+    expect(inventoryCategories[0]?.index).toEqual(0);
+    expect(inventoryCategories[1]?.index).toEqual(1);
+    expect(inventoryCategories[2]?.index).toEqual(2);
   });
 });

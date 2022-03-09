@@ -4,22 +4,20 @@ import { AuthenticationError } from "blitz";
 
 import papaparse from "papaparse";
 
-import createMockContext from "test/create-mock-context";
-
-import db from "db";
+import createMockContext from "test/helpers/create-mock-context";
+import createUser from "test/helpers/create-user";
+import createCategory from "test/helpers/create-category";
+import createGear from "test/helpers/create-gear";
+import createCategoryItem from "test/helpers/create-category-item";
+import displayCurrency from "app/modules/common/helpers/display-currency";
+import csvHeadingRow from "test/data/csv-heading-row";
 
 import inventoryExportCsvMutation from "./inventory-export-csv-mutation";
 
 let user: User;
 
 beforeEach(async () => {
-  user = await db.user.create({
-    data: {
-      email: "example@hikerherd.com",
-      username: "testuser",
-      hashedPassword: "fakehash",
-    },
-  });
+  user = await createUser();
 });
 
 describe("inventoryExportCsvMutation", () => {
@@ -34,231 +32,89 @@ describe("inventoryExportCsvMutation", () => {
   it("should return the correct CSV", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const category0 = await db.category.create({
-      data: {
-        name: "category 0",
-        type: "INVENTORY",
+    const category0 = await createCategory({ userId: user.id });
+    const category1 = await createCategory({ userId: user.id });
+    const category2 = await createCategory({ userId: user.id });
+
+    const gear0 = await createGear({ userId: user.id });
+    const gear1 = await createGear({ userId: user.id });
+    const gear2 = await createGear({ userId: user.id });
+
+    const items = [
+      {
         index: 0,
-        userId: user.id,
+        gear: gear0,
+        category: category0,
       },
-    });
-
-    const category1 = await db.category.create({
-      data: {
-        name: "category 1",
-        type: "INVENTORY",
+      {
         index: 1,
-        userId: user.id,
+        gear: gear1,
+        category: category0,
       },
-    });
-
-    const category2 = await db.category.create({
-      data: {
-        name: "category 2",
-        type: "INVENTORY",
+      {
+        index: 0,
+        gear: gear0,
+        category: category1,
+      },
+      {
+        index: 1,
+        gear: gear2,
+        category: category1,
+      },
+      {
+        index: 0,
+        gear: gear0,
+        category: category2,
+      },
+      {
+        index: 1,
+        gear: gear1,
+        category: category2,
+      },
+      {
         index: 2,
-        userId: user.id,
+        gear: gear2,
+        category: category2,
       },
-    });
+    ];
 
-    const gear0 = await db.gear.create({
-      data: {
-        name: "Gear 0",
-        weight: 100,
-        imageUrl: "https://example.com/gear0.png",
-        link: "https://example.com/gear0",
-        notes: "Nice gear",
-        consumable: false,
-        price: 10000,
-        currency: "GBP",
-        userId: user.id,
-      },
-    });
-
-    const gear1 = await db.gear.create({
-      data: {
-        name: "Gear 1",
-        weight: 500,
-        imageUrl: "https://example.com/gear1.png",
-        link: "https://example.com/gear1",
-        notes: "I like it",
-        consumable: true,
-        price: 999,
-        currency: "USD",
-        userId: user.id,
-      },
-    });
-
-    const gear2 = await db.gear.create({
-      data: {
-        name: "Gear 2",
-        weight: 1000,
-        userId: user.id,
-      },
-    });
-
-    await db.categoryItem.createMany({
-      data: [
-        {
-          index: 0,
-          gearId: gear0.id,
-          categoryId: category0.id,
-        },
-        {
-          index: 1,
-          gearId: gear1.id,
-          categoryId: category0.id,
-        },
-        {
-          index: 0,
-          gearId: gear0.id,
-          categoryId: category1.id,
-        },
-        {
-          index: 1,
-          gearId: gear2.id,
-          categoryId: category1.id,
-        },
-        {
-          index: 0,
-          gearId: gear0.id,
-          categoryId: category2.id,
-        },
-        {
-          index: 1,
-          gearId: gear1.id,
-          categoryId: category2.id,
-        },
-        {
-          index: 2,
-          gearId: gear2.id,
-          categoryId: category2.id,
-        },
-      ],
-    });
+    await Promise.all(
+      items.map((item) =>
+        createCategoryItem({
+          index: item.index,
+          gearId: item.gear.id,
+          categoryId: item.category.id,
+        })
+      )
+    );
 
     const result = await inventoryExportCsvMutation({ type: "INVENTORY" }, ctx);
 
     const parsedData = papaparse.parse(result);
 
-    expect(parsedData.data[0]).toEqual([
-      "name",
-      "category",
-      "weight",
-      "unit",
-      "notes",
-      "price",
-      "currency",
-      "link",
-      "image",
-      "consumable",
-      "worn",
-      "quantity",
-    ]);
+    parsedData.data.forEach((row, i) => {
+      if (i === 0) {
+        expect(row).toEqual(csvHeadingRow);
+      } else {
+        const item = items[i - 1];
 
-    expect(parsedData.data[1]).toEqual([
-      "Gear 0",
-      "category 0",
-      "100",
-      "gram",
-      "Nice gear",
-      "100",
-      "£",
-      "https://example.com/gear0",
-      "https://example.com/gear0.png",
-      "",
-      "",
-      "1",
-    ]);
+        if (!item) throw new Error("Item not found");
 
-    expect(parsedData.data[2]).toEqual([
-      "Gear 1",
-      "category 0",
-      "500",
-      "gram",
-      "I like it",
-      "9.99",
-      "$",
-      "https://example.com/gear1",
-      "https://example.com/gear1.png",
-      "consumable",
-      "",
-      "1",
-    ]);
-
-    expect(parsedData.data[3]).toEqual([
-      "Gear 0",
-      "category 1",
-      "100",
-      "gram",
-      "Nice gear",
-      "100",
-      "£",
-      "https://example.com/gear0",
-      "https://example.com/gear0.png",
-      "",
-      "",
-      "1",
-    ]);
-
-    expect(parsedData.data[4]).toEqual([
-      "Gear 2",
-      "category 1",
-      "1000",
-      "gram",
-      "",
-      "",
-      "$",
-      "",
-      "",
-      "",
-      "",
-      "1",
-    ]);
-
-    expect(parsedData.data[5]).toEqual([
-      "Gear 0",
-      "category 2",
-      "100",
-      "gram",
-      "Nice gear",
-      "100",
-      "£",
-      "https://example.com/gear0",
-      "https://example.com/gear0.png",
-      "",
-      "",
-      "1",
-    ]);
-
-    expect(parsedData.data[6]).toEqual([
-      "Gear 1",
-      "category 2",
-      "500",
-      "gram",
-      "I like it",
-      "9.99",
-      "$",
-      "https://example.com/gear1",
-      "https://example.com/gear1.png",
-      "consumable",
-      "",
-      "1",
-    ]);
-
-    expect(parsedData.data[7]).toEqual([
-      "Gear 2",
-      "category 2",
-      "1000",
-      "gram",
-      "",
-      "",
-      "$",
-      "",
-      "",
-      "",
-      "",
-      "1",
-    ]);
+        expect(row).toEqual([
+          item.gear.name,
+          item.category.name,
+          `${item.gear.weight}`,
+          "gram",
+          item.gear.notes || "",
+          item.gear.price ? `${item.gear.price / 100}` : "",
+          displayCurrency(item.gear.currency),
+          item.gear.link || "",
+          item.gear.imageUrl || "",
+          item.gear.consumable ? "consumable" : "",
+          "",
+          "1",
+        ]);
+      }
+    });
   });
 });

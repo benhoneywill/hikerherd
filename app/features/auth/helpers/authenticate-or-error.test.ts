@@ -1,49 +1,44 @@
-import { AuthenticationError, SecurePassword } from "blitz";
+import type { User } from "db";
 
-import db from "db";
+import { AuthenticationError } from "blitz";
+
+import { faker } from "@faker-js/faker";
+
+import createUser from "test/helpers/create-user";
 
 import authenticateOrError from "./authenticate-or-error";
 
-const EMAIL = "example@example.com";
-const USERNAME = "username";
-const PASSWORD = "password12345";
+let user: User;
+const password = faker.internet.password(12);
 
 beforeEach(async () => {
-  const hashedPassword = await SecurePassword.hash(PASSWORD);
-
-  await db.user.create({
-    data: {
-      email: EMAIL,
-      username: USERNAME,
-      hashedPassword,
-    },
-  });
+  user = await createUser({ password });
 });
 
 describe("authenticateOrError", () => {
   it("should error if the email & password are incorrect", async () => {
     await expect(
-      authenticateOrError("wrong@example.com", "wrong12345")
+      authenticateOrError(faker.internet.email(), faker.internet.password())
     ).rejects.toThrow(AuthenticationError);
   });
 
   it("should error if the email is incorrect", async () => {
     await expect(
-      authenticateOrError("wrong@example.com", PASSWORD)
+      authenticateOrError(faker.internet.email(), password)
     ).rejects.toThrow(AuthenticationError);
   });
 
   it("should error if the password is incorrect", async () => {
-    await expect(authenticateOrError(EMAIL, "wrong12345")).rejects.toThrow(
-      AuthenticationError
-    );
+    await expect(
+      authenticateOrError(user.email, faker.internet.password())
+    ).rejects.toThrow(AuthenticationError);
   });
 
   it("should return a user without the password if the credentials are correct", async () => {
-    const user = await authenticateOrError(EMAIL, PASSWORD);
+    const authenticatedUser = await authenticateOrError(user.email, password);
 
-    expect(user.email).toEqual(EMAIL);
-    expect(user.username).toEqual(USERNAME);
-    expect((user as any).hashedPassword).toBeUndefined();
+    expect(authenticatedUser.email).toEqual(user.email);
+    expect(authenticatedUser.username).toEqual(user.username);
+    expect((authenticatedUser as User).hashedPassword).toBeUndefined();
   });
 });
