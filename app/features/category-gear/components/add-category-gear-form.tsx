@@ -53,16 +53,18 @@ const AddCategoryGearForm: FC<AddCategoryGearFormProps> = ({
       submitText="Add"
       onSubmit={async (values) => {
         try {
+          const vals = { ...values };
+
           if (weightUnit === "IMPERIAL") {
-            values.weight = ozTog(values.weight);
+            vals.weight = ozTog(values.weight);
           }
 
           if (values.price) {
-            values.price = Math.floor(values.price * 100);
+            vals.price = Math.floor(values.price * 100);
           }
 
           if (!categoryId) throw new Error("Category required");
-          const result = await createGear(values);
+          const result = await createGear(vals);
 
           onClose();
           if (onSuccess) {
