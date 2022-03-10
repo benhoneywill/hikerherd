@@ -2,10 +2,11 @@ import type { User, Pack } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
+import faker from "@faker-js/faker";
+
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
-
-import db from "db";
+import createPack from "test/helpers/create-pack";
 
 import packQuery from "./pack-query";
 
@@ -14,15 +15,7 @@ let pack: Pack;
 
 beforeEach(async () => {
   user = await createUser();
-
-  pack = await db.pack.create({
-    data: {
-      name: "My Pack",
-      slug: "my-pack",
-      notes: null,
-      userId: user.id,
-    },
-  });
+  pack = await createPack({ userId: user.id });
 });
 
 describe("packQuery", () => {
@@ -37,7 +30,7 @@ describe("packQuery", () => {
   it("should error if the pack is not found", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await expect(packQuery({ id: "abc123" }, ctx)).rejects.toThrow(
+    await expect(packQuery({ id: faker.datatype.uuid() }, ctx)).rejects.toThrow(
       NotFoundError
     );
   });

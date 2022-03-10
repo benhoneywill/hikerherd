@@ -2,8 +2,12 @@ import type { User, Pack, PackCategory } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
+import faker from "@faker-js/faker";
+
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
+import createPack from "test/helpers/create-pack";
+import createPackCategory from "test/helpers/create-pack-category";
 
 import db from "db";
 
@@ -15,23 +19,8 @@ let category: PackCategory;
 
 beforeEach(async () => {
   user = await createUser();
-
-  pack = await db.pack.create({
-    data: {
-      name: "My Pack",
-      slug: "my-pack",
-      userId: user.id,
-      notes: null,
-    },
-  });
-
-  category = await db.packCategory.create({
-    data: {
-      name: "My category",
-      index: 0,
-      packId: pack.id,
-    },
-  });
+  pack = await createPack({ userId: user.id });
+  category = await createPackCategory({ packId: pack.id });
 });
 
 describe("updatePackCategoryMutation", () => {
@@ -39,7 +28,10 @@ describe("updatePackCategoryMutation", () => {
     const { ctx } = await createMockContext();
 
     await expect(
-      updatePackCategoryMutation({ id: category.id, name: "updated" }, ctx)
+      updatePackCategoryMutation(
+        { id: category.id, name: faker.random.word() },
+        ctx
+      )
     ).rejects.toThrow(AuthenticationError);
   });
 
@@ -47,7 +39,10 @@ describe("updatePackCategoryMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      updatePackCategoryMutation({ id: "abc123", name: "updated" }, ctx)
+      updatePackCategoryMutation(
+        { id: faker.datatype.uuid(), name: faker.random.word() },
+        ctx
+      )
     ).rejects.toThrow(NotFoundError);
   });
 
@@ -57,19 +52,24 @@ describe("updatePackCategoryMutation", () => {
     const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(
-      updatePackCategoryMutation({ id: category.id, name: "updated" }, ctx)
+      updatePackCategoryMutation(
+        { id: category.id, name: faker.random.word() },
+        ctx
+      )
     ).rejects.toThrow(AuthorizationError);
   });
 
   it("Should correctly update the category name", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await updatePackCategoryMutation({ id: category.id, name: "updated" }, ctx);
+    const name = faker.random.word();
+
+    await updatePackCategoryMutation({ id: category.id, name }, ctx);
 
     const updated = await db.packCategory.findUnique({
       where: { id: category.id },
     });
 
-    expect(updated?.name).toEqual("updated");
+    expect(updated?.name).toEqual(name);
   });
 });

@@ -1,6 +1,7 @@
 import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import idSchema from "app/modules/common/schemas/id-schema";
+import conditionallyDeleteGear from "app/features/gear/functions/conditionally-delete-gear";
 
 import db from "db";
 
@@ -29,27 +30,15 @@ const deletePackMutation = resolver.pipe(
 
       await Promise.all(
         packItems.map(async (item) => {
-          const inventoryItem = await prisma.categoryItem.findFirst({
-            where: {
-              gearId: item.gearId,
-            },
-          });
-
-          const clone = await prisma.gear.findFirst({
-            where: {
-              clonedFromId: item.gearId,
-            },
-          });
-
           await prisma.packCategoryItem.delete({
             where: {
               id: item.id,
             },
           });
 
-          if (!inventoryItem && !clone) {
-            await prisma.gear.delete({ where: { id: item.gearId } });
-          }
+          await conditionallyDeleteGear(prisma, ctx, {
+            id: item.gearId,
+          });
         })
       );
 

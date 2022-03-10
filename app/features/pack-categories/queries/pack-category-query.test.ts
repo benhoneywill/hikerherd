@@ -2,10 +2,12 @@ import type { User, Pack, PackCategory } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
+import faker from "@faker-js/faker";
+
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
-
-import db from "db";
+import createPack from "test/helpers/create-pack";
+import createPackCategory from "test/helpers/create-pack-category";
 
 import packCategoryQuery from "./pack-category-query";
 
@@ -15,23 +17,8 @@ let category: PackCategory;
 
 beforeEach(async () => {
   user = await createUser();
-
-  pack = await db.pack.create({
-    data: {
-      name: "My Pack",
-      slug: "my-pack",
-      userId: user.id,
-      notes: null,
-    },
-  });
-
-  category = await db.packCategory.create({
-    data: {
-      name: "My category",
-      index: 0,
-      packId: pack.id,
-    },
-  });
+  pack = await createPack({ userId: user.id });
+  category = await createPackCategory({ packId: pack.id });
 });
 
 describe("packCategoryQuery", () => {
@@ -46,9 +33,9 @@ describe("packCategoryQuery", () => {
   it("should error if the category does not exist", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await expect(packCategoryQuery({ id: "abc123" }, ctx)).rejects.toThrow(
-      NotFoundError
-    );
+    await expect(
+      packCategoryQuery({ id: faker.datatype.uuid() }, ctx)
+    ).rejects.toThrow(NotFoundError);
   });
 
   it("should error if the category does not belong to the user", async () => {
@@ -68,7 +55,7 @@ describe("packCategoryQuery", () => {
 
     expect(result).toMatchObject({
       id: category.id,
-      name: "My category",
+      name: category.name,
     });
   });
 });

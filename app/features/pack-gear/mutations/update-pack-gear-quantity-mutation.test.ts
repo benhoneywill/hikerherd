@@ -2,23 +2,18 @@ import type { User, PackCategory, PackCategoryItem, Pack } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
+import faker from "@faker-js/faker";
+
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
+import createPack from "test/helpers/create-pack";
+import createPackCategory from "test/helpers/create-pack-category";
+import createGear from "test/helpers/create-gear";
+import createPackCategoryItem from "test/helpers/create-pack-category-item";
 
 import db from "db";
 
 import updatePackGearQuantityMutation from "./update-pack-gear-quantity-mutation";
-
-const GEAR_VALUES = {
-  name: "My gear",
-  weight: 100,
-  imageUrl: "https://example.com/example.png",
-  link: "https://example.com/",
-  notes: "Nice gear, use it a lot",
-  consumable: false,
-  price: 10000,
-  currency: "GBP",
-} as const;
 
 let user: User;
 let pack: Pack;
@@ -27,40 +22,14 @@ let item: PackCategoryItem;
 
 beforeEach(async () => {
   user = await createUser();
+  pack = await createPack({ userId: user.id });
+  category = await createPackCategory({ packId: pack.id });
 
-  pack = await db.pack.create({
-    data: {
-      name: "My Pack",
-      slug: "my-pack",
-      userId: user.id,
-      notes: null,
-    },
-  });
-
-  category = await db.packCategory.create({
-    data: {
-      name: "My category",
-      index: 0,
-      packId: pack.id,
-    },
-  });
-
-  item = await db.packCategoryItem.create({
-    data: {
-      index: 0,
-      worn: false,
-      category: {
-        connect: {
-          id: category.id,
-        },
-      },
-      gear: {
-        create: {
-          ...GEAR_VALUES,
-          userId: user.id,
-        },
-      },
-    },
+  const gear = await createGear({ userId: user.id });
+  item = await createPackCategoryItem({
+    categoryId: category.id,
+    gearId: gear.id,
+    quantity: 1,
   });
 });
 
@@ -77,7 +46,10 @@ describe("updatePackGearQuantityMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      updatePackGearQuantityMutation({ id: "abc123", type: "increment" }, ctx)
+      updatePackGearQuantityMutation(
+        { id: faker.datatype.uuid(), type: "increment" },
+        ctx
+      )
     ).rejects.toThrow(NotFoundError);
   });
 

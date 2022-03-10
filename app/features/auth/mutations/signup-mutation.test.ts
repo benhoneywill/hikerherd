@@ -85,7 +85,7 @@ describe("signupMutation", () => {
       where: { id: ctx.session.userId as string },
     });
 
-    if (!user) throw new Error("User not found");
+    if (!user) fail("User not found");
 
     expect(user.email).toEqual(email);
 

@@ -2,126 +2,31 @@ import type { User, Pack } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
-import papaparse from "papaparse";
+import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
+import createPack from "test/helpers/create-pack";
+import getCsvData from "test/data/get-csv-data";
+import getCsv from "test/data/get-csv";
+import createPackCategory from "test/helpers/create-pack-category";
+import createGear from "test/helpers/create-gear";
+import createPackCategoryItem from "test/helpers/create-pack-category-item";
 
 import db from "db";
 
 import packImportCsvMutation from "./pack-import-csv-mutation";
 
-const createCsv = () => {
-  return papaparse.unparse([
-    [
-      "name",
-      "category",
-      "weight",
-      "unit",
-      "notes",
-      "price",
-      "currency",
-      "link",
-      "image",
-      "consumable",
-      "worn",
-      "quantity",
-    ],
-
-    [
-      "Gear 0",
-      "category 0",
-      "100",
-      "gram",
-      "Nice gear",
-      "100",
-      "£",
-      "https://example.com/gear0",
-      "https://example.com/gear0.png",
-      "",
-      "",
-      "1",
-    ],
-
-    [
-      "Gear 1",
-      "category 0",
-      "500",
-      "gram",
-      "I like it",
-      "9.99",
-      "$",
-      "https://example.com/gear1",
-      "https://example.com/gear1.png",
-      "consumable",
-      "",
-      "1",
-    ],
-
-    [
-      "Gear 0",
-      "category 1",
-      "100",
-      "gram",
-      "Nice gear",
-      "100",
-      "£",
-      "https://example.com/gear0",
-      "https://example.com/gear0.png",
-      "",
-      "",
-      "1",
-    ],
-
-    ["Gear 2", "category 1", "1000", "gram", "", "", "$", "", "", "", "", "1"],
-
-    [
-      "Gear 0",
-      "category 2",
-      "100",
-      "gram",
-      "Nice gear",
-      "100",
-      "£",
-      "https://example.com/gear0",
-      "https://example.com/gear0.png",
-      "",
-      "",
-      "1",
-    ],
-
-    [
-      "Gear 1",
-      "category 2",
-      "500",
-      "gram",
-      "I like it",
-      "9.99",
-      "$",
-      "https://example.com/gear1",
-      "https://example.com/gear1.png",
-      "consumable",
-      "",
-      "1",
-    ],
-
-    ["Gear 2", "category 2", "1000", "gram", "", "", "$", "", "", "", "", "1"],
-  ]);
-};
+const categories = ["category 1", "category 2", "category 3"];
+const data = getCsvData(categories);
+const testCsv = getCsv(data);
 
 let user: User;
 let pack: Pack;
 
 beforeEach(async () => {
   user = await createUser();
-
-  pack = await db.pack.create({
-    data: {
-      userId: user.id,
-      name: "my pack",
-      slug: "my-pack",
-    },
-  });
+  pack = await createPack({ userId: user.id });
 });
 
 describe("packImportCsvMutation", () => {
@@ -129,7 +34,7 @@ describe("packImportCsvMutation", () => {
     const { ctx } = await createMockContext();
 
     await expect(
-      packImportCsvMutation({ id: pack.id, file: "" }, ctx)
+      packImportCsvMutation({ id: pack.id, file: testCsv }, ctx)
     ).rejects.toThrow(AuthenticationError);
   });
 
@@ -137,7 +42,7 @@ describe("packImportCsvMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      packImportCsvMutation({ id: "abc123", file: "" }, ctx)
+      packImportCsvMutation({ id: faker.datatype.uuid(), file: testCsv }, ctx)
     ).rejects.toThrow(NotFoundError);
   });
 
@@ -147,130 +52,108 @@ describe("packImportCsvMutation", () => {
     const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(
-      packImportCsvMutation({ id: pack.id, file: "" }, ctx)
+      packImportCsvMutation({ id: pack.id, file: testCsv }, ctx)
     ).rejects.toThrow(AuthorizationError);
   });
 
   it("should create the correct database records", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await packImportCsvMutation({ id: pack.id, file: createCsv() }, ctx);
+    await packImportCsvMutation({ id: pack.id, file: testCsv }, ctx);
 
-    const gear0 = {
-      name: "Gear 0",
-      weight: 100,
-      imageUrl: "https://example.com/gear0.png",
-      link: "https://example.com/gear0",
-      notes: "Nice gear",
-      consumable: false,
-      price: 10000,
-      currency: "GBP",
-      userId: user.id,
-    };
+    const categoryCount = await db.packCategory.count();
+    expect(categoryCount).toEqual(categories.length);
 
-    const gear1 = {
-      name: "Gear 1",
-      weight: 500,
-      imageUrl: "https://example.com/gear1.png",
-      link: "https://example.com/gear1",
-      notes: "I like it",
-      consumable: true,
-      price: 999,
-      currency: "USD",
-      userId: user.id,
-    };
+    const categoryItemCount = await db.packCategoryItem.count();
+    expect(categoryItemCount).toEqual(Object.values(data).flat().length);
 
-    const gear2 = {
-      name: "Gear 2",
-      weight: 1000,
-      userId: user.id,
-    };
+    await Promise.all(
+      categories.map(async (name, index) => {
+        const category = await db.packCategory.findFirst({
+          where: { name },
+          include: {
+            items: { orderBy: { index: "asc" }, include: { gear: true } },
+          },
+        });
 
-    const category0 = await db.packCategory.findFirst({
-      where: { name: "category 0" },
-      include: {
-        items: { include: { gear: true }, orderBy: { index: "asc" } },
-      },
-    });
+        if (!category) fail("Category not created");
 
-    expect(category0?.index).toEqual(0);
-    expect(category0?.items.length).toEqual(2);
-    expect(category0?.items[0]?.gear).toMatchObject(gear0);
-    expect(category0?.items[1]?.gear).toMatchObject(gear1);
+        const csvCategory = data[name];
+        if (!csvCategory) fail("Not matching csv category");
 
-    const category1 = await db.packCategory.findFirst({
-      where: { name: "category 1" },
-      include: {
-        items: { include: { gear: true }, orderBy: { index: "asc" } },
-      },
-    });
+        expect(category.items.length).toEqual(csvCategory.length);
+        expect(category.index).toEqual(index);
 
-    expect(category1?.index).toEqual(1);
-    expect(category1?.items.length).toEqual(2);
-    expect(category1?.items[0]?.gear).toMatchObject(gear0);
-    expect(category1?.items[1]?.gear).toMatchObject(gear2);
+        category.items.forEach((item, index) => {
+          const csvItem = csvCategory[index];
 
-    const category2 = await db.packCategory.findFirst({
-      where: { name: "category 2" },
-      include: {
-        items: { include: { gear: true }, orderBy: { index: "asc" } },
-      },
-    });
+          if (!csvItem) fail("No matching CSV item");
 
-    expect(category2?.index).toEqual(2);
-    expect(category2?.items.length).toEqual(3);
-    expect(category2?.items[0]?.gear).toMatchObject(gear0);
-    expect(category2?.items[1]?.gear).toMatchObject(gear1);
-    expect(category2?.items[2]?.gear).toMatchObject(gear2);
+          expect(item.index).toEqual(index);
+          expect(item.gear.name).toEqual(csvItem.name);
+          expect(item.gear.weight).toEqual(Number(csvItem.weight));
+        });
+      })
+    );
   });
 
   it("should append to categories that already exist", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await db.packCategory.create({
-      data: {
-        name: "category 0",
-        index: 0,
-        packId: pack.id,
-        items: {
-          create: {
-            index: 0,
-            worn: false,
-            gear: {
-              create: {
-                name: "Existing gear",
-                weight: 1000,
-                userId: user.id,
-              },
-            },
+    const existingCategoryName = categories[1];
+
+    const existingCategory = await createPackCategory({
+      packId: pack.id,
+      name: existingCategoryName,
+      index: 0,
+    });
+
+    const gear = await createGear({ userId: user.id });
+
+    await createPackCategoryItem({
+      categoryId: existingCategory.id,
+      gearId: gear.id,
+      index: 0,
+    });
+
+    await packImportCsvMutation({ id: pack.id, file: testCsv }, ctx);
+
+    const categoryCount = await db.packCategory.count();
+    expect(categoryCount).toEqual(categories.length);
+
+    const categoryItemCount = await db.packCategoryItem.count();
+    expect(categoryItemCount).toEqual(Object.values(data).flat().length + 1);
+
+    await Promise.all(
+      categories.map(async (name, index) => {
+        const isExisting = existingCategoryName === name;
+
+        const category = await db.packCategory.findFirst({
+          where: { name },
+          include: {
+            items: { orderBy: { index: "asc" }, include: { gear: true } },
           },
-        },
-      },
-    });
+        });
 
-    await packImportCsvMutation({ id: pack.id, file: createCsv() }, ctx);
+        if (!category) fail("Category not created");
 
-    const categoryCount = await db.packCategory.findFirst({
-      select: { _count: true },
-    });
+        const csvCategory = data[name];
+        if (!csvCategory) fail("Not matching csv category");
 
-    expect(categoryCount?._count?.items).toEqual(3);
+        if (isExisting) {
+          expect(category.items.length).toEqual(csvCategory.length + 1);
+          expect(category.index).toEqual(existingCategory.index);
+        } else {
+          expect(category.items.length).toEqual(csvCategory.length);
+          expect(category.index).toEqual(
+            index <= existingCategory.index ? index + 1 : index
+          );
+        }
 
-    const category0 = await db.packCategory.findFirst({
-      where: { name: "category 0" },
-      include: {
-        items: { include: { gear: true }, orderBy: { index: "asc" } },
-      },
-    });
-
-    expect(category0?.index).toEqual(0);
-    expect(category0?.items.length).toEqual(3);
-
-    expect(category0?.items[0]?.gear.name).toEqual("Existing gear");
-    expect(category0?.items[1]?.gear.name).toEqual("Gear 0");
-    expect(category0?.items[2]?.gear.name).toEqual("Gear 1");
-
-    expect(category0?.items[1]?.index).toEqual(1);
-    expect(category0?.items[2]?.index).toEqual(2);
+        category.items.forEach((item, index) => {
+          expect(item.index).toEqual(index);
+        });
+      })
+    );
   });
 });

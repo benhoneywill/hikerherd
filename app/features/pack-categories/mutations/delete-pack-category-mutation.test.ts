@@ -2,8 +2,12 @@ import type { User, Pack, PackCategory } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
+import faker from "@faker-js/faker";
+
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
+import createPack from "test/helpers/create-pack";
+import createPackCategory from "test/helpers/create-pack-category";
 
 import db from "db";
 
@@ -15,23 +19,8 @@ let category: PackCategory;
 
 beforeEach(async () => {
   user = await createUser();
-
-  pack = await db.pack.create({
-    data: {
-      name: "My Pack",
-      slug: "my-pack",
-      userId: user.id,
-      notes: null,
-    },
-  });
-
-  category = await db.packCategory.create({
-    data: {
-      name: "My category",
-      index: 0,
-      packId: pack.id,
-    },
-  });
+  pack = await createPack({ userId: user.id });
+  category = await createPackCategory({ packId: pack.id });
 });
 
 describe("deletePackCategoryMutation", () => {
@@ -47,7 +36,7 @@ describe("deletePackCategoryMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      deletePackCategoryMutation({ id: "abc123" }, ctx)
+      deletePackCategoryMutation({ id: faker.datatype.uuid() }, ctx)
     ).rejects.toThrow(NotFoundError);
   });
 
@@ -76,25 +65,24 @@ describe("deletePackCategoryMutation", () => {
   it("should change the indexes of the categories correctly", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await db.packCategory.createMany({
-      data: [
-        { name: "cat0", packId: pack.id, index: 0 },
-        { name: "cat1", packId: pack.id, index: 1 },
-        { name: "cat2", packId: pack.id, index: 2 },
-        { name: "cat3", packId: pack.id, index: 3 },
-      ],
+    const cat1 = await createPackCategory({ packId: pack.id, index: 1 });
+    const cat2 = await createPackCategory({ packId: pack.id, index: 2 });
+    const cat3 = await createPackCategory({ packId: pack.id, index: 3 });
+
+    await deletePackCategoryMutation({ id: cat1.id }, ctx);
+
+    const fetched0 = await db.packCategory.findUnique({
+      where: { id: category.id },
+    });
+    const fetched2 = await db.packCategory.findUnique({
+      where: { id: cat2.id },
+    });
+    const fetched3 = await db.packCategory.findUnique({
+      where: { id: cat3.id },
     });
 
-    const cat2 = await db.packCategory.findFirst({ where: { name: "cat2" } });
-
-    await deletePackCategoryMutation({ id: cat2?.id as string }, ctx);
-
-    const cat0 = await db.packCategory.findFirst({ where: { name: "cat0" } });
-    const cat1 = await db.packCategory.findFirst({ where: { name: "cat1" } });
-    const cat3 = await db.packCategory.findFirst({ where: { name: "cat3" } });
-
-    expect(cat0?.index).toEqual(0);
-    expect(cat1?.index).toEqual(1);
-    expect(cat3?.index).toEqual(2);
+    expect(fetched0?.index).toEqual(0);
+    expect(fetched2?.index).toEqual(1);
+    expect(fetched3?.index).toEqual(2);
   });
 });

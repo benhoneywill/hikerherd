@@ -4,6 +4,8 @@ import idSchema from "app/modules/common/schemas/id-schema";
 
 import db from "db";
 
+import decrementPackCategoryIndexesAfter from "../functions/decrement-pack-category-indexes-after";
+
 const deletePackCategoryMutation = resolver.pipe(
   resolver.zod(idSchema),
   resolver.authorize(),
@@ -36,18 +38,9 @@ const deletePackCategoryMutation = resolver.pipe(
         throw new Error("Can not delete a category while it still has items");
       }
 
-      // Decrement the indexes of all the categories with
-      // a higher index than this category
-      await prisma.packCategory.updateMany({
-        where: {
-          packId: category.pack.id,
-          index: { gt: category.index },
-        },
-        data: {
-          index: {
-            decrement: 1,
-          },
-        },
+      await decrementPackCategoryIndexesAfter(prisma, ctx, {
+        packId: category.pack.id,
+        index: category.index,
       });
 
       return prisma.packCategory.delete({

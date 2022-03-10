@@ -3,6 +3,8 @@ import { AuthorizationError, NotFoundError, resolver } from "blitz";
 import db from "db";
 
 import moveCategorySchema from "../schemas/move-category-schema";
+import decrementCategoryIndexesAfter from "../functions/decrement-category-indexes-after";
+import incrementCategoryIndexesFrom from "../functions/increment-category-indexes-from";
 
 const moveCategoryMutation = resolver.pipe(
   resolver.zod(moveCategorySchema),
@@ -27,34 +29,16 @@ const moveCategoryMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      // First, every category after this one has it's index decremented
-      await prisma.category.updateMany({
-        where: {
-          userId: ctx.session.userId,
-          type: category.type,
-          index: { gt: category.index },
-        },
-        data: {
-          index: { decrement: 1 },
-        },
+      await decrementCategoryIndexesAfter(prisma, ctx, {
+        type: category.type,
+        index: category.index,
       });
 
-      // Then, every category after or equal to the new index
-      // has their indexes incremented
-      await prisma.category.updateMany({
-        where: {
-          userId: ctx.session.userId,
-          type: category.type,
-          index: { gte: index },
-        },
-        data: {
-          index: {
-            increment: 1,
-          },
-        },
+      await incrementCategoryIndexesFrom(prisma, ctx, {
+        type: category.type,
+        index,
       });
 
-      // Save the category in it's new index
       return await prisma.category.update({
         where: { id },
         data: { index },

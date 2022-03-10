@@ -3,6 +3,7 @@ import { AuthorizationError, NotFoundError, resolver } from "blitz";
 import db from "db";
 
 import createPackCategorySchema from "../schemas/create-pack-category-schema";
+import getNextPackCategoryIndex from "../functions/get-next-pack-category-index";
 
 const createPackCategoryMutation = resolver.pipe(
   resolver.zod(createPackCategorySchema),
@@ -22,12 +23,9 @@ const createPackCategoryMutation = resolver.pipe(
     }
 
     return db.$transaction(async (prisma) => {
-      const lastCategory = await prisma.packCategory.findFirst({
-        where: { packId },
-        orderBy: { index: "desc" },
+      const index = await getNextPackCategoryIndex(prisma, ctx, {
+        packId: pack.id,
       });
-
-      const index = lastCategory ? lastCategory.index + 1 : 0;
 
       return await prisma.packCategory.create({
         data: {

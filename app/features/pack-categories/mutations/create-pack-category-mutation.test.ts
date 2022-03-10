@@ -2,10 +2,12 @@ import type { User, Pack } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
+import faker from "@faker-js/faker";
+
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
-
-import db from "db";
+import createPack from "test/helpers/create-pack";
+import createPackCategory from "test/helpers/create-pack-category";
 
 import createPackCategoryMutation from "./create-pack-category-mutation";
 
@@ -14,15 +16,7 @@ let pack: Pack;
 
 beforeEach(async () => {
   user = await createUser();
-
-  pack = await db.pack.create({
-    data: {
-      name: "My Pack",
-      slug: "my-pack",
-      userId: user.id,
-      notes: null,
-    },
-  });
+  pack = await createPack({ userId: user.id });
 });
 
 describe("createPackCategoryMutation", () => {
@@ -30,7 +24,10 @@ describe("createPackCategoryMutation", () => {
     const { ctx } = await createMockContext();
 
     await expect(
-      createPackCategoryMutation({ name: "My category", packId: pack.id }, ctx)
+      createPackCategoryMutation(
+        { name: faker.random.word(), packId: pack.id },
+        ctx
+      )
     ).rejects.toThrow(AuthenticationError);
   });
 
@@ -38,7 +35,10 @@ describe("createPackCategoryMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      createPackCategoryMutation({ name: "My category", packId: "abc123" }, ctx)
+      createPackCategoryMutation(
+        { name: faker.random.word(), packId: faker.datatype.uuid() },
+        ctx
+      )
     ).rejects.toThrow(NotFoundError);
   });
 
@@ -48,37 +48,38 @@ describe("createPackCategoryMutation", () => {
     const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(
-      createPackCategoryMutation({ name: "My category", packId: pack.id }, ctx)
+      createPackCategoryMutation(
+        { name: faker.random.word(), packId: pack.id },
+        ctx
+      )
     ).rejects.toThrow(AuthorizationError);
   });
 
   it("should correctly create a first category", async () => {
     const { ctx } = await createMockContext({ user });
 
+    const name = faker.random.word();
+
     const category = await createPackCategoryMutation(
-      { name: "My category", packId: pack.id },
+      { name, packId: pack.id },
       ctx
     );
 
     expect(category?.index).toEqual(0);
+    expect(category?.name).toEqual(name);
   });
 
   it("should create subsequent categories with the correct index", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await db.packCategory.createMany({
-      data: [
-        { name: "0", packId: pack.id, index: 0 },
-        { name: "1", packId: pack.id, index: 1 },
-        { name: "2", packId: pack.id, index: 2 },
-      ],
-    });
+    await createPackCategory({ packId: pack.id, index: 0 });
+    await createPackCategory({ packId: pack.id, index: 1 });
 
     const category = await createPackCategoryMutation(
-      { name: "3", packId: pack.id },
+      { name: faker.random.word(), packId: pack.id },
       ctx
     );
 
-    expect(category?.index).toEqual(3);
+    expect(category?.index).toEqual(2);
   });
 });

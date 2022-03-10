@@ -2,10 +2,14 @@ import type { User, PackCategory, CategoryItem, Pack } from "db";
 
 import { NotFoundError } from "blitz";
 
+import faker from "@faker-js/faker";
+
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
-
-import db from "db";
+import createPack from "test/helpers/create-pack";
+import createPackCategory from "test/helpers/create-pack-category";
+import createGear from "test/helpers/create-gear";
+import createPackCategoryItem from "test/helpers/create-pack-category-item";
 
 import packOrganizerQuery from "./pack-organizer-query";
 
@@ -14,53 +18,15 @@ let pack: Pack;
 let category: PackCategory;
 let item: CategoryItem;
 
-const GEAR_VALUES = {
-  name: "My gear",
-  weight: 100,
-  imageUrl: "https://example.com/example.png",
-  link: "https://example.com/",
-  notes: "Nice gear, use it a lot",
-  consumable: false,
-  price: 10000,
-  currency: "GBP",
-} as const;
-
 beforeEach(async () => {
   user = await createUser();
+  pack = await createPack({ userId: user.id });
+  category = await createPackCategory({ packId: pack.id });
 
-  pack = await db.pack.create({
-    data: {
-      name: "My Pack",
-      slug: "my-pack",
-      notes: null,
-      userId: user.id,
-    },
-  });
-
-  category = await db.packCategory.create({
-    data: {
-      name: "Category",
-      index: 0,
-      packId: pack.id,
-    },
-  });
-
-  item = await db.packCategoryItem.create({
-    data: {
-      index: 0,
-      worn: false,
-      category: {
-        connect: {
-          id: category.id,
-        },
-      },
-      gear: {
-        create: {
-          ...GEAR_VALUES,
-          userId: user.id,
-        },
-      },
-    },
+  const gear = await createGear({ userId: user.id });
+  item = await createPackCategoryItem({
+    categoryId: category.id,
+    gearId: gear.id,
   });
 });
 
@@ -68,9 +34,9 @@ describe("packOrganizerQuery", () => {
   it("should error if the pack is not found", async () => {
     const { ctx } = await createMockContext();
 
-    await expect(packOrganizerQuery({ id: "abc123" }, ctx)).rejects.toThrow(
-      NotFoundError
-    );
+    await expect(
+      packOrganizerQuery({ id: faker.datatype.uuid() }, ctx)
+    ).rejects.toThrow(NotFoundError);
   });
 
   it("Should return the pack", async () => {

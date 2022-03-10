@@ -3,11 +3,15 @@ import type { User, Pack } from "db";
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
 import papaparse from "papaparse";
+import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
-
-import db from "db";
+import createPack from "test/helpers/create-pack";
+import createPackCategory from "test/helpers/create-pack-category";
+import createGear from "test/helpers/create-gear";
+import createPackCategoryItem from "test/helpers/create-pack-category-item";
+import displayCurrency from "app/modules/common/helpers/display-currency";
 
 import packExportCsvMutation from "./pack-export-csv-mutation";
 
@@ -16,14 +20,7 @@ let pack: Pack;
 
 beforeEach(async () => {
   user = await createUser();
-
-  pack = await db.pack.create({
-    data: {
-      userId: user.id,
-      name: "my pack",
-      slug: "my-pack",
-    },
-  });
+  pack = await createPack({ userId: user.id });
 });
 
 describe("packExportCsvMutation", () => {
@@ -38,9 +35,9 @@ describe("packExportCsvMutation", () => {
   it("should error if the pack does not exist", async () => {
     const { ctx } = await createMockContext({ user });
 
-    await expect(packExportCsvMutation({ id: "abc123" }, ctx)).rejects.toThrow(
-      NotFoundError
-    );
+    await expect(
+      packExportCsvMutation({ id: faker.datatype.uuid() }, ctx)
+    ).rejects.toThrow(NotFoundError);
   });
 
   it("should error if the pack does not belong to the user", async () => {
@@ -56,235 +53,89 @@ describe("packExportCsvMutation", () => {
   it("should return the correct CSV", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const category0 = await db.packCategory.create({
-      data: {
-        name: "category 0",
+    const category0 = await createPackCategory({ packId: pack.id });
+    const category1 = await createPackCategory({ packId: pack.id });
+    const category2 = await createPackCategory({ packId: pack.id });
+
+    const gear0 = await createGear({ userId: user.id });
+    const gear1 = await createGear({ userId: user.id });
+    const gear2 = await createGear({ userId: user.id });
+
+    const items = [
+      {
         index: 0,
-        packId: pack.id,
+        gear: gear0,
+        category: category0,
+        worn: true,
       },
-    });
-
-    const category1 = await db.packCategory.create({
-      data: {
-        name: "category 1",
+      {
         index: 1,
-        packId: pack.id,
+        gear: gear1,
+        category: category0,
       },
-    });
-
-    const category2 = await db.packCategory.create({
-      data: {
-        name: "category 2",
+      {
+        index: 0,
+        gear: gear0,
+        category: category1,
+        quantity: 5,
+      },
+      {
+        index: 1,
+        gear: gear2,
+        category: category1,
+      },
+      {
+        index: 0,
+        gear: gear0,
+        category: category2,
+      },
+      {
+        index: 1,
+        gear: gear1,
+        category: category2,
+      },
+      {
         index: 2,
-        packId: pack.id,
+        gear: gear2,
+        category: category2,
       },
-    });
+    ];
 
-    const gear0 = await db.gear.create({
-      data: {
-        name: "Gear 0",
-        weight: 100,
-        imageUrl: "https://example.com/gear0.png",
-        link: "https://example.com/gear0",
-        notes: "Nice gear",
-        consumable: false,
-        price: 10000,
-        currency: "GBP",
-        userId: user.id,
-      },
-    });
-
-    const gear1 = await db.gear.create({
-      data: {
-        name: "Gear 1",
-        weight: 500,
-        imageUrl: "https://example.com/gear1.png",
-        link: "https://example.com/gear1",
-        notes: "I like it",
-        consumable: true,
-        price: 999,
-        currency: "USD",
-        userId: user.id,
-      },
-    });
-
-    const gear2 = await db.gear.create({
-      data: {
-        name: "Gear 2",
-        weight: 1000,
-        userId: user.id,
-      },
-    });
-
-    await db.packCategoryItem.createMany({
-      data: [
-        {
-          index: 0,
-          gearId: gear0.id,
-          categoryId: category0.id,
-          worn: true,
-        },
-        {
-          index: 1,
-          gearId: gear1.id,
-          categoryId: category0.id,
-          worn: false,
-        },
-        {
-          index: 0,
-          gearId: gear0.id,
-          categoryId: category1.id,
-          worn: false,
-        },
-        {
-          index: 1,
-          gearId: gear2.id,
-          categoryId: category1.id,
-          worn: false,
-        },
-        {
-          index: 0,
-          gearId: gear0.id,
-          categoryId: category2.id,
-          worn: false,
-        },
-        {
-          index: 1,
-          gearId: gear1.id,
-          categoryId: category2.id,
-          worn: false,
-        },
-        {
-          index: 2,
-          gearId: gear2.id,
-          categoryId: category2.id,
-          worn: false,
-        },
-      ],
-    });
+    await Promise.all(
+      items.map((item) =>
+        createPackCategoryItem({
+          index: item.index,
+          gearId: item.gear.id,
+          categoryId: item.category.id,
+          worn: !!item.worn,
+          quantity: item.quantity,
+        })
+      )
+    );
 
     const result = await packExportCsvMutation({ id: pack.id }, ctx);
 
-    const parsedData = papaparse.parse(result);
+    const parsedData = papaparse.parse(result, { header: true });
 
-    expect(parsedData.data[0]).toEqual([
-      "name",
-      "category",
-      "weight",
-      "unit",
-      "notes",
-      "price",
-      "currency",
-      "link",
-      "image",
-      "consumable",
-      "worn",
-      "quantity",
-    ]);
+    parsedData.data.forEach((row, i) => {
+      const item = items[i];
 
-    expect(parsedData.data[1]).toEqual([
-      "Gear 0",
-      "category 0",
-      "100",
-      "gram",
-      "Nice gear",
-      "100",
-      "£",
-      "https://example.com/gear0",
-      "https://example.com/gear0.png",
-      "",
-      "worn",
-      "1",
-    ]);
+      if (!item) fail("Item not found");
 
-    expect(parsedData.data[2]).toEqual([
-      "Gear 1",
-      "category 0",
-      "500",
-      "gram",
-      "I like it",
-      "9.99",
-      "$",
-      "https://example.com/gear1",
-      "https://example.com/gear1.png",
-      "consumable",
-      "",
-      "1",
-    ]);
-
-    expect(parsedData.data[3]).toEqual([
-      "Gear 0",
-      "category 1",
-      "100",
-      "gram",
-      "Nice gear",
-      "100",
-      "£",
-      "https://example.com/gear0",
-      "https://example.com/gear0.png",
-      "",
-      "",
-      "1",
-    ]);
-
-    expect(parsedData.data[4]).toEqual([
-      "Gear 2",
-      "category 1",
-      "1000",
-      "gram",
-      "",
-      "",
-      "$",
-      "",
-      "",
-      "",
-      "",
-      "1",
-    ]);
-
-    expect(parsedData.data[5]).toEqual([
-      "Gear 0",
-      "category 2",
-      "100",
-      "gram",
-      "Nice gear",
-      "100",
-      "£",
-      "https://example.com/gear0",
-      "https://example.com/gear0.png",
-      "",
-      "",
-      "1",
-    ]);
-
-    expect(parsedData.data[6]).toEqual([
-      "Gear 1",
-      "category 2",
-      "500",
-      "gram",
-      "I like it",
-      "9.99",
-      "$",
-      "https://example.com/gear1",
-      "https://example.com/gear1.png",
-      "consumable",
-      "",
-      "1",
-    ]);
-
-    expect(parsedData.data[7]).toEqual([
-      "Gear 2",
-      "category 2",
-      "1000",
-      "gram",
-      "",
-      "",
-      "$",
-      "",
-      "",
-      "",
-      "",
-      "1",
-    ]);
+      expect(row).toMatchObject({
+        name: item.gear.name,
+        category: item.category.name,
+        weight: `${item.gear.weight}`,
+        unit: "gram",
+        notes: item.gear.notes || "",
+        price: item.gear.price ? `${item.gear.price / 100}` : "",
+        currency: displayCurrency(item.gear.currency),
+        link: item.gear.link || "",
+        image: item.gear.imageUrl || "",
+        consumable: item.gear.consumable ? "consumable" : "",
+        worn: item.worn ? "worn" : "",
+        quantity: `${item.quantity || 1}`,
+      });
+    });
   });
 });
