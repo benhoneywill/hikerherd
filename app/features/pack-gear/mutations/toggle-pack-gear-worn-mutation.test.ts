@@ -29,6 +29,7 @@ beforeEach(async () => {
   item = await createPackCategoryItem({
     categoryId: category.id,
     gearId: gear.id,
+    worn: false,
   });
 });
 
