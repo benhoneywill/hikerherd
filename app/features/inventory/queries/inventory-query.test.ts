@@ -4,8 +4,9 @@ import { AuthenticationError } from "blitz";
 
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
-
-import db from "db";
+import createCategory from "test/helpers/create-category";
+import createGear from "test/helpers/create-gear";
+import createCategoryItem from "test/helpers/create-category-item";
 
 import inventoryQuery from "./inventory-query";
 
@@ -13,45 +14,11 @@ let user: User;
 let category: Category;
 let item: CategoryItem;
 
-const GEAR_VALUES = {
-  name: "My gear",
-  weight: 100,
-  imageUrl: "https://example.com/example.png",
-  link: "https://example.com/",
-  notes: "Nice gear, use it a lot",
-  consumable: false,
-  price: 10000,
-  currency: "GBP",
-} as const;
-
 beforeEach(async () => {
   user = await createUser();
-
-  category = await db.category.create({
-    data: {
-      name: "Category",
-      index: 0,
-      type: "INVENTORY",
-      userId: user.id,
-    },
-  });
-
-  item = await db.categoryItem.create({
-    data: {
-      index: 0,
-      category: {
-        connect: {
-          id: category.id,
-        },
-      },
-      gear: {
-        create: {
-          ...GEAR_VALUES,
-          userId: user.id,
-        },
-      },
-    },
-  });
+  category = await createCategory({ userId: user.id });
+  const gear = await createGear({ userId: user.id });
+  item = await createCategoryItem({ categoryId: category.id, gearId: gear.id });
 });
 
 describe("inventoryQuery", () => {

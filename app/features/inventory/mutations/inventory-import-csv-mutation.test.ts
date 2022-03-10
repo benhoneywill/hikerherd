@@ -2,29 +2,21 @@ import type { User } from "db";
 
 import { AuthenticationError } from "blitz";
 
-import papaparse from "papaparse";
-
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
-import getCsvRow from "test/data/get-csv-row";
-import csvHeadingRow from "test/data/csv-heading-row";
 import createCategory from "test/helpers/create-category";
 import createGear from "test/helpers/create-gear";
 import createCategoryItem from "test/helpers/create-category-item";
+import getCsv from "test/data/get-csv";
+import getCsvData from "test/data/get-csv-data";
 
 import db from "db";
 
 import inventoryImportCsvMutation from "./inventory-import-csv-mutation";
 
 const categories = ["category 1", "category 2", "category 3"];
-
-const items = categories.map((categoryName) => [
-  getCsvRow({ categoryName }),
-  getCsvRow({ categoryName }),
-  getCsvRow({ categoryName }),
-]);
-
-const testCsv = papaparse.unparse([csvHeadingRow, ...items.flat()]);
+const data = getCsvData(categories);
+const testCsv = getCsv(data);
 
 let user: User;
 
@@ -49,41 +41,47 @@ describe("inventoryImportCsvMutation", () => {
     const categoryCount = await db.category.count();
     expect(categoryCount).toEqual(categories.length);
 
-    categories.forEach(async (categoryName, categoryIndex) => {
-      const category = await db.category.findFirst({
-        where: { name: categoryName },
-        include: {
-          items: { orderBy: { index: "asc" } },
-        },
-      });
+    const categoryItemCount = await db.categoryItem.count();
+    expect(categoryItemCount).toEqual(Object.values(data).flat().length);
 
-      expect(category?.name).toEqual(categoryName);
-      expect(category?.index).toEqual(categoryIndex);
-      expect(category?.items.length).toEqual(3);
-
-      const categoryItems = items[categoryIndex];
-
-      if (!categoryItems) throw new Error("Category should have items");
-
-      categoryItems.forEach(async (item, itemIndex) => {
-        const categoryItem = await db.categoryItem.findFirst({
-          where: { categoryId: category?.id, index: itemIndex },
-          include: { gear: true },
+    await Promise.all(
+      categories.map(async (name, index) => {
+        const category = await db.category.findFirst({
+          where: { name },
+          include: {
+            items: { orderBy: { index: "asc" }, include: { gear: true } },
+          },
         });
 
-        expect(categoryItem?.gear.name).toEqual(item[0]);
-      });
-    });
+        if (!category) fail("Category not created");
+
+        const csvCategory = data[name];
+        if (!csvCategory) fail("Not matching csv category");
+
+        expect(category.items.length).toEqual(csvCategory.length);
+        expect(category.index).toEqual(index);
+
+        category.items.forEach((item, index) => {
+          const csvItem = csvCategory[index];
+
+          if (!csvItem) fail("No matching CSV item");
+
+          expect(item.index).toEqual(index);
+          expect(item.gear.name).toEqual(csvItem.name);
+          expect(item.gear.weight).toEqual(Number(csvItem.weight));
+        });
+      })
+    );
   });
 
   it("should append to categories that already exist", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const existingCategoryIndex = 1;
+    const existingCategoryName = categories[1];
 
     const existingCategory = await createCategory({
       userId: user.id,
-      name: categories[existingCategoryIndex],
+      name: existingCategoryName,
       index: 0,
     });
 
@@ -98,47 +96,41 @@ describe("inventoryImportCsvMutation", () => {
     await inventoryImportCsvMutation({ type: "INVENTORY", file: testCsv }, ctx);
 
     const categoryCount = await db.category.count();
+    expect(categoryCount).toEqual(categories.length);
 
-    expect(categoryCount).toEqual(3);
+    const categoryItemCount = await db.categoryItem.count();
+    expect(categoryItemCount).toEqual(Object.values(data).flat().length + 1);
 
-    categories.forEach(async (categoryName, categoryIndex) => {
-      const isExisting = existingCategory.name === categoryName;
+    await Promise.all(
+      categories.map(async (name, index) => {
+        const isExisting = existingCategoryName === name;
 
-      const category = await db.category.findFirst({
-        where: { name: categoryName },
-        include: {
-          items: { orderBy: { index: "asc" } },
-        },
-      });
-
-      expect(category?.name).toEqual(categoryName);
-
-      if (isExisting) {
-        expect(category?.items.length).toEqual(4);
-        expect(category?.index).toEqual(0);
-      } else {
-        expect(category?.items.length).toEqual(3);
-        expect(category?.index).toEqual(
-          categoryIndex < existingCategoryIndex
-            ? categoryIndex + 1
-            : categoryIndex
-        );
-      }
-
-      const categoryItems = items[categoryIndex];
-
-      if (!categoryItems) throw new Error("Category should have items");
-
-      categoryItems.forEach(async (item, itemIndex) => {
-        const index = isExisting ? itemIndex + 1 : itemIndex;
-
-        const categoryItem = await db.categoryItem.findFirst({
-          where: { categoryId: category?.id, index },
-          include: { gear: true },
+        const category = await db.category.findFirst({
+          where: { name },
+          include: {
+            items: { orderBy: { index: "asc" }, include: { gear: true } },
+          },
         });
 
-        expect(categoryItem?.gear.name).toEqual(item[0]);
-      });
-    });
+        if (!category) fail("Category not created");
+
+        const csvCategory = data[name];
+        if (!csvCategory) fail("Not matching csv category");
+
+        if (isExisting) {
+          expect(category.items.length).toEqual(csvCategory.length + 1);
+          expect(category.index).toEqual(existingCategory.index);
+        } else {
+          expect(category.items.length).toEqual(csvCategory.length);
+          expect(category.index).toEqual(
+            index <= existingCategory.index ? index + 1 : index
+          );
+        }
+
+        category.items.forEach((item, index) => {
+          expect(item.index).toEqual(index);
+        });
+      })
+    );
   });
 });

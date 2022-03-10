@@ -1,76 +1,61 @@
 import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import idSchema from "app/modules/common/schemas/id-schema";
+import conditionallyDeleteGear from "app/features/gear/functions/conditionally-delete-gear";
 
 import db from "db";
+
+import decrementPackItemIndexesAfter from "../functions/decrement-pack-item-indexes-after";
 
 const deletePackGearMutation = resolver.pipe(
   resolver.zod(idSchema),
   resolver.authorize(),
 
   async ({ id }, ctx) => {
-    return db.$transaction(async (prisma) => {
-      const item = await prisma.packCategoryItem.findUnique({
-        where: { id },
-        select: {
-          gearId: true,
-          index: true,
-          category: {
-            select: {
-              id: true,
-              pack: {
-                select: {
-                  userId: true,
-                },
+    const item = await db.packCategoryItem.findUnique({
+      where: { id },
+      select: {
+        gearId: true,
+        index: true,
+        category: {
+          select: {
+            id: true,
+            pack: {
+              select: {
+                userId: true,
               },
             },
           },
         },
+      },
+    });
+
+    if (!item) {
+      throw new NotFoundError();
+    }
+
+    if (item.category.pack.userId !== ctx.session.userId) {
+      throw new AuthorizationError();
+    }
+
+    const deletedItem = await db.$transaction(async (prisma) => {
+      await decrementPackItemIndexesAfter(prisma, ctx, {
+        categoryId: item.category.id,
+        index: item.index,
       });
 
-      if (!item) {
-        throw new NotFoundError();
-      }
-
-      if (item.category.pack.userId !== ctx.session.userId) {
-        throw new AuthorizationError();
-      }
-
-      const inventoryItem = await prisma.categoryItem.findFirst({
-        where: {
-          gearId: item.gearId,
-        },
-      });
-
-      const clone = await prisma.gear.findFirst({
-        where: {
-          clonedFromId: item.gearId,
-        },
-      });
-
-      // Decrement the index of all items after this one in the category
-      await prisma.packCategoryItem.updateMany({
-        where: {
-          categoryId: item.category.id,
-          index: { gt: item.index },
-        },
-        data: {
-          index: { decrement: 1 },
-        },
-      });
-
-      const result = await prisma.packCategoryItem.delete({
+      return prisma.packCategoryItem.delete({
         where: {
           id,
         },
       });
-
-      if (!inventoryItem && !clone) {
-        await prisma.gear.delete({ where: { id: item.gearId } });
-      }
-
-      return result;
     });
+
+    await conditionallyDeleteGear(db, ctx, {
+      id: item.gearId,
+    });
+
+    return deletedItem;
   }
 );
 

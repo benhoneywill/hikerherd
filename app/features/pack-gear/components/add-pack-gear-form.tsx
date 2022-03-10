@@ -52,15 +52,17 @@ const AddPackGearForm: FC<AddPackGearFormProps> = ({
       initialValues={initialValues}
       onSubmit={async (values) => {
         try {
+          const vals = { ...values };
+
           if (weightUnit === "IMPERIAL") {
-            values.weight = ozTog(values.weight);
+            vals.weight = ozTog(values.weight);
           }
 
           if (values.price) {
-            values.price = Math.floor(values.price * 100);
+            vals.price = Math.floor(values.price * 100);
           }
 
-          const result = await createGear(values);
+          const result = await createGear(vals);
 
           if (onSuccess) {
             onSuccess(result);

@@ -2,47 +2,29 @@ import type { User, PackCategory, Pack } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
+import faker from "@faker-js/faker";
+
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
+import createPack from "test/helpers/create-pack";
+import createPackCategory from "test/helpers/create-pack-category";
+import getGearData from "test/data/get-gear-data";
+import createCategory from "test/helpers/create-category";
 
 import db from "db";
 
 import createPackGearMutation from "./create-pack-gear-mutation";
 
-const GEAR_VALUES = {
-  name: "My gear",
-  weight: 100,
-  imageUrl: "https://example.com/example.png",
-  link: "https://example.com/",
-  notes: "Nice gear, use it a lot",
-  consumable: false,
-  price: 10000,
-  currency: "GBP",
-} as const;
-
 let user: User;
 let pack: Pack;
 let category: PackCategory;
 
+const gear = getGearData();
+
 beforeEach(async () => {
   user = await createUser();
-
-  pack = await db.pack.create({
-    data: {
-      name: "My Pack",
-      slug: "my-pack",
-      userId: user.id,
-      notes: null,
-    },
-  });
-
-  category = await db.packCategory.create({
-    data: {
-      name: "My category",
-      index: 0,
-      packId: pack.id,
-    },
-  });
+  pack = await createPack({ userId: user.id });
+  category = await createPackCategory({ packId: pack.id });
 });
 
 describe("createPackGearMutation", () => {
@@ -50,7 +32,7 @@ describe("createPackGearMutation", () => {
     const { ctx } = await createMockContext();
 
     await expect(
-      createPackGearMutation({ ...GEAR_VALUES, categoryId: category.id }, ctx)
+      createPackGearMutation({ ...gear, categoryId: category.id }, ctx)
     ).rejects.toThrow(AuthenticationError);
   });
 
@@ -58,7 +40,10 @@ describe("createPackGearMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      createPackGearMutation({ ...GEAR_VALUES, categoryId: "abc123" }, ctx)
+      createPackGearMutation(
+        { ...gear, categoryId: faker.datatype.uuid() },
+        ctx
+      )
     ).rejects.toThrow(NotFoundError);
   });
 
@@ -68,7 +53,7 @@ describe("createPackGearMutation", () => {
     const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(
-      createPackGearMutation({ ...GEAR_VALUES, categoryId: category.id }, ctx)
+      createPackGearMutation({ ...gear, categoryId: category.id }, ctx)
     ).rejects.toThrow(AuthorizationError);
   });
 
@@ -76,7 +61,7 @@ describe("createPackGearMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     const item = await createPackGearMutation(
-      { ...GEAR_VALUES, categoryId: category.id },
+      { ...gear, categoryId: category.id },
       ctx
     );
 
@@ -86,24 +71,24 @@ describe("createPackGearMutation", () => {
     });
 
     expect(fetched?.index).toEqual(0);
-    expect(fetched?.gear).toMatchObject(GEAR_VALUES);
+    expect(fetched?.gear).toMatchObject(gear);
   });
 
   it("should create subsequent items with the correct index", async () => {
     const { ctx } = await createMockContext({ user });
 
     const first = await createPackGearMutation(
-      { ...GEAR_VALUES, categoryId: category.id },
+      { ...gear, categoryId: category.id },
       ctx
     );
 
     const second = await createPackGearMutation(
-      { ...GEAR_VALUES, categoryId: category.id },
+      { ...gear, categoryId: category.id },
       ctx
     );
 
     const third = await createPackGearMutation(
-      { ...GEAR_VALUES, categoryId: category.id },
+      { ...gear, categoryId: category.id },
       ctx
     );
 
@@ -115,25 +100,59 @@ describe("createPackGearMutation", () => {
   it("should track different categories with different indexes", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const otherCategory = await db.packCategory.create({
-      data: {
-        name: "My 2nd category",
-        index: 1,
-        packId: pack.id,
-      },
-    });
+    const otherCategory = await createPackCategory({ packId: pack.id });
 
     const first = await createPackGearMutation(
-      { ...GEAR_VALUES, categoryId: category.id },
+      { ...gear, categoryId: category.id },
       ctx
     );
 
     const second = await createPackGearMutation(
-      { ...GEAR_VALUES, categoryId: otherCategory.id },
+      { ...gear, categoryId: otherCategory.id },
       ctx
     );
 
     expect(first?.index).toEqual(0);
     expect(second?.index).toEqual(0);
+  });
+
+  it("should also add the new item to the inventory", async () => {
+    const { ctx } = await createMockContext({ user });
+
+    const item = await createPackGearMutation(
+      { ...gear, categoryId: category.id },
+      ctx
+    );
+
+    const inventoryCategory = await db.category.findFirst({
+      where: { name: category.name },
+      include: { items: true },
+    });
+
+    expect(inventoryCategory?.index).toEqual(0);
+    expect(inventoryCategory?.items.length).toEqual(1);
+    expect(inventoryCategory?.items[0]?.gearId).toEqual(item.gearId);
+  });
+
+  it("should add the new inventory item an existing category with the same name", async () => {
+    const { ctx } = await createMockContext({ user });
+
+    const existingInventoryCategory = await createCategory({
+      userId: user.id,
+      name: category.name,
+    });
+
+    const item = await createPackGearMutation(
+      { ...gear, categoryId: category.id },
+      ctx
+    );
+
+    const inventoryCategory = await db.category.findUnique({
+      where: { id: existingInventoryCategory.id },
+      include: { items: true },
+    });
+
+    expect(inventoryCategory?.items.length).toEqual(1);
+    expect(inventoryCategory?.items[0]?.gearId).toEqual(item.gearId);
   });
 });

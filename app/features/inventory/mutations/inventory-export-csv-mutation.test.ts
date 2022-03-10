@@ -10,7 +10,6 @@ import createCategory from "test/helpers/create-category";
 import createGear from "test/helpers/create-gear";
 import createCategoryItem from "test/helpers/create-category-item";
 import displayCurrency from "app/modules/common/helpers/display-currency";
-import csvHeadingRow from "test/data/csv-heading-row";
 
 import inventoryExportCsvMutation from "./inventory-export-csv-mutation";
 
@@ -90,31 +89,27 @@ describe("inventoryExportCsvMutation", () => {
 
     const result = await inventoryExportCsvMutation({ type: "INVENTORY" }, ctx);
 
-    const parsedData = papaparse.parse(result);
+    const parsedData = papaparse.parse(result, { header: true });
 
     parsedData.data.forEach((row, i) => {
-      if (i === 0) {
-        expect(row).toEqual(csvHeadingRow);
-      } else {
-        const item = items[i - 1];
+      const item = items[i];
 
-        if (!item) throw new Error("Item not found");
+      if (!item) fail("Item not found");
 
-        expect(row).toEqual([
-          item.gear.name,
-          item.category.name,
-          `${item.gear.weight}`,
-          "gram",
-          item.gear.notes || "",
-          item.gear.price ? `${item.gear.price / 100}` : "",
-          displayCurrency(item.gear.currency),
-          item.gear.link || "",
-          item.gear.imageUrl || "",
-          item.gear.consumable ? "consumable" : "",
-          "",
-          "1",
-        ]);
-      }
+      expect(row).toMatchObject({
+        name: item.gear.name,
+        category: item.category.name,
+        weight: `${item.gear.weight}`,
+        unit: "gram",
+        notes: item.gear.notes || "",
+        price: item.gear.price ? `${item.gear.price / 100}` : "",
+        currency: displayCurrency(item.gear.currency),
+        link: item.gear.link || "",
+        image: item.gear.imageUrl || "",
+        consumable: item.gear.consumable ? "consumable" : "",
+        worn: "",
+        quantity: "1",
+      });
     });
   });
 });

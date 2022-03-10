@@ -32,7 +32,7 @@ export const displayWeight = (
   if (unit === WeightUnit.METRIC) {
     return large
       ? `${withDecimalPlaces(gToKg(weight))}kg`
-      : `${withDecimalPlaces(weight, 1)}g`;
+      : `${withDecimalPlaces(weight, 0)}g`;
   } else {
     return large
       ? `${withDecimalPlaces(ozToLb(gToOz(weight)))}lb`

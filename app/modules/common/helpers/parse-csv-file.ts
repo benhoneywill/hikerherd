@@ -6,6 +6,11 @@ import papaparse from "papaparse";
 import { ozTog } from "./display-weight";
 import { signToCurrency } from "./currency-to-sign";
 
+type ParsedCsvResultItem = ParsedCsvItem & { category: string };
+type ParsedCsvResult = {
+  [category: string]: ParsedCsvResultItem[];
+};
+
 const csvItemSchema = z.object({
   name: z.string().min(1),
   category: z.string().min(1),
@@ -21,9 +26,7 @@ const csvItemSchema = z.object({
   quantity: z.number().int().min(0).nullable().optional(),
 });
 
-const parseCsvFile = (
-  file: string
-): (ParsedCsvItem & { category: string })[] => {
+const parseCsvFile = (file: string): ParsedCsvResult => {
   const { data } = papaparse.parse(file, {
     header: true,
     transformHeader: (header) => header.toLowerCase(),
@@ -40,7 +43,7 @@ const parseCsvFile = (
     },
   });
 
-  return data.map((item) => {
+  const mappedData: ParsedCsvResultItem[] = data.map((item) => {
     const valid = csvItemSchema.parse(item);
 
     return {
@@ -60,6 +63,15 @@ const parseCsvFile = (
       },
     };
   });
+
+  return mappedData.reduce((groups, item) => {
+    const items = groups[item.category] || [];
+
+    return {
+      ...groups,
+      [item.category]: [...items, item],
+    };
+  }, {} as ParsedCsvResult);
 };
 
 export default parseCsvFile;

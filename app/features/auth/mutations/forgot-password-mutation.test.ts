@@ -55,7 +55,7 @@ describe("forgotPasswordMutation", () => {
     const tokens = await db.token.findMany({ where: { userId: user.id } });
     const token = tokens[0];
 
-    if (!token) throw new Error("Missing token");
+    if (!token) fail("Missing token");
 
     // deletes the old token
     expect(tokens.length).toBe(1);

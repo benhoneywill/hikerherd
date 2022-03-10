@@ -2,6 +2,8 @@ import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
+import decrementPackItemIndexesAfter from "../functions/decrement-pack-item-indexes-after";
+import incrementPackItemIndexesFrom from "../functions/increment-pack-item-indexes-from";
 import movePackGearSchema from "../schemas/move-pack-gear-schema";
 
 const movePackGearMutation = resolver.pipe(
@@ -56,25 +58,14 @@ const movePackGearMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      await prisma.packCategoryItem.updateMany({
-        where: {
-          categoryId: packItem.category.id,
-          index: { gt: packItem.index },
-        },
-        data: {
-          index: {
-            decrement: 1,
-          },
-        },
+      await decrementPackItemIndexesAfter(prisma, ctx, {
+        categoryId: packItem.category.id,
+        index: packItem.index,
       });
 
-      await prisma.packCategoryItem.updateMany({
-        where: { categoryId: categoryId, index: { gte: index } },
-        data: {
-          index: {
-            increment: 1,
-          },
-        },
+      await incrementPackItemIndexesFrom(prisma, ctx, {
+        categoryId: categoryId,
+        index,
       });
 
       return await prisma.packCategoryItem.update({

@@ -2,6 +2,8 @@ import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import db from "db";
 
+import decrementItemIndexesAfter from "../functions/decrement-item-indexes-after";
+import incrementItemIndexesFrom from "../functions/increment-item-indexes-from";
 import moveCategoryGearSchema from "../schemas/move-category-gear-schema";
 
 const moveCategoryGearMutation = resolver.pipe(
@@ -45,31 +47,16 @@ const moveCategoryGearMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      // Decrement the indexes of all the items after the current item
-      // that are in the source category
-      await prisma.categoryItem.updateMany({
-        where: {
-          categoryId: categoryItem.category.id,
-          index: { gt: categoryItem.index },
-        },
-        data: {
-          index: { decrement: 1 },
-        },
+      await decrementItemIndexesAfter(prisma, ctx, {
+        categoryId: categoryItem.category.id,
+        index: categoryItem.index,
       });
 
-      // Increment the indexes of all items after the new location
-      // within the destination category
-      await prisma.categoryItem.updateMany({
-        where: {
-          categoryId,
-          index: { gte: index },
-        },
-        data: {
-          index: { increment: 1 },
-        },
+      await incrementItemIndexesFrom(prisma, ctx, {
+        categoryId,
+        index,
       });
 
-      // Finally set the new index and category ID on the target item
       return await prisma.categoryItem.update({
         where: { id },
         data: {

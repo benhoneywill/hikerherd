@@ -2,6 +2,8 @@ import type { User } from "db";
 
 import { AuthenticationError } from "blitz";
 
+import faker from "@faker-js/faker";
+
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
 
@@ -20,20 +22,19 @@ describe("createPackMutation", () => {
     const { ctx } = await createMockContext();
 
     await expect(
-      createPackMutation({ name: "My pack", notes: null }, ctx)
+      createPackMutation({ name: faker.random.word(), notes: null }, ctx)
     ).rejects.toThrow(AuthenticationError);
   });
 
   it("should correctly create a pack", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const pack = await createPackMutation(
-      { name: "My pack", notes: null },
-      ctx
-    );
+    const name = faker.random.word();
+
+    const pack = await createPackMutation({ name, notes: null }, ctx);
 
     const fetched = await db.pack.findUnique({ where: { id: pack.id } });
 
-    expect(fetched?.name).toEqual("My pack");
+    expect(fetched?.name).toEqual(name);
   });
 });

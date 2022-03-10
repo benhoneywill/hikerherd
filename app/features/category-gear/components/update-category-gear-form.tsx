@@ -9,7 +9,11 @@ import { Center } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 
 import ModalForm from "app/modules/forms/components/modal-form";
-import { gToOz, ozTog } from "app/modules/common/helpers/display-weight";
+import {
+  gToOz,
+  ozTog,
+  withDecimalPlaces,
+} from "app/modules/common/helpers/display-weight";
 import GearFormFields from "app/modules/forms/components/gear-form-fields";
 import userPreferencesContext from "app/features/users/contexts/user-preferences-context";
 
@@ -48,8 +52,8 @@ const UpdateCategoryGearForm: FC<UpdateCategoryGearFormProps> = ({
     name: gearItem?.gear.name,
     weight:
       weightUnit === "IMPERIAL"
-        ? gToOz(gearItem?.gear.weight || 0)
-        : gearItem?.gear.weight,
+        ? withDecimalPlaces(gToOz(gearItem?.gear.weight || 0), 2)
+        : withDecimalPlaces(gearItem?.gear.weight || 0, 0),
     price: gearItem?.gear.price && gearItem?.gear.price / 100,
     currency: gearItem?.gear.currency,
     link: gearItem?.gear.link,
@@ -69,15 +73,17 @@ const UpdateCategoryGearForm: FC<UpdateCategoryGearFormProps> = ({
       submitText={id ? "Update" : "Create"}
       onSubmit={async (values) => {
         try {
+          const vals = { ...values };
+
           if (weightUnit === "IMPERIAL") {
-            values.weight = ozTog(values.weight);
+            vals.weight = ozTog(values.weight);
           }
 
           if (values.price) {
-            values.price = Math.floor(values.price * 100);
+            vals.price = Math.floor(values.price * 100);
           }
 
-          let result = await updateGear(values);
+          let result = await updateGear(vals);
 
           onClose();
           if (onSuccess) {

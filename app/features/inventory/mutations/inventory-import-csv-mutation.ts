@@ -1,10 +1,13 @@
-import type { ParsedCsvItem } from "app/modules/common/helpers/item-to-csv-format";
+import type { Category } from "db";
 
 import { resolver } from "blitz";
 
 import { ZodError } from "zod";
 
 import parseCsvFile from "app/modules/common/helpers/parse-csv-file";
+import getNextCategoryIndex from "app/features/categories/functions/get-next-category-index";
+import getNextItemIndex from "app/features/category-gear/functions/get-next-item-index";
+import createCategoryItem from "app/features/category-gear/functions/create-category-gear";
 
 import db from "db";
 
@@ -19,33 +22,16 @@ const inventoryImportCsvMutation = resolver.pipe(
     try {
       const gearItems = parseCsvFile(file);
 
-      const groupedItems = gearItems.reduce((groups, item) => {
-        return {
-          ...groups,
-          [item.category]: [...(groups[item.category] || []), item],
-        };
-      }, {} as { [name: string]: ParsedCsvItem[] });
-
       await db.$transaction(async (prisma) => {
-        const user = await prisma.user.findUnique({
-          where: { id: ctx.session.userId },
-          select: {
-            categories: {
-              where: { type },
-              orderBy: { index: "desc" },
-              take: 1,
-              select: { index: true },
-            },
-          },
+        let nextCategoryIndex = await getNextCategoryIndex(prisma, ctx, {
+          type,
         });
 
-        let highestCategoryIndex = user?.categories[0]
-          ? user?.categories[0]?.index
-          : -1;
-
         await Promise.all(
-          Object.entries(groupedItems).map(async ([categoryName, items]) => {
-            let category = await prisma.category.findFirst({
+          Object.entries(gearItems).map(async ([categoryName, items]) => {
+            let category: Category;
+
+            const existingCategory = await prisma.category.findFirst({
               where: {
                 userId: ctx.session.userId,
                 name: { equals: categoryName, mode: "insensitive" },
@@ -53,55 +39,32 @@ const inventoryImportCsvMutation = resolver.pipe(
               },
             });
 
-            if (!category) {
-              const index = highestCategoryIndex + 1;
-              highestCategoryIndex = index;
+            if (existingCategory) {
+              category = existingCategory;
+            } else {
+              const index = nextCategoryIndex;
+              nextCategoryIndex = nextCategoryIndex + 1;
 
               category = await prisma.category.create({
                 data: {
                   userId: ctx.session.userId,
                   name: categoryName,
                   type,
-                  index: index,
+                  index,
                 },
               });
             }
 
-            const lastItem = await prisma.categoryItem.findFirst({
-              where: { categoryId: category.id },
-              orderBy: { index: "desc" },
-              take: 1,
-              select: { index: true },
+            const nextItemIndex = await getNextItemIndex(prisma, ctx, {
+              categoryId: category.id,
             });
-
-            let highestItemIndex = lastItem ? lastItem?.index : -1;
 
             return Promise.all(
               items.map(async (item, index) => {
-                return prisma.categoryItem.create({
-                  data: {
-                    index: highestItemIndex + index + 1,
-
-                    category: {
-                      connect: {
-                        id: category?.id,
-                      },
-                    },
-
-                    gear: {
-                      create: {
-                        name: item.gear.name,
-                        weight: item.gear.weight,
-                        imageUrl: item.gear.imageUrl,
-                        link: item.gear.link,
-                        notes: item.gear.notes,
-                        consumable: item.gear.consumable,
-                        price: item.gear.price,
-                        currency: item.gear.currency,
-                        userId: ctx.session.userId,
-                      },
-                    },
-                  },
+                return createCategoryItem(prisma, ctx, {
+                  index: nextItemIndex + index,
+                  categoryId: category.id,
+                  values: item.gear,
                 });
               })
             );

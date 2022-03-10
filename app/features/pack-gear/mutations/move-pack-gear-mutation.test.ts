@@ -2,23 +2,18 @@ import type { User, Pack, PackCategory, PackCategoryItem } from "db";
 
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
+import faker from "@faker-js/faker";
+
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
+import createPack from "test/helpers/create-pack";
+import createPackCategory from "test/helpers/create-pack-category";
+import createGear from "test/helpers/create-gear";
+import createPackCategoryItem from "test/helpers/create-pack-category-item";
 
 import db from "db";
 
 import movePackGearMutation from "./move-pack-gear-mutation";
-
-const GEAR_VALUES = {
-  name: "My gear",
-  weight: 100,
-  imageUrl: "https://example.com/example.png",
-  link: "https://example.com/",
-  notes: "Nice gear, use it a lot",
-  consumable: false,
-  price: 10000,
-  currency: "GBP",
-} as const;
 
 let user: User;
 let pack: Pack;
@@ -28,48 +23,16 @@ let item: PackCategoryItem;
 
 beforeEach(async () => {
   user = await createUser();
+  pack = await createPack({ userId: user.id });
 
-  pack = await db.pack.create({
-    data: {
-      name: "My Pack",
-      slug: "my-pack",
-      userId: user.id,
-      notes: null,
-    },
-  });
+  category1 = await createPackCategory({ packId: pack.id, index: 0 });
+  category2 = await createPackCategory({ packId: pack.id, index: 1 });
 
-  category1 = await db.packCategory.create({
-    data: {
-      name: "Category 1",
-      index: 0,
-      packId: pack.id,
-    },
-  });
+  const gear = await createGear({ userId: user.id });
 
-  category2 = await db.packCategory.create({
-    data: {
-      name: "Category 2",
-      index: 0,
-      packId: pack.id,
-    },
-  });
-
-  item = await db.packCategoryItem.create({
-    data: {
-      index: 0,
-      worn: false,
-      category: {
-        connect: {
-          id: category1.id,
-        },
-      },
-      gear: {
-        create: {
-          ...GEAR_VALUES,
-          userId: user.id,
-        },
-      },
-    },
+  item = await createPackCategoryItem({
+    categoryId: category1.id,
+    gearId: gear.id,
   });
 });
 
@@ -90,7 +53,7 @@ describe("movePackGearMutation", () => {
 
     await expect(
       movePackGearMutation(
-        { id: "abc123", categoryId: category2.id, index: 0 },
+        { id: faker.datatype.uuid(), categoryId: category2.id, index: 0 },
         ctx
       )
     ).rejects.toThrow(NotFoundError);
@@ -113,18 +76,32 @@ describe("movePackGearMutation", () => {
     const { ctx } = await createMockContext({ user });
 
     await expect(
-      movePackGearMutation({ id: item.id, categoryId: "abc123", index: 0 }, ctx)
+      movePackGearMutation(
+        { id: item.id, categoryId: faker.datatype.uuid(), index: 0 },
+        ctx
+      )
     ).rejects.toThrow(NotFoundError);
   });
 
   it("should error if the destination category does not belong to the user", async () => {
     const otherUser = await createUser();
+    const otherCategory = await createPackCategory({
+      packId: pack.id,
+      index: 1,
+    });
+
+    const gear = await createGear({ userId: user.id });
+
+    const otherItem = await createPackCategoryItem({
+      categoryId: otherCategory.id,
+      gearId: gear.id,
+    });
 
     const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(
       movePackGearMutation(
-        { id: item.id, categoryId: category2.id, index: 0 },
+        { id: otherItem.id, categoryId: category2.id, index: 0 },
         ctx
       )
     ).rejects.toThrow(AuthorizationError);
@@ -133,40 +110,18 @@ describe("movePackGearMutation", () => {
   it("should update the category and indexes of items correctly", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const item2 = await db.packCategoryItem.create({
-      data: {
-        index: 0,
-        worn: false,
-        category: {
-          connect: {
-            id: category2.id,
-          },
-        },
-        gear: {
-          create: {
-            ...GEAR_VALUES,
-            userId: user.id,
-          },
-        },
-      },
+    const gear = await createGear({ userId: user.id });
+
+    const item2 = await createPackCategoryItem({
+      categoryId: category2.id,
+      gearId: gear.id,
+      index: 0,
     });
 
-    const item3 = await db.packCategoryItem.create({
-      data: {
-        index: 1,
-        worn: false,
-        category: {
-          connect: {
-            id: category1.id,
-          },
-        },
-        gear: {
-          create: {
-            ...GEAR_VALUES,
-            userId: user.id,
-          },
-        },
-      },
+    const item3 = await createPackCategoryItem({
+      categoryId: category1.id,
+      gearId: gear.id,
+      index: 1,
     });
 
     await movePackGearMutation(

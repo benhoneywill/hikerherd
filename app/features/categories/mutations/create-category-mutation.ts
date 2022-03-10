@@ -2,6 +2,7 @@ import { resolver } from "blitz";
 
 import db from "db";
 
+import getNextCategoryIndex from "../functions/get-next-category-index";
 import createCategorySchema from "../schemas/create-category-schema";
 
 const createCategoryMutation = resolver.pipe(
@@ -10,27 +11,7 @@ const createCategoryMutation = resolver.pipe(
 
   async ({ name, type }, ctx) => {
     return db.$transaction(async (prisma) => {
-      // Find the current user along with the category
-      // with the highest index in the current type
-      const user = await prisma.user.findUnique({
-        where: { id: ctx.session.userId },
-        select: {
-          categories: {
-            where: { type },
-            orderBy: { index: "desc" },
-            take: 1,
-            select: { index: true },
-          },
-        },
-      });
-
-      if (!user) {
-        throw new Error("Something went wrong");
-      }
-
-      // Find out what the index of the new category should be
-      // based on the index of the current highest-index category
-      const index = user.categories[0] ? user.categories[0]?.index + 1 : 0;
+      const index = await getNextCategoryIndex(prisma, ctx, { type });
 
       return await prisma.category.create({
         data: {

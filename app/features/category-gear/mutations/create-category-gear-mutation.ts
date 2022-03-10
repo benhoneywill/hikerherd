@@ -3,60 +3,33 @@ import { AuthorizationError, NotFoundError, resolver } from "blitz";
 import db from "db";
 
 import createCategoryGearSchema from "../schemas/create-category-gear-schema";
+import getNextItemIndex from "../functions/get-next-item-index";
+import createCategoryGear from "../functions/create-category-gear";
 
 const createGearMutation = resolver.pipe(
   resolver.zod(createCategoryGearSchema),
   resolver.authorize(),
 
   async ({ categoryId, ...values }, ctx) => {
+    const category = await db.category.findUnique({
+      where: { id: categoryId },
+      select: { id: true, userId: true },
+    });
+
+    if (!category) {
+      throw new NotFoundError();
+    }
+
+    if (category.userId !== ctx.session.userId) {
+      throw new AuthorizationError();
+    }
+
     return db.$transaction(async (prisma) => {
-      const category = await prisma.category.findUnique({
-        where: { id: categoryId },
-        select: {
-          id: true,
-          userId: true,
-          _count: {
-            select: {
-              items: true,
-            },
-          },
-        },
+      const index = await getNextItemIndex(prisma, ctx, {
+        categoryId: category.id,
       });
 
-      if (!category) {
-        throw new NotFoundError();
-      }
-
-      if (category.userId !== ctx.session.userId) {
-        throw new AuthorizationError();
-      }
-
-      return prisma.categoryItem.create({
-        data: {
-          // add the new item last in the category
-          index: category._count?.items || 0,
-
-          category: {
-            connect: {
-              id: category.id,
-            },
-          },
-
-          gear: {
-            create: {
-              name: values.name,
-              weight: values.weight,
-              imageUrl: values.imageUrl,
-              link: values.link,
-              notes: values.notes,
-              consumable: values.consumable,
-              price: values.price,
-              currency: values.currency,
-              userId: ctx.session.userId,
-            },
-          },
-        },
-      });
+      return createCategoryGear(prisma, ctx, { categoryId, index, values });
     });
   }
 );

@@ -4,8 +4,7 @@ import { AuthenticationError } from "blitz";
 
 import createMockContext from "test/helpers/create-mock-context";
 import createUser from "test/helpers/create-user";
-
-import db from "db";
+import createPack from "test/helpers/create-pack";
 
 import packsQuery from "./packs-query";
 
@@ -14,15 +13,7 @@ let pack: Pack;
 
 beforeEach(async () => {
   user = await createUser();
-
-  pack = await db.pack.create({
-    data: {
-      name: "My Pack",
-      slug: "my-pack",
-      notes: null,
-      userId: user.id,
-    },
-  });
+  pack = await createPack({ userId: user.id });
 });
 
 describe("packsQuery", () => {
