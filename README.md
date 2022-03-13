@@ -52,8 +52,8 @@ All donations will go towards the costs of running the project.
 
 **🧑‍💻 Ben Honeywill**
 
-💻 Website: [benhoneywill.com](https://benhoneywill.com)
-🐦 Twitter: [@benhoneywill](https://twitter.com/benhoneywill)
-🐙 Github: [@benhoneywill](https://github.com/benhoneywill)
-🧑‍🎓 LinkedIn: [@benhoneywill](https://linkedin.com/in/benhoneywill)
-📸 Instagram: [@benontrail](https://instagram.com/benontrail)
+- 💻 Website [benhoneywill.com](https://benhoneywill.com)
+- 🐦 Twitter [@benhoneywill](https://twitter.com/benhoneywill)
+- 🐙 Github [@benhoneywill](https://github.com/benhoneywill)
+- 🧑‍🎓 LinkedIn [@benhoneywill](https://linkedin.com/in/benhoneywill)
+- 📸 Instagram [@benontrail](https://instagram.com/benontrail)
