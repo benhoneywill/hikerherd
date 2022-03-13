@@ -16,7 +16,7 @@
 
 ### Set up
 
-You will need to set up you environment variables by copying `.env.example`. You will also need to set up a local or remote postgres database for development and testing.
+You will need to set up your environment variables by copying `.env.example`. You will also need to set up a local or remote postgres database for development and testing.
 
 **Install dependencies**
 
