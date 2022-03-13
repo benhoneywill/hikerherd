@@ -50,7 +50,7 @@ Drop the project a ⭐️ if you you like hikerherd, and share the app with your
 
 hikerherd is free, and I pay for the hosting costs out of my own pocket.
 
-If you use hikerherd and want to support the app, please consider [buying me a coffee](https://ko-fi.com/benontrail)!
+If you use hikerherd and want to support the app, you can show your support by [buying me a coffee](https://ko-fi.com/benontrail)!
 
 ## Author
 
