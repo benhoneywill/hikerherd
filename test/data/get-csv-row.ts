@@ -2,7 +2,7 @@ import type { GearValues } from "./get-gear-data";
 
 import faker from "@faker-js/faker";
 
-import displayCurrency from "app/modules/common/helpers/display-currency";
+import displayCurrency from "app/helpers/display-currency";
 
 import getGearData from "./get-gear-data";
 
