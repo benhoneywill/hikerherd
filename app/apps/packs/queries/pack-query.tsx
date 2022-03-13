@@ -16,6 +16,7 @@ const packQuery = resolver.pipe(
         userId: true,
         notes: true,
         name: true,
+        private: true,
       },
     });
 

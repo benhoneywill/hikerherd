@@ -22,7 +22,10 @@ describe("createPackMutation", () => {
     const { ctx } = await createMockContext();
 
     await expect(
-      createPackMutation({ name: faker.random.word(), notes: null }, ctx)
+      createPackMutation(
+        { name: faker.random.word(), notes: null, private: false },
+        ctx
+      )
     ).rejects.toThrow(AuthenticationError);
   });
 
@@ -31,7 +34,10 @@ describe("createPackMutation", () => {
 
     const name = faker.random.word();
 
-    const pack = await createPackMutation({ name, notes: null }, ctx);
+    const pack = await createPackMutation(
+      { name, notes: null, private: false },
+      ctx
+    );
 
     const fetched = await db.pack.findUnique({ where: { id: pack.id } });
 

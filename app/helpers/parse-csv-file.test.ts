@@ -40,7 +40,7 @@ describe("parseCsvFile", () => {
       gear: {
         name: gear.name,
         weight: Number(gear.weight),
-        price: Number(gear.price) * 100,
+        price: Math.floor(Number(gear.price) * 100),
         currency: signToCurrency(gear.currency),
         consumable: !!gear.consumable,
         link: gear.link,

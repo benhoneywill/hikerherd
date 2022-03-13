@@ -6,6 +6,7 @@ import requiredStringSchema from "app/schemas/required-string-schema";
 const createPackSchema = z.object({
   name: requiredStringSchema().min(2),
   notes: editorContentSchema.nullable(),
+  private: z.boolean(),
 });
 
 export default createPackSchema;

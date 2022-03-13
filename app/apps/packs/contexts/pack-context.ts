@@ -13,6 +13,7 @@ type PackContext = {
     userId?: string;
     notes?: string | null;
     name?: string;
+    private?: boolean;
   };
 
   categories: ReturnType<typeof useCalculatePackTotals>["categories"];

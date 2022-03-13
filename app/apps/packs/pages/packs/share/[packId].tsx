@@ -54,7 +54,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   try {
     const packId = ctx.params?.packId as string;
-    await client.prefetchQuery(packOrganizerQuery, { id: packId });
+    const pack = await client.prefetchQuery(packOrganizerQuery, { id: packId });
+
+    if (pack.private) {
+      throw new NotFoundError();
+    }
   } catch (error) {
     if (error instanceof NotFoundError) {
       return { notFound: true };

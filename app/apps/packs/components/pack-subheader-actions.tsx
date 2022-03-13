@@ -7,7 +7,7 @@ import { HStack } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { Icon } from "@chakra-ui/icon";
 import { useToast } from "@chakra-ui/toast";
-import { MenuItem, MenuList } from "@chakra-ui/menu";
+import { MenuItem, MenuList, MenuDivider } from "@chakra-ui/menu";
 import {
   FaArrowRight,
   FaEdit,
@@ -77,9 +77,15 @@ const PackSubheaderActions: FC = () => {
               <MenuItem icon={<FaEdit />} onClick={editPack}>
                 Edit
               </MenuItem>
-              <MenuItem icon={<FaShare />} onClick={copyShareLink}>
+              <MenuItem
+                icon={<FaShare />}
+                command={pack.private ? "private" : ""}
+                onClick={copyShareLink}
+                isDisabled={pack.private}
+              >
                 Share
               </MenuItem>
+              <MenuDivider />
               <MenuItem icon={<FaFileExport />} onClick={exportToCsv}>
                 Export CSV
               </MenuItem>

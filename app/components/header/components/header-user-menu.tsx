@@ -9,7 +9,7 @@ import { Fade } from "@chakra-ui/transition";
 import { Menu, MenuList, MenuItem, MenuButton } from "@chakra-ui/menu";
 import Icon from "@chakra-ui/icon";
 import { SkeletonCircle } from "@chakra-ui/skeleton";
-import { FaChevronDown, FaCog, FaSignOutAlt } from "react-icons/fa";
+import { FaChevronDown, FaCog, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { Portal } from "@chakra-ui/portal";
 
 import useCurrentUser from "app/apps/users/hooks/use-current-user";
@@ -46,6 +46,7 @@ const UserMenuButton: FC = () => {
 
 const HeaderUserMenu: FC = () => {
   const [logout] = useMutation(logoutMutation);
+  const user = useCurrentUser({ suspense: false });
 
   return (
     <Suspense fallback={<UserMenuLoader />}>
@@ -54,6 +55,16 @@ const HeaderUserMenu: FC = () => {
 
         <Portal>
           <MenuList>
+            {user && (
+              <Link
+                href={Routes.ProfilePage({ username: user.username })}
+                passHref
+              >
+                <MenuItem as="a" icon={<FaUser />}>
+                  My profile
+                </MenuItem>
+              </Link>
+            )}
             <Link href={Routes.PreferencesPage()} passHref>
               <MenuItem as="a" icon={<FaCog />}>
                 My preferences

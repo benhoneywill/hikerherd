@@ -4,20 +4,19 @@ import { useMutation, useRouter, Routes, useQuery } from "blitz";
 import { Fragment, useState } from "react";
 
 import { Button, IconButton } from "@chakra-ui/button";
-import { FcTimeline } from "react-icons/fc";
 import { Heading, SimpleGrid, HStack, Text, Stack } from "@chakra-ui/layout";
-import { FaTrash } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 import { useToast } from "@chakra-ui/toast";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { useColorModeValue } from "@chakra-ui/react";
 
 import SidebarLayout from "app/layouts/sidebar-layout";
-import LinkCard from "app/components/link-card";
 import ConfirmModal from "app/components/confirm-modal";
 
 import packsQuery from "../queries/packs-query";
 import PackForm from "../components/pack-form";
 import deletePackMutation from "../mutations/delete-pack-mutation";
+import PackCard from "../components/pack-card";
 
 const PacksPage: BlitzPage = () => {
   const router = useRouter();
@@ -74,16 +73,14 @@ const PacksPage: BlitzPage = () => {
       {packs.length >= 1 && (
         <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4} mt={2}>
           {packs.map((pack) => (
-            <LinkCard
+            <PackCard
               key={pack.id}
-              href={Routes.PackPage({ packId: pack.id })}
-              icon={FcTimeline}
-              title={pack.name}
+              pack={pack}
               actions={
                 <Tooltip label="Delete this pack">
                   <IconButton
                     size="sm"
-                    icon={<FaTrash />}
+                    icon={<MdDelete />}
                     aria-label="Delete"
                     colorScheme="red"
                     variant="ghost"
