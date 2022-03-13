@@ -4,6 +4,7 @@ const calculatePackTotals = (categories: DragAndDropState) => {
   let totalWeight = 0;
   let wornWeight = 0;
   let consumableWeight = 0;
+  let baseWeight = 0;
 
   const weightedCategories = categories.map((category) => {
     return {
@@ -12,11 +13,17 @@ const calculatePackTotals = (categories: DragAndDropState) => {
         const itemWeight = item.gear.weight * (item.quantity || 1);
 
         totalWeight += itemWeight;
+
         if (item.worn) {
           wornWeight += itemWeight;
         }
+
         if (item.gear.consumable) {
           consumableWeight += itemWeight;
+        }
+
+        if (!item.worn && !item.gear.consumable) {
+          baseWeight += itemWeight;
         }
 
         return acc + itemWeight;
@@ -28,7 +35,7 @@ const calculatePackTotals = (categories: DragAndDropState) => {
     categories: weightedCategories,
     totalWeight,
     packWeight: totalWeight - wornWeight,
-    baseWeight: totalWeight - wornWeight - consumableWeight,
+    baseWeight,
     wornWeight,
     consumableWeight,
   };
