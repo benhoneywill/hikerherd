@@ -26,7 +26,7 @@ describe("updatePackMutation", () => {
 
     await expect(
       updatePackMutation(
-        { id: pack.id, name: faker.random.word(), notes: null },
+        { id: pack.id, name: faker.random.word(), notes: null, private: false },
         ctx
       )
     ).rejects.toThrow(AuthenticationError);
@@ -37,7 +37,12 @@ describe("updatePackMutation", () => {
 
     await expect(
       updatePackMutation(
-        { id: faker.datatype.uuid(), name: faker.random.word(), notes: null },
+        {
+          id: faker.datatype.uuid(),
+          name: faker.random.word(),
+          notes: null,
+          private: false,
+        },
         ctx
       )
     ).rejects.toThrow(NotFoundError);
@@ -50,7 +55,7 @@ describe("updatePackMutation", () => {
 
     await expect(
       updatePackMutation(
-        { id: pack.id, name: faker.random.word(), notes: null },
+        { id: pack.id, name: faker.random.word(), notes: null, private: false },
         ctx
       )
     ).rejects.toThrow(AuthorizationError);
@@ -61,7 +66,10 @@ describe("updatePackMutation", () => {
 
     const name = faker.random.word();
 
-    await updatePackMutation({ id: pack.id, name, notes: null }, ctx);
+    await updatePackMutation(
+      { id: pack.id, name, notes: null, private: false },
+      ctx
+    );
 
     const fetchedPack = await db.pack.findUnique({
       where: { id: pack.id },
