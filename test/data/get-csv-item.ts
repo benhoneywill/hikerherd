@@ -1,17 +1,10 @@
-import type { GearValues } from "./get-gear-data";
+import type { CurrencySign } from "app/helpers/sign-to-currency";
 
 import faker from "@faker-js/faker";
 
-import displayCurrency from "app/modules/common/helpers/display-currency";
+import displayCurrency from "app/helpers/display-currency";
 
 import getGearData from "./get-gear-data";
-
-type CsvRowValues = GearValues & {
-  categoryName?: string;
-  worn?: boolean;
-  unit?: "gram" | "ounce";
-  quantity?: number;
-};
 
 export type TestCsvItem = {
   name: string;
@@ -20,7 +13,7 @@ export type TestCsvItem = {
   unit: string;
   notes: string;
   price: string;
-  currency: string;
+  currency: CurrencySign | "";
   link: string;
   image: string;
   consumable: string;
@@ -28,22 +21,23 @@ export type TestCsvItem = {
   quantity: string;
 };
 
-const getCsvItem = (values: CsvRowValues = {}): TestCsvItem => {
+const getCsvItem = (values: Partial<TestCsvItem> = {}): TestCsvItem => {
   const gear = getGearData();
 
   return {
     name: gear.name,
-    category: values.categoryName || faker.random.word(),
-    weight: `${gear.weight}`,
-    unit: values.unit || "gram",
-    notes: gear.notes || "",
-    price: gear.price ? `${gear.price / 100}` : "",
+    category: faker.random.word(),
+    unit: "gram",
+    notes: gear.notes,
     currency: displayCurrency(gear.currency),
-    link: gear.link || "",
-    image: gear.imageUrl || "",
+    link: gear.link,
+    image: gear.imageUrl,
+    weight: `${gear.weight}`,
+    price: `${gear.price / 100}`,
     consumable: gear.consumable ? "consumable" : "",
-    worn: values.worn ? "worn" : "",
-    quantity: `${values.quantity || 1}`,
+    worn: "",
+    quantity: `${1}`,
+    ...values,
   };
 };
 

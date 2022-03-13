@@ -3,13 +3,13 @@ import type { TestCsvItem } from "./get-csv-item";
 import getCsvItem from "./get-csv-item";
 
 const getCsvData = (categories: string[]) => {
-  return categories.reduce((result, categoryName) => {
+  return categories.reduce((result, category) => {
     return {
       ...result,
-      [categoryName]: [
-        getCsvItem({ categoryName }),
-        getCsvItem({ categoryName }),
-        getCsvItem({ categoryName }),
+      [category]: [
+        getCsvItem({ category }),
+        getCsvItem({ category }),
+        getCsvItem({ category }),
       ],
     };
   }, {} as { [name: string]: TestCsvItem[] });

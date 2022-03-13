@@ -8,7 +8,7 @@ export type CategoryValues = {
   index?: number;
 };
 
-const getCategoryData = (values: CategoryValues) => ({
+const getCategoryData = (values: CategoryValues = {}) => ({
   name: faker.random.word(),
   type: "INVENTORY" as CategoryType,
   index: 0,

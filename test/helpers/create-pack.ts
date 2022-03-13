@@ -1,7 +1,7 @@
 import type { PackValues } from "test/data/get-pack-data";
 
 import getPackData from "test/data/get-pack-data";
-import slugify from "app/modules/common/helpers/slugify";
+import slugify from "app/helpers/slugify";
 
 import db from "db";
 

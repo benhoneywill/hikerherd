@@ -1,4 +1,4 @@
-// import chance from "chance"
+// import faker from "@faker-js/faker";
 
 // import db from "./index"
 
@@ -6,7 +6,7 @@
 
 const seed = async () => {
   // for (let i = 0; i < 5; i++) {
-  //   await db.resource.create({ data: { name: chance.string() } })
+  //   await db.resource.create({ data: { name: faker.name.firstName() } })
   // }
 };
 
