@@ -36,6 +36,10 @@ yarn test
 yarn dev
 ```
 
+### Documentation
+
+hikerherd is built using the Blitz framework, you can read [the Blitz docs](https://blitzjs.com/docs) to find out more.
+
 ## Show your support
 
 ### Like and share
