@@ -2,9 +2,9 @@
 
 > hikerherd helps you plan your adventures and organize your gear while reducing the weight your pack.
 
-### ⛰️ [Go to hikerherd](https://www.hikerherd.com)
+#### ⛰️ [Go to hikerherd](https://www.hikerherd.com)
 
-### 📖 [Read the hikerherd blog](https://blog.hikerherd.com)
+#### 📖 [Read the hikerherd blog](https://blog.hikerherd.com)
 
 ## Quick start
 
@@ -18,19 +18,19 @@
 
 You will need to set up you environment variables by copying `.env.example`. You will also need to set up a local or remote postgres database for development and testing.
 
-#### Install dependencies
+**Install dependencies**
 
 ```
 yarn install
 ```
 
-#### Run tests
+**Run tests**
 
 ```
 yarn test
 ```
 
-#### Develop
+**Develop**
 
 ```
 yarn dev
@@ -52,8 +52,8 @@ All donations will go towards the costs of running the project.
 
 **🧑‍💻 Ben Honeywill**
 
-- Website: [benhoneywill.com](https://benhoneywill.com)
-- Twitter: [@benhoneywill](https://twitter.com/benhoneywill)
-- Github: [@benhoneywill](https://github.com/benhoneywill)
-- LinkedIn: [@benhoneywill](https://linkedin.com/in/benhoneywill)
-- Instagram: [@benontrail](https://instagram.com/benontrail)
+💻 Website: [benhoneywill.com](https://benhoneywill.com)
+🐦 Twitter: [@benhoneywill](https://twitter.com/benhoneywill)
+🐙 Github: [@benhoneywill](https://github.com/benhoneywill)
+🧑‍🎓 LinkedIn: [@benhoneywill](https://linkedin.com/in/benhoneywill)
+📸 Instagram: [@benontrail](https://instagram.com/benontrail)
