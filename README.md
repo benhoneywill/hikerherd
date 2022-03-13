@@ -46,11 +46,11 @@ hikerherd is built using the Blitz framework, you can read [the Blitz docs](http
 
 Drop the project a ⭐️ if you you like hikerherd, and share the app with your friends.
 
-### ❤️ Donate
+### ❤️ Buy me a coffee
 
-hikerherd is free, and I pay for the hosting costs out of my own pocket. If you use hikerherd and want to support the app, please consider [donating here](https://ko-fi.com/benontrail)!
+hikerherd is free, and I pay for the hosting costs out of my own pocket.
 
-All donations will go towards the costs of running the project.
+If you use hikerherd and want to support the app, please consider [buying me a coffee](https://ko-fi.com/benontrail)!
 
 ## Author
 

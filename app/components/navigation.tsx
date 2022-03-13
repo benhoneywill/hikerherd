@@ -101,24 +101,6 @@ const Navigation: FC = () => {
   return (
     <Box as="aside">
       <Stack as="aside" spacing={8}>
-        <NavigationSection title="hikerherd">
-          <NavigationItem route={Routes.DiscoverPage()} icon={FcSearch}>
-            Discover
-          </NavigationItem>
-          <NavigationExternalItem
-            href="https://blog.hikerherd.com"
-            icon={FcKindle}
-          >
-            Newsletter
-          </NavigationExternalItem>
-          <NavigationExternalItem
-            href="https://ko-fi.com/benontrail"
-            icon={FcLike}
-          >
-            Support
-          </NavigationExternalItem>
-        </NavigationSection>
-
         <NavigationSection title="Gear tools">
           <NavigationItem route={Routes.InventoryPage()} icon={FcList}>
             Inventory
@@ -129,6 +111,9 @@ const Navigation: FC = () => {
           <NavigationItem route={Routes.PacksPage()} icon={FcTimeline}>
             Packs
           </NavigationItem>
+          <NavigationItem route={Routes.DiscoverPage()} icon={FcSearch}>
+            Discover
+          </NavigationItem>
         </NavigationSection>
 
         <NavigationSection title="Other">
@@ -136,10 +121,22 @@ const Navigation: FC = () => {
             Preferences
           </NavigationItem>
           <NavigationExternalItem
+            href="https://blog.hikerherd.com"
+            icon={FcKindle}
+          >
+            Newsletter
+          </NavigationExternalItem>
+          <NavigationExternalItem
             href="https://blog.hikerherd.com/contact"
             icon={FcVoicePresentation}
           >
             Contact
+          </NavigationExternalItem>
+          <NavigationExternalItem
+            href="https://ko-fi.com/benontrail"
+            icon={FcLike}
+          >
+            Buy me a coffee
           </NavigationExternalItem>
         </NavigationSection>
       </Stack>
