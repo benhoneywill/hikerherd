@@ -7,6 +7,7 @@ const updatePackSchema = z.object({
   id: z.string(),
   name: requiredStringSchema().min(2),
   notes: editorContentSchema.nullable(),
+  private: z.boolean(),
 });
 
 export default updatePackSchema;

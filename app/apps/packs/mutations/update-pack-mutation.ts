@@ -8,7 +8,7 @@ const updatePackMutation = resolver.pipe(
   resolver.zod(updatePackSchema),
   resolver.authorize(),
 
-  async ({ id, name, notes }, ctx) => {
+  async ({ id, name, notes, private: isPrivate }, ctx) => {
     const pack = await db.pack.findUnique({
       where: { id },
       select: { userId: true },
@@ -27,6 +27,7 @@ const updatePackMutation = resolver.pipe(
       data: {
         name,
         notes: notes && JSON.stringify(notes),
+        private: isPrivate,
       },
     });
   }

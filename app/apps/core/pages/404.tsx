@@ -7,10 +7,7 @@ const NotFoundPage: BlitzPage = () => {
 };
 
 NotFoundPage.getLayout = (page) => (
-  <BoxLayout
-    title="Not found"
-    description="That page doesn't exist. Even the best navigators get lost sometimes."
-  >
+  <BoxLayout title="Not found" description="That page doesn't exist.">
     {page}
   </BoxLayout>
 );

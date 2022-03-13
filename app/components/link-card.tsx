@@ -1,43 +1,41 @@
 import type { RouteUrlObject } from "blitz";
 import type { FC } from "react";
-import type { IconType } from "react-icons";
+import type { BoxProps } from "@chakra-ui/layout";
 
 import { Link } from "blitz";
 
-import { Stack, Heading, Text, HStack, Box } from "@chakra-ui/layout";
-import { Icon } from "@chakra-ui/icon";
+import { HStack, Box } from "@chakra-ui/layout";
 
 import Card from "./card";
 
-type LinkCardProps = {
+type LinkCardProps = BoxProps & {
   href: RouteUrlObject;
-  icon: IconType;
-  title: string;
-  text?: string;
   actions?: JSX.Element;
 };
 
-const LinkCard: FC<LinkCardProps> = ({ href, title, text, icon, actions }) => {
+const LinkCard: FC<LinkCardProps> = ({ href, children, actions, ...props }) => {
   return (
-    <Box position="relative">
+    <Box position="relative" h="100%">
       {actions && (
-        <HStack position="absolute" top={3} right={3}>
+        <HStack
+          position="absolute"
+          top={3}
+          right={3}
+          opacity="0.5"
+          _hover={{ opacity: 1 }}
+        >
           {actions}
         </HStack>
       )}
+
       <Link href={href} passHref>
         <a>
           <Card
             transition="border 50ms ease"
             _hover={{ borderColor: "blue.400" }}
+            {...props}
           >
-            <Stack align="center" textAlign="center">
-              <Icon mt={1} as={icon} w={8} h={8} />
-              <Heading size="md" noOfLines={1}>
-                {title}
-              </Heading>
-              {text && <Text opacity="0.6">{text}</Text>}
-            </Stack>
+            {children}
           </Card>
         </a>
       </Link>

@@ -10,13 +10,14 @@ const createPackMutation = resolver.pipe(
   resolver.zod(createPackSchema),
   resolver.authorize(),
 
-  async ({ name, notes }, ctx) => {
+  async ({ name, notes, private: isPrivate }, ctx) => {
     return db.pack.create({
       data: {
         name,
         notes: notes && JSON.stringify(notes),
         slug: slugify(name, { withRandomSuffix: true }),
         userId: ctx.session.userId,
+        private: isPrivate,
       },
     });
   }

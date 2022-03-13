@@ -4,13 +4,16 @@ import type { PromiseReturnType } from "blitz";
 import { Fragment } from "react";
 import { useQuery, useMutation } from "blitz";
 
-import { Center } from "@chakra-ui/layout";
+import { Center, HStack } from "@chakra-ui/layout";
 import { FORM_ERROR } from "final-form";
 import { Spinner } from "@chakra-ui/spinner";
+import { FaLock } from "react-icons/fa";
+import { Tag, TagLeftIcon, TagLabel } from "@chakra-ui/tag";
 
 import TextField from "app/components/forms/components/text-field";
 import EditorField from "app/components/editor/components/editor-field";
 import ModalForm from "app/components/forms/components/modal-form";
+import CheckboxField from "app/components/forms/components/checkbox-field";
 
 import createPackMutation from "../mutations/create-pack-mutation";
 import createPackSchema from "../schemas/create-pack-schema";
@@ -54,6 +57,7 @@ const PackForm: FC<PackFormProps> = ({
       initialValues={{
         name: pack ? pack.name : "",
         notes: pack?.notes ? JSON.parse(pack.notes) : null,
+        private: !!pack?.private,
       }}
       onSubmit={async (values) => {
         try {
@@ -100,6 +104,13 @@ const PackForm: FC<PackFormProps> = ({
                 bubbleMenu
                 floatingMenu
               />
+              <HStack>
+                <Tag colorScheme="orange" flexShrink="0">
+                  <TagLeftIcon as={FaLock} />
+                  <TagLabel>Make this pack private?</TagLabel>
+                </Tag>
+                <CheckboxField name="private" />
+              </HStack>
             </Fragment>
           )}
         </Fragment>
