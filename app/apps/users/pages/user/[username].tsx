@@ -3,7 +3,15 @@ import type { BlitzPage, GetServerSideProps } from "blitz";
 import { useQuery, useRouter, NotFoundError } from "blitz";
 import { Fragment } from "react";
 
-import { Container, Box, Heading, Stack, SimpleGrid } from "@chakra-ui/layout";
+import {
+  Container,
+  Box,
+  Heading,
+  Stack,
+  SimpleGrid,
+  Center,
+  Text,
+} from "@chakra-ui/layout";
 import { Avatar } from "@chakra-ui/avatar";
 import { useColorModeValue } from "@chakra-ui/react";
 
@@ -18,6 +26,8 @@ const ProfilePage: BlitzPage = () => {
   const [user] = useQuery(userQuery, {
     username: router.query.username as string,
   });
+
+  const emptyBg = useColorModeValue("gray.200", "gray.700");
 
   return (
     <Fragment>
@@ -35,11 +45,21 @@ const ProfilePage: BlitzPage = () => {
           Packs
         </Heading>
 
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} mt={2}>
-          {user.packs.map((pack) => (
-            <PackCard key={pack.id} pack={pack} shareLink />
-          ))}
-        </SimpleGrid>
+        {!!user.packs.length && (
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} mt={2}>
+            {user.packs.map((pack) => (
+              <PackCard key={pack.id} pack={pack} shareLink />
+            ))}
+          </SimpleGrid>
+        )}
+
+        {!user.packs.length && (
+          <Center p={6} borderRadius="md" bg={emptyBg}>
+            <Text size="md" opacity="0.4">
+              {user.username} has not made any packs yet
+            </Text>
+          </Center>
+        )}
       </Container>
     </Fragment>
   );

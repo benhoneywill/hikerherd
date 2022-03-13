@@ -43,7 +43,9 @@ const PackNotes: FC = () => {
           />
         ) : (
           <Center p={6} borderRadius="md" bg={emptyBg}>
-            <Text size="md">This pack does not have any notes</Text>
+            <Text size="md" opacity="0.4">
+              This pack does not have any notes
+            </Text>
           </Center>
         )}
       </Container>
