@@ -17,6 +17,14 @@ beforeEach(async () => {
     name: "Sleeping bag",
     notes: "This bag keeps me warm",
     userId: user.id,
+    weight: 100,
+  });
+
+  await createGear({
+    name: "Sleeping bag",
+    notes: "This is my second bag",
+    userId: user.id,
+    weight: 300,
   });
 });
 
@@ -39,21 +47,37 @@ describe("searchGearQuery", () => {
 
     const result2 = await searchGearQuery({ query: "sleep" }, ctx);
 
-    expect(result2.length).toEqual(1);
+    expect(result2.length).toEqual(2);
     expect(result2[0]?.name).toEqual("Sleeping bag");
+    expect(result2[1]?.name).toEqual("Sleeping bag");
   });
 
-  it("should allow small spelling mistakes", async () => {
+  it("should filter by weight", async () => {
     const { ctx } = await createMockContext();
 
-    const result1 = await searchGearQuery({ query: "tnt" }, ctx);
+    const result1 = await searchGearQuery(
+      { query: "sleep", maxWeight: 200 },
+      ctx
+    );
 
     expect(result1.length).toEqual(1);
-    expect(result1[0]?.name).toEqual("Tent");
+    expect(result1[0]?.name).toEqual("Sleeping bag");
+    expect(result1[0]?.weight).toEqual(100);
 
-    const result2 = await searchGearQuery({ query: "sleping bg" }, ctx);
+    const result2 = await searchGearQuery(
+      { query: "sleep", minWeight: 200 },
+      ctx
+    );
 
     expect(result2.length).toEqual(1);
     expect(result2[0]?.name).toEqual("Sleeping bag");
+    expect(result2[0]?.weight).toEqual(300);
+
+    const result3 = await searchGearQuery(
+      { query: "sleep", minWeight: 200, maxWeight: 250 },
+      ctx
+    );
+
+    expect(result3.length).toEqual(0);
   });
 });

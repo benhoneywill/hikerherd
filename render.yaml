@@ -31,3 +31,12 @@ services:
 
       - key: POSTMARK_API_TOKEN
         sync: false # (Keep secrets out of version control)
+
+      - key: CLOUDINARY_API_KEY
+        sync: false # (Keep secrets out of version control)
+
+      - key: CLOUDINARY_API_SECRET
+        sync: false # (Keep secrets out of version control)
+
+      - key: BLITZ_PUBLIC_CLOUDINARY_CLOUD_NAME
+        value: hikerherd

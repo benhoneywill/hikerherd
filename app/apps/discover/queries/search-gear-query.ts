@@ -9,31 +9,46 @@ import searchGearSchema from "../schemas/search-gear-schema";
 const searchGearQuery = resolver.pipe(
   resolver.zod(searchGearSchema),
 
-  async ({ query }) => {
+  async ({ query, minWeight, maxWeight }) => {
     if (!query) return [];
 
-    const results = await db.$queryRaw`
-      SELECT
-        gear.*,
-        gear.id,
-        Count(clone."clonedFromId") as "cloneCount"
-      FROM
-        "Gear" gear
-      LEFT JOIN
-        "Gear" clone
-      ON
-        gear.id = clone."clonedFromId"
-      WHERE
-        gear."clonedFromId" IS NULL
-      AND
-        (SIMILARITY(gear.name, ${query}) > 0.15 OR COALESCE(SIMILARITY(gear.notes, ${query}), 0) > 0.1)
-      GROUP BY
-        gear.id
-      ORDER BY
-        (SIMILARITY(gear.name, ${query}) + (COALESCE(SIMILARITY(gear.notes, ${query}), 0) * 0.3)) * (1 + LEAST(0.1, (Count(clone."clonedFromId") / 100))) DESC
-      LIMIT
-        20;
-    `;
+    const search = query.split(" ").join(" | ");
+
+    const results = await db.gear.findMany({
+      take: 24,
+
+      where: {
+        OR: [
+          { name: { search, mode: "insensitive" } },
+          { name: { contains: query, mode: "insensitive" } },
+          { notes: { search, mode: "insensitive" } },
+          { notes: { contains: query, mode: "insensitive" } },
+        ],
+        clonedFromId: null,
+        weight: { gte: minWeight, lte: maxWeight },
+      },
+
+      include: {
+        _count: {
+          select: { clones: true },
+        },
+      },
+
+      orderBy: [
+        {
+          _relevance: {
+            fields: ["name", "notes"],
+            search,
+            sort: "desc",
+          },
+        },
+        {
+          clones: {
+            _count: "desc",
+          },
+        },
+      ],
+    });
 
     return results as Gear[];
   }
