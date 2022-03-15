@@ -20,7 +20,7 @@ class Document extends BlitzDocument {
     return (
       <Html lang="en">
         <DocumentHead />
-        <body style={{ backgroundColor: "#edf2f7" }}>
+        <body>
           <Main />
           <BlitzScript />
           <Analytics />
