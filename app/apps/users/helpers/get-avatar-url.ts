@@ -3,10 +3,10 @@ import type { User } from "@prisma/client";
 import cloudinaryClient from "integrations/cloudinary-client";
 
 const getAvatarUrl = (
-  user: Pick<User, "avatar_id" | "avatar_version">,
+  user: Pick<User, "avatar_id" | "avatar_version"> | null | undefined,
   size: number
 ) => {
-  if (!user.avatar_id) return "";
+  if (!user?.avatar_id) return "";
 
   const version = user.avatar_version ? `${user.avatar_version}` : undefined;
 

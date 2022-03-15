@@ -10,7 +10,6 @@ import { Menu, MenuList, MenuItem, MenuButton } from "@chakra-ui/menu";
 import Icon from "@chakra-ui/icon";
 import { SkeletonCircle } from "@chakra-ui/skeleton";
 import { FaChevronDown, FaCog, FaSignOutAlt, FaUser } from "react-icons/fa";
-import { Portal } from "@chakra-ui/portal";
 
 import useCurrentUser from "app/apps/users/hooks/use-current-user";
 import logoutMutation from "app/apps/auth/mutations/logout-mutation";
@@ -39,7 +38,7 @@ const UserMenuButton: FC = () => {
         px={1}
         rightIcon={<Icon pr={1} as={FaChevronDown} />}
       >
-        {user && <Avatar size="xs" src={getAvatarUrl(user, 100)} />}
+        <Avatar size="xs" src={getAvatarUrl(user, 100)} />
       </MenuButton>
     </Fade>
   );
@@ -54,32 +53,30 @@ const HeaderUserMenu: FC = () => {
       <Menu>
         <UserMenuButton />
 
-        <Portal>
-          <MenuList>
-            {user && (
-              <Link
-                href={Routes.ProfilePage({ username: user.username })}
-                passHref
-              >
-                <MenuItem as="a" icon={<FaUser />}>
-                  My profile
-                </MenuItem>
-              </Link>
-            )}
-            <Link href={Routes.PreferencesPage()} passHref>
-              <MenuItem as="a" icon={<FaCog />}>
-                My preferences
+        <MenuList>
+          {user && (
+            <Link
+              href={Routes.ProfilePage({ username: user.username })}
+              passHref
+            >
+              <MenuItem as="a" icon={<FaUser />}>
+                My profile
               </MenuItem>
             </Link>
-            <MenuItem
-              as="button"
-              onClick={() => logout()}
-              icon={<FaSignOutAlt />}
-            >
-              Logout
+          )}
+          <Link href={Routes.PreferencesPage()} passHref>
+            <MenuItem as="a" icon={<FaCog />}>
+              My preferences
             </MenuItem>
-          </MenuList>
-        </Portal>
+          </Link>
+          <MenuItem
+            as="button"
+            onClick={() => logout()}
+            icon={<FaSignOutAlt />}
+          >
+            Logout
+          </MenuItem>
+        </MenuList>
       </Menu>
     </Suspense>
   );
