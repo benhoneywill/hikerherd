@@ -2,6 +2,8 @@
 
 > hikerherd helps you plan your adventures and organize your gear while reducing the weight your pack.
 
+![Tests](https://github.com/benhoneywill/hikerherd/actions/workflows/tests.yml/badge.svg)
+
 #### ⛰️ [Go to hikerherd](https://www.hikerherd.com)
 
 #### 📖 [Read the hikerherd blog](https://blog.hikerherd.com)
