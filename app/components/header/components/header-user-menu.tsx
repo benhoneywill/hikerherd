@@ -31,7 +31,7 @@ const UserMenuButton: FC = () => {
   const user = useCurrentUser();
 
   return (
-    <Fade in={!!user}>
+    <Fade in>
       <MenuButton
         as={Button}
         size="sm"
