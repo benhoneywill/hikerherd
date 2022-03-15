@@ -6,11 +6,11 @@ import papaparse from "papaparse";
 import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createPack from "test/helpers/create-pack";
-import createPackCategory from "test/helpers/create-pack-category";
-import createGear from "test/helpers/create-gear";
-import createPackCategoryItem from "test/helpers/create-pack-category-item";
+import createUser from "test/factories/create-user";
+import createPack from "test/factories/create-pack";
+import createPackCategory from "test/factories/create-pack-category";
+import createGear from "test/factories/create-gear";
+import createPackCategoryItem from "test/factories/create-pack-category-item";
 import displayCurrency from "app/helpers/display-currency";
 
 import packExportCsvMutation from "./pack-export-csv-mutation";
@@ -19,7 +19,7 @@ let user: User;
 let pack: Pack;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
   pack = await createPack({ userId: user.id });
 });
 
@@ -41,7 +41,7 @@ describe("packExportCsvMutation", () => {
   });
 
   it("should error if the pack does not belong to the user", async () => {
-    const otherUser = await createUser();
+    const otherUser = await createUser({});
 
     const { ctx } = await createMockContext({ user: otherUser });
 

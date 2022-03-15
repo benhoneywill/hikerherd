@@ -1,13 +1,19 @@
 import type { BlitzPage, GetServerSideProps } from "blitz";
 
-import { getSession, NotFoundError, useRouter, Routes } from "blitz";
+import {
+  AuthenticationError,
+  AuthorizationError,
+  NotFoundError,
+  useRouter,
+  Routes,
+} from "blitz";
 
 import FixedLayout from "app/layouts/fixed-layout";
 import PrefetchQueryClient from "app/helpers/prefetch-query-client";
 
 import PackOrganizer from "../../components/pack-organizer";
 import PackSubheader from "../../components/pack-subheader";
-import packOrganizerQuery from "../../queries/pack-organizer-query";
+import packQuery from "../../queries/pack-query";
 
 const PackPage: BlitzPage = () => {
   const router = useRouter();
@@ -15,6 +21,7 @@ const PackPage: BlitzPage = () => {
 };
 
 PackPage.authenticate = { redirectTo: Routes.LoginPage() };
+
 PackPage.getLayout = (page) => {
   return <FixedLayout subheader={<PackSubheader />}>{page}</FixedLayout>;
 };
@@ -24,13 +31,19 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   try {
     const packId = ctx.params?.packId as string;
-    const pack = await client.prefetchQuery(packOrganizerQuery, { id: packId });
-    const session = await getSession(ctx.req, ctx.res);
-    if (pack.userId !== session.userId) {
-      throw new NotFoundError();
-    }
+    await client.prefetchQuery(packQuery, { id: packId });
   } catch (error) {
-    if (error instanceof NotFoundError) {
+    if (error instanceof AuthenticationError) {
+      return {
+        redirect: {
+          destination: Routes.LoginPage(),
+          permanent: false,
+        },
+      };
+    } else if (
+      error instanceof NotFoundError ||
+      error instanceof AuthorizationError
+    ) {
       return { notFound: true };
     } else {
       throw error;

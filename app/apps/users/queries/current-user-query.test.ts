@@ -1,14 +1,14 @@
 import type { User } from "db";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
+import createUser from "test/factories/create-user";
 
 import currentUserQuery from "./current-user-query";
 
 let user: User;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
 });
 
 describe("currentUserQuery", () => {
@@ -29,7 +29,7 @@ describe("currentUserQuery", () => {
     expect(fetched?.username).toEqual(user.username);
     expect(fetched?.email).toEqual(user.email);
     expect(fetched?.role).toEqual(user.role);
-    expect(fetched?.avatar).toEqual(user.avatar);
+    expect(fetched?.avatar_id).toEqual(user.avatar_id);
     expect(fetched?.weightUnit).toEqual(user.weightUnit);
     expect(fetched?.currency).toEqual(user.currency);
   });

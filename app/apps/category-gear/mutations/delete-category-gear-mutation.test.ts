@@ -5,13 +5,13 @@ import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createCategory from "test/helpers/create-category";
-import createGear from "test/helpers/create-gear";
-import createCategoryItem from "test/helpers/create-category-item";
-import createPack from "test/helpers/create-pack";
-import createPackCategory from "test/helpers/create-pack-category";
-import createPackCategoryItem from "test/helpers/create-pack-category-item";
+import createUser from "test/factories/create-user";
+import createCategory from "test/factories/create-category";
+import createGear from "test/factories/create-gear";
+import createCategoryItem from "test/factories/create-category-item";
+import createPack from "test/factories/create-pack";
+import createPackCategory from "test/factories/create-pack-category";
+import createPackCategoryItem from "test/factories/create-pack-category-item";
 
 import db from "db";
 
@@ -22,7 +22,7 @@ let category: Category;
 let item: CategoryItem;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
   category = await createCategory({ userId: user.id });
   const gear = await createGear({ userId: user.id });
   item = await createCategoryItem({ categoryId: category.id, gearId: gear.id });
@@ -46,7 +46,7 @@ describe("deleteCategoryGearMutation", () => {
   });
 
   it("should error if the item does not belong to the user", async () => {
-    const otherUser = await createUser();
+    const otherUser = await createUser({});
     const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(

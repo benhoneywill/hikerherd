@@ -3,8 +3,8 @@ import type { User, Category } from "db";
 import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createCategory from "test/helpers/create-category";
+import createUser from "test/factories/create-user";
+import createCategory from "test/factories/create-category";
 
 import categoryQuery from "./category-query";
 
@@ -12,7 +12,7 @@ let user: User;
 let category: Category;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
   category = await createCategory({ userId: user.id });
 });
 
@@ -34,7 +34,7 @@ describe("categoryQuery", () => {
   });
 
   it("should error if the category does not belong to the user", async () => {
-    const otherUser = await createUser();
+    const otherUser = await createUser({});
     const { ctx } = await createMockContext({ user: otherUser });
 
     await expect(categoryQuery({ id: category.id }, ctx)).rejects.toThrow(

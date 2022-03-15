@@ -3,8 +3,8 @@ import type { User, Pack } from "db";
 import { AuthenticationError } from "blitz";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createPack from "test/helpers/create-pack";
+import createUser from "test/factories/create-user";
+import createPack from "test/factories/create-pack";
 
 import packsQuery from "./packs-query";
 
@@ -12,7 +12,7 @@ let user: User;
 let pack: Pack;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
   pack = await createPack({ userId: user.id });
 });
 

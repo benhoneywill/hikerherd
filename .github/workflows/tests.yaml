@@ -43,3 +43,23 @@ jobs:
       - run: yarn build
       - run: yarn migrate
       - run: yarn test
+
+  cypress:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - run: yarn install --frozen-lockfile
+      - run: yarn cypress:ci

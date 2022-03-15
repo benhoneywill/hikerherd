@@ -1,11 +1,11 @@
 import type { User, Pack } from "db";
 
-import createGear from "test/helpers/create-gear";
+import createGear from "test/factories/create-gear";
 import createMockContext from "test/helpers/create-mock-context";
-import createPack from "test/helpers/create-pack";
-import createPackCategory from "test/helpers/create-pack-category";
-import createPackCategoryItem from "test/helpers/create-pack-category-item";
-import createUser from "test/helpers/create-user";
+import createPack from "test/factories/create-pack";
+import createPackCategory from "test/factories/create-pack-category";
+import createPackCategoryItem from "test/factories/create-pack-category-item";
+import createUser from "test/factories/create-user";
 
 import userQuery from "./user-query";
 
@@ -13,7 +13,7 @@ let user: User;
 let pack: Pack;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
   pack = await createPack({ userId: user.id });
   await createPack({ userId: user.id });
   await createPack({ userId: user.id, private: true });
@@ -38,7 +38,7 @@ describe("userQuery", () => {
 
     expect(fetched?.id).toEqual(user.id);
     expect(fetched?.username).toEqual(user.username);
-    expect(fetched?.avatar).toEqual(user.avatar);
+    expect(fetched?.avatar_id).toEqual(user.avatar_id);
     expect((fetched as any)?.email).not.toBeDefined();
 
     expect(fetched.packs.length).toEqual(2);

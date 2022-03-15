@@ -7,10 +7,15 @@
     "build": "blitz prisma generate && blitz build",
     "start": "blitz start",
     "studio": "blitz prisma studio",
+    "migrate": "blitz prisma migrate deploy",
+    "prepare": "husky install",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "test": "jest",
-    "migrate": "blitz prisma migrate deploy",
-    "prepare": "husky install"
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:server": "yarn migrate && yarn build && yarn start -p 3099",
+    "cypress:dev": "NODE_ENV=test start-server-and-test cypress:server 3099 cypress:open",
+    "cypress:ci": "NODE_ENV=test start-server-and-test cypress:server 3099 cypress:run"
   },
   "prisma": {
     "schema": "db/schema.prisma"
@@ -32,8 +37,12 @@
     "@tiptap/html": "2.0.0-beta.139",
     "@tiptap/react": "2.0.0-beta.95",
     "@tiptap/starter-kit": "2.0.0-beta.142",
+    "@types/formidable": "^2.0.4",
     "blitz": "0.45.3",
+    "cloudinary": "^1.28.1",
+    "cloudinary-core": "^2.12.3",
     "final-form": "4.20.4",
+    "formidable": "^2.0.1",
     "framer-motion": "5.3.1",
     "fuse.js": "6.5.3",
     "html-to-text": "8.1.0",
@@ -43,6 +52,7 @@
     "react": "18.0.0-rc.0",
     "react-beautiful-dnd": "13.1.0",
     "react-dom": "18.0.0-rc.0",
+    "react-dropzone": "^12.0.4",
     "react-final-form": "6.5.7",
     "react-icons": "4.3.1",
     "victory": "36.2.0",
@@ -50,13 +60,17 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^6.0.0-beta.0",
+    "@testing-library/cypress": "^8.0.2",
     "@types/html-to-text": "8.0.1",
     "@types/papaparse": "^5.3.2",
     "@types/react": "17.0.34",
     "@types/react-beautiful-dnd": "13.1.2",
+    "@types/testing-library__cypress": "^5.0.9",
     "@typescript-eslint/eslint-plugin": "5.7.0",
+    "cypress": "^9.5.2",
     "eslint": "8.4.1",
     "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-prettier": "4.0.0",
     "husky": "7.0.4",
     "lint-staged": "11.2.6",
@@ -65,6 +79,7 @@
     "prettier-plugin-prisma": "3.4.1",
     "pretty-quick": "3.1.1",
     "prisma": "3.4.1",
+    "start-server-and-test": "^1.14.0",
     "typescript": "4.5.4"
   }
 }

@@ -24,15 +24,25 @@ const packsQuery = resolver.pipe(
     });
 
     return packs.map((pack) => {
-      const { baseWeight, totalWeight, packWeight } = calculatePackTotals(
-        pack.categories
-      );
+      const {
+        baseWeight,
+        totalWeight,
+        packWeight,
+        wornWeight,
+        consumableWeight,
+      } = calculatePackTotals(pack.categories);
 
       return {
         name: pack.name,
         private: pack.private,
         id: pack.id,
-        totals: { baseWeight, totalWeight, packWeight },
+        totals: {
+          baseWeight,
+          totalWeight,
+          packWeight,
+          wornWeight,
+          consumableWeight,
+        },
       };
     });
   }

@@ -10,10 +10,16 @@ type PackContext = {
 
   pack: {
     id: string;
-    userId?: string;
     notes?: string | null;
     name?: string;
     private?: boolean;
+  };
+
+  user?: {
+    id: string;
+    avatar_id: string | null;
+    avatar_version: number | null;
+    username: string;
   };
 
   categories: ReturnType<typeof useCalculatePackTotals>["categories"];

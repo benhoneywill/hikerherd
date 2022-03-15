@@ -3,15 +3,15 @@ import type { User } from "db";
 import { AuthenticationError } from "blitz";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createCategory from "test/helpers/create-category";
+import createUser from "test/factories/create-user";
+import createCategory from "test/factories/create-category";
 
 import categoriesQuery from "./categories-query";
 
 let user: User;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
 });
 
 describe("categoriesQuery", () => {
@@ -26,7 +26,7 @@ describe("categoriesQuery", () => {
   it("should fetch the current users categories by type", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const otherUser = await createUser();
+    const otherUser = await createUser({});
 
     await createCategory({ userId: user.id, index: 0 });
     await createCategory({ userId: user.id, index: 1 });

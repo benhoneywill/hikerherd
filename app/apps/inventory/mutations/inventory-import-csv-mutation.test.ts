@@ -3,10 +3,10 @@ import type { User } from "db";
 import { AuthenticationError } from "blitz";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createCategory from "test/helpers/create-category";
-import createGear from "test/helpers/create-gear";
-import createCategoryItem from "test/helpers/create-category-item";
+import createUser from "test/factories/create-user";
+import createCategory from "test/factories/create-category";
+import createGear from "test/factories/create-gear";
+import createCategoryItem from "test/factories/create-category-item";
 import getCsv from "test/data/get-csv";
 import getCsvData from "test/data/get-csv-data";
 
@@ -21,7 +21,7 @@ const testCsv = getCsv(data);
 let user: User;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
 });
 
 describe("inventoryImportCsvMutation", () => {

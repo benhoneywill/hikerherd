@@ -12,6 +12,7 @@ import UserPreferencesProvider from "app/apps/users/providers/user-preferences-p
 
 import AppErrorFallback from "../components/app-error-fallback";
 import PageLoader from "../components/page-loader";
+import LayoutLoader from "../components/layout-loader";
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   const { reset } = useQueryErrorResetBoundary();
@@ -22,11 +23,13 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
     <ChakraProvider portalZIndex={4}>
       <ErrorBoundary FallbackComponent={AppErrorFallback} onReset={reset}>
         <UserPreferencesProvider>
-          {getLayout(
-            <Suspense fallback={<PageLoader />}>
-              <Component {...pageProps} />
-            </Suspense>
-          )}
+          <Suspense fallback={<LayoutLoader />}>
+            {getLayout(
+              <Suspense fallback={<PageLoader />}>
+                <Component {...pageProps} />
+              </Suspense>
+            )}
+          </Suspense>
         </UserPreferencesProvider>
       </ErrorBoundary>
     </ChakraProvider>

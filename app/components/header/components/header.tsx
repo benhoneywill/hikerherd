@@ -11,7 +11,6 @@ import HeaderActions from "./header-actions";
 import HeaderLogo from "./header-logo";
 import HeaderLoggedOut from "./header-logged-out";
 import HeaderLoggedIn from "./header-logged-in";
-import BetaBanner from "./beta-banner";
 
 const Header: FC = () => {
   const session = useSession({ suspense: false });
@@ -30,7 +29,6 @@ const Header: FC = () => {
       />
 
       <Box position="sticky" top="0" zIndex={3}>
-        <BetaBanner />
         <Box
           as="header"
           py={3}

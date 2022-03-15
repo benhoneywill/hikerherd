@@ -15,7 +15,8 @@ const userQuery = resolver.pipe(
       select: {
         id: true,
         username: true,
-        avatar: true,
+        avatar_id: true,
+        avatar_version: true,
         packs: {
           where: { private: false },
           include: {
@@ -38,15 +39,25 @@ const userQuery = resolver.pipe(
     }
 
     const packs = user.packs.map((pack) => {
-      const { baseWeight, totalWeight, packWeight } = calculatePackTotals(
-        pack.categories
-      );
+      const {
+        baseWeight,
+        totalWeight,
+        packWeight,
+        wornWeight,
+        consumableWeight,
+      } = calculatePackTotals(pack.categories);
 
       return {
         name: pack.name,
         id: pack.id,
         private: pack.private,
-        totals: { baseWeight, totalWeight, packWeight },
+        totals: {
+          baseWeight,
+          totalWeight,
+          packWeight,
+          wornWeight,
+          consumableWeight,
+        },
       };
     });
 

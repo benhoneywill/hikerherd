@@ -5,11 +5,11 @@ import { NotFoundError } from "blitz";
 import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createPack from "test/helpers/create-pack";
-import createPackCategory from "test/helpers/create-pack-category";
-import createGear from "test/helpers/create-gear";
-import createPackCategoryItem from "test/helpers/create-pack-category-item";
+import createUser from "test/factories/create-user";
+import createPack from "test/factories/create-pack";
+import createPackCategory from "test/factories/create-pack-category";
+import createGear from "test/factories/create-gear";
+import createPackCategoryItem from "test/factories/create-pack-category-item";
 
 import packOrganizerQuery from "./pack-organizer-query";
 
@@ -19,7 +19,7 @@ let category: PackCategory;
 let item: CategoryItem;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
   pack = await createPack({ userId: user.id });
   category = await createPackCategory({ packId: pack.id });
 
@@ -39,8 +39,28 @@ describe("packOrganizerQuery", () => {
     ).rejects.toThrow(NotFoundError);
   });
 
-  it("Should return the pack", async () => {
+  it("should error if the pack is private", async () => {
+    const { ctx } = await createMockContext();
+
+    const privatePack = await createPack({ userId: user.id, private: true });
+
+    await expect(
+      packOrganizerQuery({ id: privatePack.id }, ctx)
+    ).rejects.toThrow(NotFoundError);
+  });
+
+  it("should return the pack if it is private and it belongs to the user", async () => {
     const { ctx } = await createMockContext({ user });
+
+    const privatePack = await createPack({ userId: user.id, private: true });
+
+    const result = await packOrganizerQuery({ id: privatePack.id }, ctx);
+
+    expect(result?.name).toEqual(privatePack.name);
+  });
+
+  it("Should return the pack if it is public", async () => {
+    const { ctx } = await createMockContext();
 
     const result = await packOrganizerQuery({ id: pack.id }, ctx);
 

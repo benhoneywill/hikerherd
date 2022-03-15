@@ -24,13 +24,12 @@ const PackProvider: FC<PackProviderProps> = ({ id, share, children }) => {
   const [pack, { refetch: refetchPack }] = useQuery(
     packQuery,
     { id },
-    { suspense: false, enabled: !share }
+    { enabled: !share }
   );
 
   const [packOrganizer, { refetch: refetchOrganizer }] = useQuery(
     packOrganizerQuery,
-    { id },
-    { suspense: false }
+    { id }
   );
 
   const { categories, totalWeight, packWeight, baseWeight } =
@@ -46,9 +45,12 @@ const PackProvider: FC<PackProviderProps> = ({ id, share, children }) => {
 
         pack: pack || {
           id,
-          name: packOrganizer?.name,
-          notes: packOrganizer?.notes,
+          notes: packOrganizer.notes,
+          name: packOrganizer.name,
+          private: packOrganizer.private,
         },
+
+        user: packOrganizer?.user,
 
         categories,
         totalWeight,

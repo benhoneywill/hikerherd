@@ -5,10 +5,10 @@ import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createCategory from "test/helpers/create-category";
-import createGear from "test/helpers/create-gear";
-import createCategoryItem from "test/helpers/create-category-item";
+import createUser from "test/factories/create-user";
+import createCategory from "test/factories/create-category";
+import createGear from "test/factories/create-gear";
+import createCategoryItem from "test/factories/create-category-item";
 
 import categoryGearQuery from "./category-gear-query";
 
@@ -17,7 +17,7 @@ let category: Category;
 let item: CategoryItem;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
   category = await createCategory({ userId: user.id });
 
   const gear = await createGear({ userId: user.id });
@@ -45,7 +45,7 @@ describe("categoryGearQuery", () => {
   });
 
   it("should error if the item does not belong to the user", async () => {
-    const otherUser = await createUser();
+    const otherUser = await createUser({});
 
     const { ctx } = await createMockContext({ user: otherUser });
 

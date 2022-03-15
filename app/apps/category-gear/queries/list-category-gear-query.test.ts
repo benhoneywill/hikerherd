@@ -3,17 +3,17 @@ import type { User } from "db";
 import { AuthenticationError } from "blitz";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createCategory from "test/helpers/create-category";
-import createCategoryItem from "test/helpers/create-category-item";
-import createGear from "test/helpers/create-gear";
+import createUser from "test/factories/create-user";
+import createCategory from "test/factories/create-category";
+import createCategoryItem from "test/factories/create-category-item";
+import createGear from "test/factories/create-gear";
 
 import listCategoryGearQuery from "./list-category-gear-query";
 
 let user: User;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
 
   const category = await createCategory({ userId: user.id });
 

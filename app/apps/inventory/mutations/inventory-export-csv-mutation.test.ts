@@ -5,10 +5,10 @@ import { AuthenticationError } from "blitz";
 import papaparse from "papaparse";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createCategory from "test/helpers/create-category";
-import createGear from "test/helpers/create-gear";
-import createCategoryItem from "test/helpers/create-category-item";
+import createUser from "test/factories/create-user";
+import createCategory from "test/factories/create-category";
+import createGear from "test/factories/create-gear";
+import createCategoryItem from "test/factories/create-category-item";
 import displayCurrency from "app/helpers/display-currency";
 
 import inventoryExportCsvMutation from "./inventory-export-csv-mutation";
@@ -16,7 +16,7 @@ import inventoryExportCsvMutation from "./inventory-export-csv-mutation";
 let user: User;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
 });
 
 describe("inventoryExportCsvMutation", () => {

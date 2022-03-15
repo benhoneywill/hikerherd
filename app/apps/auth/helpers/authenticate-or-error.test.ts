@@ -4,7 +4,7 @@ import { AuthenticationError } from "blitz";
 
 import { faker } from "@faker-js/faker";
 
-import createUser from "test/helpers/create-user";
+import createUser from "test/factories/create-user";
 
 import authenticateOrError from "./authenticate-or-error";
 
