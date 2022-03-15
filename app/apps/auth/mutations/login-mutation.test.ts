@@ -5,7 +5,7 @@ import { AuthenticationError } from "blitz";
 import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
+import createUser from "test/factories/create-user";
 
 import loginMutation from "./login-mutation";
 

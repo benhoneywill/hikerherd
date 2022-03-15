@@ -6,7 +6,8 @@ type CloudinaryUploadOptions = {
 };
 
 type CloudinaryUploadResponse = {
-  url: string;
+  public_id: string;
+  version: number;
 };
 
 const uploadImageToCloudinary = async (
@@ -18,10 +19,18 @@ const uploadImageToCloudinary = async (
   body.append("folder", options.folder);
   body.append("filename", options.filename);
 
-  return apiRequest<CloudinaryUploadResponse>("/api/cloudinary-upload", {
-    method: "POST",
-    body,
-  });
+  const data = await apiRequest<CloudinaryUploadResponse>(
+    "/api/cloudinary-upload",
+    {
+      method: "POST",
+      body,
+    }
+  );
+
+  return {
+    publicId: data.public_id,
+    version: data.version,
+  };
 };
 
 export default uploadImageToCloudinary;

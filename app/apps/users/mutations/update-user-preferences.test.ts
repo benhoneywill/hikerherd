@@ -3,7 +3,7 @@ import type { User } from "db";
 import { AuthenticationError } from "blitz";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
+import createUser from "test/factories/create-user";
 
 import db from "db";
 
@@ -12,7 +12,7 @@ import updatePreferencesMutation from "./update-preferences-mutation";
 let user: User;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
 });
 
 describe("updatePreferencesMutation", () => {

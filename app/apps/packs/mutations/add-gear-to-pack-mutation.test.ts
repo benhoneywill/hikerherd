@@ -5,13 +5,13 @@ import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createPack from "test/helpers/create-pack";
-import createPackCategory from "test/helpers/create-pack-category";
-import createGear from "test/helpers/create-gear";
-import createPackCategoryItem from "test/helpers/create-pack-category-item";
-import createCategory from "test/helpers/create-category";
-import createCategoryItem from "test/helpers/create-category-item";
+import createUser from "test/factories/create-user";
+import createPack from "test/factories/create-pack";
+import createPackCategory from "test/factories/create-pack-category";
+import createGear from "test/factories/create-gear";
+import createPackCategoryItem from "test/factories/create-pack-category-item";
+import createCategory from "test/factories/create-category";
+import createCategoryItem from "test/factories/create-category-item";
 
 import db from "db";
 
@@ -23,7 +23,7 @@ let category: PackCategory;
 let gear: Gear;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
   pack = await createPack({ userId: user.id });
   category = await createPackCategory({ packId: pack.id });
   gear = await createGear({ userId: user.id });
@@ -61,7 +61,7 @@ describe("addGearToPackMutation", () => {
   });
 
   it("should error if the category does not belong to the user", async () => {
-    const otherUser = await createUser();
+    const otherUser = await createUser({});
 
     const { ctx } = await createMockContext({ user: otherUser });
 
@@ -73,7 +73,7 @@ describe("addGearToPackMutation", () => {
   it("should clone the gear and add it to the pack category", async () => {
     const { ctx } = await createMockContext({ user });
 
-    const otherUser = await createUser();
+    const otherUser = await createUser({});
     const otherGear = await createGear({ userId: otherUser.id });
 
     const created = await addGearToPackMutation(

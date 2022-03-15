@@ -13,10 +13,10 @@ const packQuery = resolver.pipe(
       where: { id },
       select: {
         id: true,
-        userId: true,
         notes: true,
         name: true,
         private: true,
+        userId: true,
       },
     });
 

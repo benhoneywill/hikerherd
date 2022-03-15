@@ -5,15 +5,15 @@ import { AuthenticationError } from "blitz";
 import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createCategory from "test/helpers/create-category";
+import createUser from "test/factories/create-user";
+import createCategory from "test/factories/create-category";
 
 import createCategoryMutation from "./create-category-mutation";
 
 let user: User;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
 });
 
 describe("createCategoryMutation", () => {

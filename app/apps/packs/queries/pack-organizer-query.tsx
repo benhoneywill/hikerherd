@@ -7,7 +7,7 @@ import db from "db";
 const packOrganizerQuery = resolver.pipe(
   resolver.zod(idSchema),
 
-  async ({ id }) => {
+  async ({ id }, ctx) => {
     const pack = await db.pack.findUnique({
       where: { id },
       select: {
@@ -16,6 +16,14 @@ const packOrganizerQuery = resolver.pipe(
         name: true,
         userId: true,
         private: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            avatar_id: true,
+            avatar_version: true,
+          },
+        },
         categories: {
           orderBy: { index: "asc" },
           select: {
@@ -46,7 +54,7 @@ const packOrganizerQuery = resolver.pipe(
       },
     });
 
-    if (!pack) {
+    if (!pack || (pack.private && pack.userId !== ctx.session.userId)) {
       throw new NotFoundError();
     }
 

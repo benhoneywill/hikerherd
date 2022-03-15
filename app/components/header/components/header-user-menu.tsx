@@ -14,6 +14,7 @@ import { Portal } from "@chakra-ui/portal";
 
 import useCurrentUser from "app/apps/users/hooks/use-current-user";
 import logoutMutation from "app/apps/auth/mutations/logout-mutation";
+import getAvatarUrl from "app/apps/users/helpers/get-avatar-url";
 
 const UserMenuLoader: FC = () => (
   <Button
@@ -38,7 +39,7 @@ const UserMenuButton: FC = () => {
         px={1}
         rightIcon={<Icon pr={1} as={FaChevronDown} />}
       >
-        <Avatar size="xs" src={user?.avatar || ""} />
+        {user && <Avatar size="xs" src={getAvatarUrl(user, 100)} />}
       </MenuButton>
     </Fade>
   );

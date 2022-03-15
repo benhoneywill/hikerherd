@@ -5,7 +5,7 @@ import { hash256 } from "blitz";
 import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
+import createUser from "test/factories/create-user";
 
 import db from "db";
 
@@ -26,7 +26,7 @@ let user: User;
 
 beforeEach(async () => {
   sendPasswordReset.mockReset();
-  user = await createUser();
+  user = await createUser({});
 });
 
 describe("forgotPasswordMutation", () => {

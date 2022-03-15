@@ -8,17 +8,16 @@ import { Heading, HStack, Stack } from "@chakra-ui/layout";
 import { Icon } from "@chakra-ui/icon";
 import { FcTimeline, FcLock } from "react-icons/fc";
 import { Tag, TagLabel, TagLeftIcon } from "@chakra-ui/tag";
-import { FaFeather, FaWeightHanging } from "react-icons/fa";
+import { FaHamburger, FaTshirt, FaWeightHanging } from "react-icons/fa";
 import { Tooltip } from "@chakra-ui/tooltip";
-import { BsBagFill } from "react-icons/bs";
 
 import displayWeight from "app/helpers/display-weight";
 import LinkCard from "app/components/link-card";
 import userPreferencesContext from "app/apps/users/contexts/user-preferences-context";
 
 type PackTotals = {
-  totalWeight: number;
-  packWeight: number;
+  consumableWeight: number;
+  wornWeight: number;
   baseWeight: number;
 };
 
@@ -44,25 +43,25 @@ const PackCard: FC<PackCardProps> = ({ pack, actions, shareLink }) => {
         </HStack>
 
         <HStack>
-          <Tooltip label="Total weight">
-            <Tag colorScheme="purple" size="sm">
-              <TagLeftIcon as={FaWeightHanging} />
+          <Tooltip label="Consumable weight">
+            <Tag colorScheme="pink" size="sm">
+              <TagLeftIcon as={FaHamburger} />
               <TagLabel>
-                {displayWeight(pack.totals.totalWeight, weightUnit, true)}
+                {displayWeight(pack.totals.consumableWeight, weightUnit, true)}
               </TagLabel>
             </Tag>
           </Tooltip>
-          <Tooltip label="Pack weight">
+          <Tooltip label="Worn weight">
             <Tag colorScheme="blue" size="sm">
-              <TagLeftIcon as={BsBagFill} />
+              <TagLeftIcon as={FaTshirt} />
               <TagLabel>
-                {displayWeight(pack.totals.packWeight, weightUnit, true)}
+                {displayWeight(pack.totals.wornWeight, weightUnit, true)}
               </TagLabel>
             </Tag>
           </Tooltip>
           <Tooltip label="Base weight">
             <Tag colorScheme="teal" size="sm">
-              <TagLeftIcon as={FaFeather} />
+              <TagLeftIcon as={FaWeightHanging} />
               <TagLabel>
                 {displayWeight(pack.totals.baseWeight, weightUnit, true)}
               </TagLabel>

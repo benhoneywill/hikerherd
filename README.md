@@ -24,10 +24,16 @@ You will need to set up your environment variables by copying `.env.example`. Yo
 yarn install
 ```
 
-**Run tests**
+**Run Jest tests**
 
 ```
 yarn test
+```
+
+**Run Cypress tests**
+
+```
+yarn cypress:dev
 ```
 
 **Develop**

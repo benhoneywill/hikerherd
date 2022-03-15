@@ -22,7 +22,7 @@ class CsvImportError extends Error {
   }
 }
 
-SuperJson.registerClass(CsvImportError);
+SuperJson.registerClass(CsvImportError, "CsvImportError");
 SuperJson.allowErrorProps("issues");
 
 export default CsvImportError;

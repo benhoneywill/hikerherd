@@ -2,7 +2,7 @@ import type { User } from "db";
 
 import faker from "@faker-js/faker";
 
-import createUser from "test/helpers/create-user";
+import createUser from "test/factories/create-user";
 
 import db from "db";
 
@@ -11,7 +11,7 @@ import UserCreateError from "./user-create-error";
 let user: User;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
 });
 
 describe("UserCreateError", () => {

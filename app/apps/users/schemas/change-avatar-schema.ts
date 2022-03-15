@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 const changeAvatarSchema = z.object({
-  avatar: z.string(),
+  publicId: z.string(),
+  version: z.number(),
 });
 
 export default changeAvatarSchema;

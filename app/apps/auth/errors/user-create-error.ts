@@ -28,7 +28,7 @@ class UserCreateError extends Error {
   }
 }
 
-SuperJson.registerClass(UserCreateError);
+SuperJson.registerClass(UserCreateError, "UserCreateError");
 SuperJson.allowErrorProps("emailTaken", "usernameTaken");
 
 export default UserCreateError;

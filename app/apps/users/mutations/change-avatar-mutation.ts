@@ -8,11 +8,12 @@ const changeAvatarMutation = resolver.pipe(
   resolver.zod(changeAvatarSchema),
   resolver.authorize(),
 
-  async ({ avatar }, ctx) => {
+  async ({ publicId, version }, ctx) => {
     return await db.user.update({
       where: { id: ctx.session.userId },
       data: {
-        avatar,
+        avatar_id: publicId,
+        avatar_version: version,
       },
     });
   }

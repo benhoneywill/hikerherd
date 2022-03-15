@@ -42,7 +42,7 @@ const PackOrganizerItemMenu: FC<PackOrganizerItemMenuProps> = ({ item }) => {
       </MenuItem>
 
       <MenuItem icon={<FaTrash />} onClick={() => deleteItem(item.id)}>
-        Delete item
+        Remove item
       </MenuItem>
 
       <MenuItem

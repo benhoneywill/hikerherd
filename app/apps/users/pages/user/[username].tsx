@@ -18,14 +18,16 @@ import { useColorModeValue } from "@chakra-ui/react";
 import PrefetchQueryClient from "app/helpers/prefetch-query-client";
 import PlainLayout from "app/layouts/plain-layout";
 import PackCard from "app/apps/packs/components/pack-card";
+import Seo from "app/components/seo";
 
 import userQuery from "../../queries/user-query";
 import useCurrentUser from "../../hooks/use-current-user";
 import AvatarUploader from "../../components/avatar-uploader";
+import getAvatarUrl from "../../helpers/get-avatar-url";
 
 const ProfilePage: BlitzPage = () => {
   const router = useRouter();
-  const currentUser = useCurrentUser();
+  const currentUser = useCurrentUser({ suspense: false });
 
   const [user] = useQuery(userQuery, {
     username: router.query.username as string,
@@ -35,10 +37,15 @@ const ProfilePage: BlitzPage = () => {
 
   return (
     <Fragment>
+      <Seo
+        title={user.username}
+        description={`${user.username} is on hikerherd. Check out their gear lists and then use the hikerherd gear tools to create your own.`}
+      />
+
       <Box bg={useColorModeValue("gray.50", "gray.800")} py={6}>
         <Container as="main" maxW="container.lg" py={{ base: 5, md: 10 }}>
-          <Stack align="center" spacing={6}>
-            <Avatar size="2xl" src={user?.avatar || ""} />
+          <Stack align="center" spacing={4}>
+            <Avatar size="2xl" src={getAvatarUrl(user, 300)} />
             <Heading size="xl">{user.username}</Heading>
             {user.id === currentUser?.id && <AvatarUploader />}
           </Stack>

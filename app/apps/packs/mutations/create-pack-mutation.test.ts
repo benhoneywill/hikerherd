@@ -5,7 +5,7 @@ import { AuthenticationError } from "blitz";
 import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
+import createUser from "test/factories/create-user";
 
 import db from "db";
 
@@ -14,7 +14,7 @@ import createPackMutation from "./create-pack-mutation";
 let user: User;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
 });
 
 describe("createPackMutation", () => {

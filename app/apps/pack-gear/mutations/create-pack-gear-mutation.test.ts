@@ -5,11 +5,11 @@ import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createPack from "test/helpers/create-pack";
-import createPackCategory from "test/helpers/create-pack-category";
+import createUser from "test/factories/create-user";
+import createPack from "test/factories/create-pack";
+import createPackCategory from "test/factories/create-pack-category";
 import getGearData from "test/data/get-gear-data";
-import createCategory from "test/helpers/create-category";
+import createCategory from "test/factories/create-category";
 
 import db from "db";
 
@@ -22,7 +22,7 @@ let category: PackCategory;
 const gear = getGearData();
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
   pack = await createPack({ userId: user.id });
   category = await createPackCategory({ packId: pack.id });
 });
@@ -48,7 +48,7 @@ describe("createPackGearMutation", () => {
   });
 
   it("should error if the category does not belong to the user", async () => {
-    const otherUser = await createUser();
+    const otherUser = await createUser({});
 
     const { ctx } = await createMockContext({ user: otherUser });
 

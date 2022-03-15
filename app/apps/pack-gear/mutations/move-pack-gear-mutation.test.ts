@@ -5,11 +5,11 @@ import { AuthenticationError, AuthorizationError, NotFoundError } from "blitz";
 import faker from "@faker-js/faker";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createPack from "test/helpers/create-pack";
-import createPackCategory from "test/helpers/create-pack-category";
-import createGear from "test/helpers/create-gear";
-import createPackCategoryItem from "test/helpers/create-pack-category-item";
+import createUser from "test/factories/create-user";
+import createPack from "test/factories/create-pack";
+import createPackCategory from "test/factories/create-pack-category";
+import createGear from "test/factories/create-gear";
+import createPackCategoryItem from "test/factories/create-pack-category-item";
 
 import db from "db";
 
@@ -22,7 +22,7 @@ let category2: PackCategory;
 let item: PackCategoryItem;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
   pack = await createPack({ userId: user.id });
 
   category1 = await createPackCategory({ packId: pack.id, index: 0 });
@@ -60,7 +60,7 @@ describe("movePackGearMutation", () => {
   });
 
   it("should error if the item does not belong to the user", async () => {
-    const otherUser = await createUser();
+    const otherUser = await createUser({});
 
     const { ctx } = await createMockContext({ user: otherUser });
 
@@ -84,7 +84,7 @@ describe("movePackGearMutation", () => {
   });
 
   it("should error if the destination category does not belong to the user", async () => {
-    const otherUser = await createUser();
+    const otherUser = await createUser({});
     const otherCategory = await createPackCategory({
       packId: pack.id,
       index: 1,

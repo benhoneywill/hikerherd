@@ -1,11 +1,11 @@
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createGear from "test/helpers/create-gear";
+import createUser from "test/factories/create-user";
+import createGear from "test/factories/create-gear";
 
 import searchGearQuery from "./search-gear-query";
 
 beforeEach(async () => {
-  const user = await createUser();
+  const user = await createUser({});
 
   await createGear({
     name: "Tent",

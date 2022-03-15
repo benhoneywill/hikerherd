@@ -3,10 +3,10 @@ import type { User, Category, CategoryItem } from "db";
 import { AuthenticationError } from "blitz";
 
 import createMockContext from "test/helpers/create-mock-context";
-import createUser from "test/helpers/create-user";
-import createCategory from "test/helpers/create-category";
-import createGear from "test/helpers/create-gear";
-import createCategoryItem from "test/helpers/create-category-item";
+import createUser from "test/factories/create-user";
+import createCategory from "test/factories/create-category";
+import createGear from "test/factories/create-gear";
+import createCategoryItem from "test/factories/create-category-item";
 
 import inventoryQuery from "./inventory-query";
 
@@ -15,7 +15,7 @@ let category: Category;
 let item: CategoryItem;
 
 beforeEach(async () => {
-  user = await createUser();
+  user = await createUser({});
   category = await createCategory({ userId: user.id });
   const gear = await createGear({ userId: user.id });
   item = await createCategoryItem({ categoryId: category.id, gearId: gear.id });

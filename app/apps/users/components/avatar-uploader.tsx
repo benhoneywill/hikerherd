@@ -24,6 +24,7 @@ const AvatarUploader: FC = () => {
 
   const { getRootProps, getInputProps } = useDropzone({
     maxFiles: 1,
+    maxSize: 3145728,
     onDrop: async (files) => {
       setLoading(true);
 
@@ -37,7 +38,7 @@ const AvatarUploader: FC = () => {
               filename: currentUser.username,
             });
 
-            await changeAvatar({ avatar: data.url });
+            await changeAvatar(data);
 
             invalidateQuery(userQuery, { username: currentUser.username });
             invalidateQuery(currentUserQuery);
@@ -60,7 +61,7 @@ const AvatarUploader: FC = () => {
   });
 
   return (
-    <Box {...getRootProps()} pt={2}>
+    <Box {...getRootProps()}>
       <input {...getInputProps()} />
       <Button isLoading={loading} size="sm">
         Change avatar
