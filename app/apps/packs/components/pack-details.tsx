@@ -28,7 +28,7 @@ const PackDetails: FC<PackDetailsProps> = ({ isOpen, onClose }) => {
     <Drawer placement="right" size="xl" onClose={onClose} isOpen={isOpen}>
       <DrawerOverlay />
       <DrawerContent>
-        <DrawerCloseButton onClose={onClose} zIndex={2} />
+        <DrawerCloseButton zIndex={2} />
         <DrawerHeader borderBottomWidth="1px">{pack.name || ""}</DrawerHeader>
         <DrawerBody p={0}>
           <PackAnalytics />

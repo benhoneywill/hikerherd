@@ -40,7 +40,7 @@ const HomePage: BlitzPage = () => {
 
       <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4}>
         <LinkCard href={Routes.InventoryPage()}>
-          <Stack align="center" textAlign="center" x={2}>
+          <Stack align="center" textAlign="center">
             <Icon mt={1} as={FcList} w={8} h={8} />
             <Heading size="md">Inventory</Heading>
             <Text opacity="0.6">Organize the backpacking gear you own</Text>
@@ -48,7 +48,7 @@ const HomePage: BlitzPage = () => {
         </LinkCard>
 
         <LinkCard href={Routes.WishListPage()}>
-          <Stack align="center" textAlign="center" x={2}>
+          <Stack align="center" textAlign="center">
             <Icon mt={1} as={FcRating} w={8} h={8} />
             <Heading size="md">Wish list</Heading>
             <Text opacity="0.6">Plan the backpacking gear of your dreams.</Text>
@@ -56,7 +56,7 @@ const HomePage: BlitzPage = () => {
         </LinkCard>
 
         <LinkCard href={Routes.PacksPage()}>
-          <Stack align="center" textAlign="center" x={2}>
+          <Stack align="center" textAlign="center">
             <Icon mt={1} as={FcTimeline} w={8} h={8} />
             <Heading size="md">Packs</Heading>
             <Text opacity="0.6">
@@ -66,7 +66,7 @@ const HomePage: BlitzPage = () => {
         </LinkCard>
 
         <LinkCard href={Routes.DiscoverPage()}>
-          <Stack align="center" textAlign="center" x={2}>
+          <Stack align="center" textAlign="center">
             <Icon mt={1} as={FcSearch} w={8} h={8} />
             <Heading size="md">Discover</Heading>
             <Text opacity="0.6">Search the hikerherd database for gear.</Text>
