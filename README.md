@@ -27,7 +27,7 @@ You will need to set up your environment variables by copying `.env.example`. Yo
 
 hikerherd is built using the Blitz framework, you can read [the Blitz docs](https://blitzjs.com/docs) to find out more.
 
-More in-depth documentation for the setup, development and running of hikerherd is a work in progress.
+More in-depth documentation for the setup, development and deployment of hikerherd is a work in progress.
 
 ## Show your support
 
