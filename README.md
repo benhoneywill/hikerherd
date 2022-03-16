@@ -25,7 +25,7 @@ You will need to set up your environment variables by copying `.env.example`. Yo
 
 ### Documentation
 
-hikerherd is built using the Blitz framework, you can read [the Blitz docs](https://blitzjs.com/docs) to find out more.
+hikerherd is built using the Blitz framework, which is based on NextJS. You can read [the Blitz docs](https://blitzjs.com/docs) to find out more.
 
 More in-depth documentation for the setup, development and deployment of hikerherd is a work in progress.
 
@@ -33,9 +33,11 @@ More in-depth documentation for the setup, development and deployment of hikerhe
 
 hikerherd is a passion project of mine. I want to avoid scope creep and keep my own creative freedom over the codebase and application. Pull requests for new features are a lot of work first to review and then to maintain, therefore I am not looking for code contributions for new features.
 
-If you have ideas for the project or need help with anything, I would still love to hear from you. Visit the [GitHub Discussions](https://github.com/benhoneywill/hikerherd/discussions) to start a conversation.
+Code contributions for bug fixes with tests are very welcome, as are documentation contributions.
 
-Bug reports are welcome! Please [open an issue](https://github.com/benhoneywill/hikerherd/issues/new/choose) here on github. Code contributions for bug fixes with tests are also very welcome, as are documentation contributions.
+If you have ideas for the project or need help with anything, I would love to hear from you. Visit the [GitHub Discussions](https://github.com/benhoneywill/hikerherd/discussions) to start a conversation.
+
+Bug reports are welcome! Please [open an issue](https://github.com/benhoneywill/hikerherd/issues/new/choose) here on github.
 
 ## Show your support
 
@@ -47,7 +49,7 @@ Drop the project a ⭐️ if you you like hikerherd, and share the app with your
 
 hikerherd is free, and I pay for the hosting costs out of my own pocket.
 
-If you use hikerherd and want to support the app, you can show your support by [buying me a coffee](https://ko-fi.com/benontrail)!
+If you use hikerherd and want to support the app, you can show your support by [buying me a coffee](https://ko-fi.com/benontrail).
 
 ## Author
 
