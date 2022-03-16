@@ -18,33 +18,16 @@
 
 You will need to set up your environment variables by copying `.env.example`. You will also need to set up a local or remote postgres database for development and testing.
 
-**Install dependencies**
-
-```
-yarn install
-```
-
-**Run Jest tests**
-
-```
-yarn test
-```
-
-**Run Cypress tests**
-
-```
-yarn cypress:dev
-```
-
-**Develop**
-
-```
-yarn dev
-```
+* **install** `yarn install`
+* **unit tests**: `yarn test`
+* **e2e tests**: `yarn cypress:dev`
+* **develop**: `yarn dev`
 
 ### Documentation
 
 hikerherd is built using the Blitz framework, you can read [the Blitz docs](https://blitzjs.com/docs) to find out more.
+
+More in-depth documentation for the setup, development and running of hikerherd is a work in progress.
 
 ## Show your support
 
