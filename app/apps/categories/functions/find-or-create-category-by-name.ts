@@ -8,28 +8,30 @@ type Params = {
   type?: CategoryType;
 };
 
-const findOrCreateCategoryByName: TransactionFunction<Params, Category> =
-  async (transaction, ctx, { categoryName, type = "INVENTORY" }) => {
-    const existingCategory = await transaction.category.findFirst({
-      where: {
-        userId: ctx.session.userId,
-        type,
-        name: { equals: categoryName, mode: "insensitive" },
-      },
-    });
+const findOrCreateCategoryByName: TransactionFunction<
+  Params,
+  Category
+> = async (transaction, ctx, { categoryName, type = "INVENTORY" }) => {
+  const existingCategory = await transaction.category.findFirst({
+    where: {
+      userId: ctx.session.userId,
+      type,
+      name: { equals: categoryName, mode: "insensitive" },
+    },
+  });
 
-    if (existingCategory) return existingCategory;
+  if (existingCategory) return existingCategory;
 
-    const index = await getNextCategoryIndex(transaction, ctx, { type });
+  const index = await getNextCategoryIndex(transaction, ctx, { type });
 
-    return transaction.category.create({
-      data: {
-        userId: ctx.session.userId,
-        type,
-        name: categoryName,
-        index,
-      },
-    });
-  };
+  return transaction.category.create({
+    data: {
+      userId: ctx.session.userId,
+      type,
+      name: categoryName,
+      index,
+    },
+  });
+};
 
 export default findOrCreateCategoryByName;
