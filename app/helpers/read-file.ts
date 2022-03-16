@@ -1,7 +1,5 @@
-import { reject } from "lodash";
-
 const readFile = (file: Blob) => {
-  return new Promise<FileReader>((resolve) => {
+  return new Promise<FileReader>((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsText(file);
 
