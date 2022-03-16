@@ -19,9 +19,9 @@
 You will need to set up your environment variables by copying `.env.example`. You will also need to set up a local or remote postgres database for development and testing.
 
 * **install** `yarn install`
-* **unit tests**: `yarn test`
-* **e2e tests**: `yarn cypress:dev`
-* **develop**: `yarn dev`
+* **unit tests** `yarn test`
+* **e2e tests** `yarn cypress:dev`
+* **develop** `yarn dev`
 
 ### Documentation
 
