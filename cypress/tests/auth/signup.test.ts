@@ -20,7 +20,9 @@ describe("SignupPage", () => {
     cy.findByLabelText(/email/i).type(faker.internet.email());
     cy.findByLabelText(/username/i).type(faker.random.word());
     cy.findByLabelText(/password/i).type(faker.random.alphaNumeric(12));
-    cy.findAllByRole("button", { name: /join hikerherd/i }).click();
+    cy.findAllByRole("button", { name: /join hikerherd/i })
+      .click()
+      .wait(100);
 
     cy.location("pathname").should("equal", "/");
     cy.findByText(/welcome to hikerherd/i).should("exist");
