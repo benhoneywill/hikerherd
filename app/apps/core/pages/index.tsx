@@ -65,7 +65,7 @@ const HomePage: BlitzPage = () => {
           </Stack>
         </LinkCard>
 
-        <LinkCard href={Routes.DiscoverPage()}>
+        <LinkCard href={Routes.DiscoverGearPage()}>
           <Stack align="center" textAlign="center">
             <Icon mt={1} as={FcSearch} w={8} h={8} />
             <Heading size="md">Discover</Heading>

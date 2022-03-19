@@ -13,10 +13,10 @@ import { useColorModeValue } from "@chakra-ui/react";
 import SidebarLayout from "app/layouts/sidebar-layout";
 import Card from "app/components/card";
 
-import AddToInventoryForm from "../components/add-to-inventory-form";
-import GlobalGearSearch from "../components/global-gear-search";
+import AddToInventoryForm from "../../components/add-to-inventory-form";
+import GlobalGearSearch from "../../components/global-gear-search";
 
-const DiscoverPage: BlitzPage = () => {
+const DiscoverGearPage: BlitzPage = () => {
   const session = useSession({ suspense: false });
   const toast = useToast();
   const textColor = useColorModeValue("gray.600", "gray.400");
@@ -44,7 +44,7 @@ const DiscoverPage: BlitzPage = () => {
       />
 
       <Heading mb={4} size="md">
-        Discover
+        Gear search
       </Heading>
 
       <Text mb={2} color={textColor}>
@@ -87,6 +87,6 @@ const DiscoverPage: BlitzPage = () => {
   );
 };
 
-DiscoverPage.getLayout = (page) => <SidebarLayout>{page}</SidebarLayout>;
+DiscoverGearPage.getLayout = (page) => <SidebarLayout>{page}</SidebarLayout>;
 
-export default DiscoverPage;
+export default DiscoverGearPage;

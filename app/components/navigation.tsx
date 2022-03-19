@@ -11,9 +11,9 @@ import {
   FcRating,
   FcTimeline,
   FcSearch,
-  FcSettings,
   FcVoicePresentation,
   FcKindle,
+  FcBinoculars,
 } from "react-icons/fc";
 import { Icon } from "@chakra-ui/icon";
 import { useColorModeValue } from "@chakra-ui/react";
@@ -111,16 +111,18 @@ const Navigation: FC = () => {
           <NavigationItem route={Routes.PacksPage()} icon={FcTimeline}>
             Packs
           </NavigationItem>
-          <NavigationItem route={Routes.DiscoverPage()} icon={FcSearch}>
-            Discover
+        </NavigationSection>
+
+        <NavigationSection title="Discover">
+          <NavigationItem route={Routes.DiscoverGearPage()} icon={FcBinoculars}>
+            Gear search
+          </NavigationItem>
+          <NavigationItem route={Routes.DiscoverPacksPage()} icon={FcSearch}>
+            Pack search
           </NavigationItem>
         </NavigationSection>
 
         <NavigationSection title="Other">
-          <NavigationItem route={Routes.PreferencesPage()} icon={FcSettings}>
-            Preferences
-          </NavigationItem>
-
           {process.env.BLITZ_PUBLIC_NEWSLETTER_LINK && (
             <NavigationExternalItem
               href={process.env.BLITZ_PUBLIC_NEWSLETTER_LINK}
