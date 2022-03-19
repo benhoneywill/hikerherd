@@ -3,13 +3,13 @@ import type { BlitzPage } from "blitz";
 import { Routes } from "blitz";
 import { Fragment } from "react";
 
-import { SimpleGrid, Heading, Text, Link, Stack } from "@chakra-ui/layout";
+import { SimpleGrid, Heading, Text, Link as Anchor } from "@chakra-ui/layout";
 import { FcList, FcRating, FcSearch, FcTimeline } from "react-icons/fc";
 import { useColorModeValue } from "@chakra-ui/react";
-import { Icon } from "@chakra-ui/icon";
 
 import SidebarLayout from "app/layouts/sidebar-layout";
-import LinkCard from "app/components/link-card";
+
+import IndexCard from "../components/index-card";
 
 const HomePage: BlitzPage = () => {
   const textColor = useColorModeValue("gray.600", "gray.400");
@@ -28,50 +28,44 @@ const HomePage: BlitzPage = () => {
       <Text mb={5} color={textColor}>
         hikerherd is still in <strong>beta</strong>, so if you have any feedback
         please{" "}
-        <Link
+        <Anchor
           href="https://blog.hikerherd.com/contact"
           textDecoration="underline"
           isExternal
         >
           get in touch
-        </Link>
+        </Anchor>
         .
       </Text>
 
       <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4}>
-        <LinkCard href={Routes.InventoryPage()}>
-          <Stack align="center" textAlign="center">
-            <Icon mt={1} as={FcList} w={8} h={8} />
-            <Heading size="md">Inventory</Heading>
-            <Text opacity="0.6">Organize the backpacking gear you own</Text>
-          </Stack>
-        </LinkCard>
+        <IndexCard
+          icon={FcList}
+          href={Routes.InventoryPage()}
+          title="Inventory"
+          text="Organize the backpacking gear you own"
+        />
 
-        <LinkCard href={Routes.WishListPage()}>
-          <Stack align="center" textAlign="center">
-            <Icon mt={1} as={FcRating} w={8} h={8} />
-            <Heading size="md">Wish list</Heading>
-            <Text opacity="0.6">Plan the backpacking gear of your dreams.</Text>
-          </Stack>
-        </LinkCard>
+        <IndexCard
+          icon={FcRating}
+          href={Routes.WishListPage()}
+          title="Wish list"
+          text="Plan the backpacking gear of your dreams."
+        />
 
-        <LinkCard href={Routes.PacksPage()}>
-          <Stack align="center" textAlign="center">
-            <Icon mt={1} as={FcTimeline} w={8} h={8} />
-            <Heading size="md">Packs</Heading>
-            <Text opacity="0.6">
-              Plan for a trip by organizing gear into packs.
-            </Text>
-          </Stack>
-        </LinkCard>
+        <IndexCard
+          icon={FcTimeline}
+          href={Routes.PacksPage()}
+          title="Packs"
+          text="Plan for a trip by organizing gear into packs."
+        />
 
-        <LinkCard href={Routes.DiscoverGearPage()}>
-          <Stack align="center" textAlign="center">
-            <Icon mt={1} as={FcSearch} w={8} h={8} />
-            <Heading size="md">Discover</Heading>
-            <Text opacity="0.6">Search the hikerherd database for gear.</Text>
-          </Stack>
-        </LinkCard>
+        <IndexCard
+          icon={FcSearch}
+          href={Routes.DiscoverGearPage()}
+          title="Discover"
+          text="Search the hikerherd database for gear."
+        />
       </SimpleGrid>
     </Fragment>
   );

@@ -18,6 +18,13 @@ const searchPacksQuery = resolver.pipe(
       take: 24,
 
       include: {
+        user: {
+          select: {
+            avatar_id: true,
+            avatar_version: true,
+            username: true,
+          },
+        },
         categories: {
           include: {
             items: {
