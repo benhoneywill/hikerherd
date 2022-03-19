@@ -31,6 +31,17 @@ const searchPacksQuery = resolver.pipe(
 
       where: {
         private: false,
+        NOT: {
+          categories: {
+            none: {
+              NOT: {
+                items: {
+                  none: {},
+                },
+              },
+            },
+          },
+        },
         OR: [
           { name: { search, mode: "insensitive" } },
           { name: { contains: query, mode: "insensitive" } },
