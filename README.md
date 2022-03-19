@@ -2,11 +2,13 @@
 
 > hikerherd helps you plan your adventures and organize your gear while reducing the weight your pack.
 
-#### ⛰️ [Go to hikerherd](https://www.hikerherd.com)
+![screenshots](./public/readme-hero.png)
 
-#### 📖 [Read the hikerherd blog](https://blog.hikerherd.com)
+[Go to hikerherd](https://www.hikerherd.com) to start managing your gear.
 
-## Quick start
+[Read the blog](https://blog.hikerherd.com) or [subscribe to the newsletter](https://blog.hikerherd.com/#/portal/signup) to stay up to date with hikerherd development.
+
+## Developer quick start
 
 ### Prerequisites
 
@@ -14,49 +16,43 @@
 - [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
 - [PostgreSQL](https://www.postgresql.org/)
 
-### Set up
-
-You will need to set up your environment variables by copying `.env.example`. You will also need to set up a local or remote postgres database for development and testing.
-
-**Install dependencies**
-
-```
-yarn install
-```
-
-**Run Jest tests**
-
-```
-yarn test
-```
-
-**Run Cypress tests**
-
-```
-yarn cypress:dev
-```
-
-**Develop**
-
-```
-yarn dev
-```
-
 ### Documentation
 
-hikerherd is built using the Blitz framework, you can read [the Blitz docs](https://blitzjs.com/docs) to find out more.
+hikerherd is built in TypeScript, React, and Node using BlitzJS. Blitz is a framework based on NextJS. You can read [the Blitz docs](https://blitzjs.com/docs) to find out more.
+
+#### Initial set up
+
+Documentation for the setup, development and deployment of hikerherd is a [work in progress](https://github.com/benhoneywill/hikerherd/issues/29), but the following should be enough to get started:
+
+1. Set up local or remote postgres databases for development and testing.
+2. Set up your environment variables by following the instructions in `.env.example`.
+3. `yarn install` to install dependencies
+4. `yarn dev` to run the development server
+5. `yarn test` to run tests, or `yarn cypress:dev` to run cypress tests
+
+## Contribution Policy
+
+#### Bugs & documentation
+
+Code contributions for bug fixes and documentation are very welcome. To report a bug, Please [open an issue](https://github.com/benhoneywill/hikerherd/issues/new/choose) here on github.
+
+#### Features
+
+If you have ideas for the project, I would love to hear from you! Visit the [GitHub Discussions](https://github.com/benhoneywill/hikerherd/discussions) to start a conversation. I am always excited to hear from people who are using hikerherd and have constructive input for how it could be improved.
+
+I am not currently looking for outside contributions for new features. Feature PRs are a lot of work for me to review and they carry an ongoing maintenance burden. If you have something you desperately want to see in hikerherd then please start a discussion, and we can decide if it is something that should be implemented. If not, you are always free to fork the project and add it yourself.
 
 ## Show your support
 
-### Like and share
+#### Like and share
 
-Drop the project a ⭐️ if you you like hikerherd, and share the app with your friends.
+Drop the project a ⭐️ if you you like hikerherd, and share the app with anyone you think might like it.
 
-### ❤️ Buy me a coffee
+#### Buy me a coffee
 
-hikerherd is free, and I pay for the hosting costs out of my own pocket.
+hikerherd is free & open source, and I pay for the hosting costs out of my own pocket.
 
-If you use hikerherd and want to support the app, you can show your support by [buying me a coffee](https://ko-fi.com/benontrail)!
+If you use hikerherd and want to support the app, you can show your support by [buying me a coffee](https://ko-fi.com/benontrail).
 
 ## Author
 

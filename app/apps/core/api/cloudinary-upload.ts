@@ -57,7 +57,7 @@ const cloudinaryUploadHandler: BlitzApiHandler = async (req, res) => {
     const session = await getSession(req, res);
 
     if (!session.userId) {
-      return res.status(401).end();
+      return res.status(401).json({});
     }
 
     try {
@@ -67,7 +67,7 @@ const cloudinaryUploadHandler: BlitzApiHandler = async (req, res) => {
       return res.status(400).json(error);
     }
   } else {
-    return res.status(404).end();
+    return res.status(404).json({});
   }
 };
 
