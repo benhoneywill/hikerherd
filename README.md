@@ -40,7 +40,9 @@ Code contributions for bug fixes and documentation are very welcome. To report a
 
 If you have ideas for the project, I would love to hear from you! Visit the [GitHub Discussions](https://github.com/benhoneywill/hikerherd/discussions) to start a conversation. I am always excited to hear from people who are using hikerherd and have constructive input for how it could be improved.
 
-I am not currently looking for code contributions for new features. Feature PRs are a lot of work for me to review and they carry an ongoing maintenance burden. If you have something you desperately want to see in hikerherd then please start a discussion, and we can decide if it is something that should be implemented. If not, you are always free to fork the project and add it yourself.
+I am not currently looking for code contributions for new features. Feature PRs are a lot of work for me to review and they carry an ongoing maintenance burden, I can't currently dedicate enough time to managing outside contributions. The best way to contribute right now is to report bugs and get involved in feature discussions!
+
+If you have something you desperately want to see in hikerherd then please start a discussion, and we can decide if it is something that should be implemented. If not, you are always free to fork the project and add it yourself.
 
 ## Show your support
 
