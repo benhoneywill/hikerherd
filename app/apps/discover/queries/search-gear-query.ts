@@ -1,5 +1,3 @@
-import type { Gear } from "db";
-
 import { resolver } from "blitz";
 
 import db from "db";
@@ -14,7 +12,7 @@ const searchGearQuery = resolver.pipe(
 
     const search = query.split(" ").join(" | ");
 
-    const results = await db.gear.findMany({
+    return db.gear.findMany({
       take: 24,
 
       where: {
@@ -49,8 +47,6 @@ const searchGearQuery = resolver.pipe(
         },
       ],
     });
-
-    return results as Gear[];
   }
 );
 

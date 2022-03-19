@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import type { Pack } from "db";
+import type { BoxProps } from "@chakra-ui/layout";
 
 import { useContext } from "react";
 import { Routes } from "blitz";
@@ -27,13 +28,18 @@ type PackCardProps = {
   shareLink?: boolean;
 };
 
-const PackCard: FC<PackCardProps> = ({ pack, actions, shareLink }) => {
+const PackCard: FC<PackCardProps & BoxProps> = ({
+  pack,
+  actions,
+  shareLink,
+  ...props
+}) => {
   const { weightUnit } = useContext(userPreferencesContext);
 
   const route = shareLink ? Routes.PackSharePage : Routes.PackPage;
 
   return (
-    <LinkCard actions={actions} href={route({ packId: pack.id })}>
+    <LinkCard actions={actions} href={route({ packId: pack.id })} {...props}>
       <Stack align="center" spacing={4}>
         <HStack maxW="100%" px={8}>
           <Icon as={pack.private ? FcLock : FcTimeline} h={4} w={4} />
