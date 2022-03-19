@@ -120,24 +120,33 @@ const Navigation: FC = () => {
           <NavigationItem route={Routes.PreferencesPage()} icon={FcSettings}>
             Preferences
           </NavigationItem>
-          <NavigationExternalItem
-            href="https://blog.hikerherd.com"
-            icon={FcKindle}
-          >
-            Newsletter
-          </NavigationExternalItem>
-          <NavigationExternalItem
-            href="https://blog.hikerherd.com/contact"
-            icon={FcVoicePresentation}
-          >
-            Contact
-          </NavigationExternalItem>
-          <NavigationExternalItem
-            href="https://ko-fi.com/benontrail"
-            icon={FcLike}
-          >
-            Buy me a coffee
-          </NavigationExternalItem>
+
+          {process.env.BLITZ_PUBLIC_NEWSLETTER_LINK && (
+            <NavigationExternalItem
+              href={process.env.BLITZ_PUBLIC_NEWSLETTER_LINK}
+              icon={FcKindle}
+            >
+              Newsletter
+            </NavigationExternalItem>
+          )}
+
+          {process.env.BLITZ_PUBLIC_CONTACT_LINK && (
+            <NavigationExternalItem
+              href={process.env.BLITZ_PUBLIC_CONTACT_LINK}
+              icon={FcVoicePresentation}
+            >
+              Contact
+            </NavigationExternalItem>
+          )}
+
+          {process.env.BLITZ_PUBLIC_SUPPORT_LINK && (
+            <NavigationExternalItem
+              href={process.env.BLITZ_PUBLIC_SUPPORT_LINK}
+              icon={FcLike}
+            >
+              Buy me a coffee
+            </NavigationExternalItem>
+          )}
         </NavigationSection>
       </Stack>
     </Box>

@@ -40,3 +40,12 @@ services:
 
       - key: BLITZ_PUBLIC_CLOUDINARY_CLOUD_NAME
         value: hikerherd
+
+      - key: BLITZ_PUBLIC_SUPPORT_LINK
+        value: https://ko-fi.com/benontrail
+
+      - key: BLITZ_PUBLIC_CONTACT_LINK
+        value: https://blog.hikerherd.com/contact
+
+      - key: BLITZ_PUBLIC_NEWSLETTER_LINK
+        value: https://blog.hikerherd.com
