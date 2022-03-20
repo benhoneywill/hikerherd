@@ -35,7 +35,7 @@ const GlobalPacksSearch: FC<GlobalPacksSearchProps> = ({ packActions }) => {
       <SearchInput setQuery={setQuery} />
 
       <SearchResults
-        message="Start typing to search hikerherd for gear"
+        message="Start typing to search hikerherd for packs"
         query={query}
         items={items || []}
         isLoading={isLoading}
