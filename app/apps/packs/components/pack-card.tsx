@@ -47,7 +47,7 @@ const PackCard: FC<PackCardProps & BoxProps> = ({
   return (
     <LinkCard actions={actions} {...props}>
       <Stack align="center" spacing={5}>
-        <Stack maxW="100%" px={8} align="center" spacing={3}>
+        <Stack maxW="100%" px={8} align="center" spacing={2}>
           <HStack maxW="100%">
             {pack.private && <Icon as={FcLock} h={4} w={4} />}
 
@@ -60,7 +60,7 @@ const PackCard: FC<PackCardProps & BoxProps> = ({
             </Link>
           </HStack>
 
-          {user && <UserTag user={user} />}
+          {user && <UserTag size="sm" user={user} />}
         </Stack>
 
         <HStack>
