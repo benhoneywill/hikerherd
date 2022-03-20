@@ -45,6 +45,7 @@ const GlobalPacksSearch: FC<GlobalPacksSearchProps> = ({ packActions }) => {
             <PackCard
               key={item.id}
               pack={item}
+              user={item.user}
               actions={packActions && packActions(item)}
               shareLink
               bg={cardBg}
