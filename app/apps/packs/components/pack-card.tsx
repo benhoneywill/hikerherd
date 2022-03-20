@@ -48,11 +48,11 @@ const PackCard: FC<PackCardProps & BoxProps> = ({
     <LinkCard actions={actions} {...props}>
       <Stack align="center" spacing={5}>
         <Stack maxW="100%" px={8} align="center" spacing={3}>
-          <HStack>
+          <HStack maxW="100%">
             {pack.private && <Icon as={FcLock} h={4} w={4} />}
 
             <Link href={route({ packId: pack.id })} passHref>
-              <LinkOverlay>
+              <LinkOverlay isTruncated>
                 <Heading size="md" isTruncated>
                   {pack.name}
                 </Heading>
