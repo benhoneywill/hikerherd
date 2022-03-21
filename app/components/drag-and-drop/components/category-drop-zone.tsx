@@ -2,7 +2,7 @@ import type { FC } from "react";
 
 import { useContext } from "react";
 
-import { Box } from "@chakra-ui/layout";
+import { Box, HStack } from "@chakra-ui/layout";
 import { Droppable } from "react-beautiful-dnd";
 import { Button } from "@chakra-ui/button";
 import { useColorModeValue } from "@chakra-ui/react";
@@ -22,54 +22,63 @@ const CategoryDropZone: FC = () => {
   const dragColor = useColorModeValue("blue.200", "blue.700");
 
   return (
-    <Droppable
-      droppableId="category"
-      type="category"
-      isDropDisabled={readonly}
-      direction="horizontal"
-    >
-      {(provided, snapshot) => (
-        <Box
-          {...provided.droppableProps}
-          ref={provided.innerRef}
-          bg={snapshot.isDraggingOver ? dragColor : ""}
-          width="100%"
-          height="100%"
-          userSelect="none"
-        >
-          <HorizontalScroller>
-            {categories.map((category, index) => (
-              <DraggableCategory
-                key={category.id}
-                category={category}
-                index={index}
-              />
-            ))}
+    <HorizontalScroller>
+      <Droppable
+        droppableId="category"
+        type="category"
+        isDropDisabled={readonly}
+        direction="horizontal"
+      >
+        {(provided, snapshot) => (
+          <Box
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            bg={snapshot.isDraggingOver ? dragColor : ""}
+            height="100%"
+            userSelect="none"
+          >
+            <HStack
+              spacing={0}
+              alignItems="flex-start"
+              width="100%"
+              height="100%"
+              px={3}
+              py={6}
+            >
+              {categories.map((category, index) => (
+                <DraggableCategory
+                  key={category.id}
+                  category={category}
+                  index={index}
+                />
+              ))}
 
-            {provided.placeholder}
+              {provided.placeholder}
 
-            {addCategory && (
-              <Box
-                width="290px"
-                flex="0 0 290px"
-                padding={2}
-                borderRadius="md"
-                mx={1}
-              >
-                <Button
-                  isFullWidth
-                  size="sm"
-                  colorScheme="blue"
-                  onClick={addCategory}
+              {addCategory && (
+                <Box
+                  width="290px"
+                  flex="0 0 290px"
+                  padding={2}
+                  borderRadius="md"
+                  mx={1}
+                  onMouseDown={(e) => e.stopPropagation()}
                 >
-                  New category
-                </Button>
-              </Box>
-            )}
-          </HorizontalScroller>
-        </Box>
-      )}
-    </Droppable>
+                  <Button
+                    isFullWidth
+                    size="sm"
+                    colorScheme="blue"
+                    onClick={addCategory}
+                  >
+                    New category
+                  </Button>
+                </Box>
+              )}
+            </HStack>
+          </Box>
+        )}
+      </Droppable>
+    </HorizontalScroller>
   );
 };
 

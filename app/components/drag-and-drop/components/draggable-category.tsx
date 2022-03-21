@@ -20,7 +20,12 @@ const DraggableCategory: FC<DraggableCategoryProps> = memo(
     const { readonly } = useContext(dragAndDropContext);
 
     return (
-      <Box key={category.id} height="100%" pointerEvents="none">
+      <Box
+        key={category.id}
+        height="100%"
+        pointerEvents="none"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <Draggable
           draggableId={category.id}
           index={index}
