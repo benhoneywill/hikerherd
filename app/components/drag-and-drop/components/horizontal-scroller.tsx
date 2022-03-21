@@ -2,7 +2,7 @@ import type { FC } from "react";
 
 import { useEffect, useRef, useState } from "react";
 
-import { HStack } from "@chakra-ui/layout";
+import { Box } from "@chakra-ui/layout";
 import {
   useBreakpointValue,
   useColorModeValue,
@@ -70,23 +70,16 @@ const HorizontalScroller: FC = ({ children }) => {
   }, [isDown, bgDragEnabled, scrollLeft, startX]);
 
   return (
-    <HStack
-      spacing={0}
+    <Box
       overflowX="auto"
-      alignItems="flex-start"
       width="100%"
       height="100%"
       css={bgDragEnabled && scrollBarStyles}
-      px={3}
-      pt={6}
-      pb={bgDragEnabled ? 2 : 6}
       ref={scroller}
+      display="flex"
+      justifyContent="stretch"
       onMouseDown={(e) => {
-        if (
-          scroller.current &&
-          e.target === scroller.current &&
-          bgDragEnabled
-        ) {
+        if (scroller.current && bgDragEnabled) {
           setIsDown(true);
           setStartX(e.pageX - scroller.current?.offsetLeft);
           setScrollLeft(scroller.current?.scrollLeft);
@@ -94,7 +87,7 @@ const HorizontalScroller: FC = ({ children }) => {
       }}
     >
       {children}
-    </HStack>
+    </Box>
   );
 };
 
