@@ -32,7 +32,7 @@ const ForgotPasswordPage: BlitzPage = () => {
   );
 };
 
-ForgotPasswordPage.redirectAuthenticatedTo = Routes.HomePage();
+ForgotPasswordPage.redirectAuthenticatedTo = Routes.StartPage();
 ForgotPasswordPage.getLayout = (page) => (
   <BoxLayout
     title="Forgot Your Password?"

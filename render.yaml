@@ -2,9 +2,9 @@
 
 # This gives us a Postgresql database
 databases:
-  - name: hikerherd_db
+  - name: hikerherd_database
     databaseName: hikerherd
-    plan: standard
+    plan: starter
 
 services:
   # This is our main web service, which runs the app itself
@@ -20,7 +20,7 @@ services:
 
       - key: DATABASE_URL
         fromDatabase:
-          name: hikerherd_db
+          name: hikerherd_database
           property: connectionString
 
       - key: SESSION_SECRET_KEY

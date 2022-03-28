@@ -10,7 +10,7 @@ import { Icon } from "@chakra-ui/icon";
 import LinkCard from "app/components/link-card";
 
 type IndexCardProps = {
-  href: RouteUrlObject;
+  href: RouteUrlObject | string;
   icon: IconType;
   title: string;
   text: string;

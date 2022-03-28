@@ -42,8 +42,8 @@ const ProfilePage: BlitzPage = () => {
         description={`${user.username} is on hikerherd. Check out their gear lists and then use the hikerherd gear tools to create your own.`}
       />
 
-      <Box bg={useColorModeValue("gray.50", "gray.800")} py={6}>
-        <Container as="main" maxW="container.lg" py={{ base: 5, md: 10 }}>
+      <Box bg={useColorModeValue("gray.50", "gray.800")}>
+        <Container as="main" maxW="container.lg" py={{ base: 12, md: 20 }}>
           <Stack align="center" spacing={4}>
             <Avatar size="2xl" src={getAvatarUrl(user, 300)} />
             <Heading size="xl">{user.username}</Heading>
@@ -52,11 +52,7 @@ const ProfilePage: BlitzPage = () => {
         </Container>
       </Box>
 
-      <Container as="main" maxW="container.lg" py={{ base: 5, md: 10 }}>
-        <Heading size="lg" mb={8}>
-          Packs
-        </Heading>
-
+      <Container as="main" maxW="container.lg" py={{ base: 12, md: 20 }}>
         {!!user.packs.length && (
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} mt={2}>
             {user.packs.map((pack) => (

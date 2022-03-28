@@ -19,7 +19,7 @@ const SignupPage: BlitzPage = () => {
     <Stack spacing={8}>
       <SignupForm
         onSuccess={(user) => {
-          router.push(Routes.HomePage());
+          router.push(Routes.StartPage());
           toast({
             title: "Welcome to hikerherd.",
             description: `Hi ${user.username}, I hope you enjoy using hikerherd.`,
@@ -38,7 +38,7 @@ const SignupPage: BlitzPage = () => {
   );
 };
 
-SignupPage.redirectAuthenticatedTo = Routes.HomePage();
+SignupPage.redirectAuthenticatedTo = Routes.StartPage();
 SignupPage.getLayout = (page) => (
   <BoxLayout
     title="Sign up"
