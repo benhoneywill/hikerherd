@@ -13,7 +13,7 @@ const ResetPasswordPage: BlitzPage = () => {
   const toast = useToast();
 
   const handleSuccess = () => {
-    router.push(Routes.HomePage());
+    router.push(Routes.StartPage());
     toast({
       title: "Password changed",
       description: "You have successfully changed your password.",

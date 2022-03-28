@@ -18,8 +18,8 @@ const DiscoverPacksPage: BlitzPage = () => {
         Pack search
       </Heading>
 
-      <Text mb={2} color={textColor}>
-        Search hikerherd for packs created by other users.
+      <Text mb={5} color={textColor}>
+        Search hikerherd for packs created by other hikers.
       </Text>
 
       <Card>

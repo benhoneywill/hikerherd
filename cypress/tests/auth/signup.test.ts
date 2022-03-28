@@ -24,7 +24,7 @@ describe("SignupPage", () => {
       .click()
       .wait(100);
 
-    cy.location("pathname").should("equal", "/");
+    cy.location("pathname").should("equal", "/start");
     cy.findByText(/welcome to hikerherd/i).should("exist");
   });
 });

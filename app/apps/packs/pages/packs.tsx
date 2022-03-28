@@ -4,11 +4,12 @@ import { useMutation, useRouter, Routes, useQuery } from "blitz";
 import { Fragment, useState } from "react";
 
 import { Button, IconButton } from "@chakra-ui/button";
-import { Heading, SimpleGrid, HStack, Text, Stack } from "@chakra-ui/layout";
+import { Heading, SimpleGrid, Stack, Text } from "@chakra-ui/layout";
 import { MdDelete } from "react-icons/md";
 import { useToast } from "@chakra-ui/toast";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { useColorModeValue } from "@chakra-ui/react";
+import { FaPlus } from "react-icons/fa";
 
 import SidebarLayout from "app/layouts/sidebar-layout";
 import ConfirmModal from "app/components/confirm-modal";
@@ -21,30 +22,37 @@ import PackCard from "../components/pack-card";
 const PacksPage: BlitzPage = () => {
   const router = useRouter();
   const toast = useToast();
-  const textColor = useColorModeValue("gray.600", "gray.400");
+
   const [addingNewPack, setAddingNewPack] = useState(false);
   const [deletingPack, setDeletingPack] = useState<string | null>(null);
+
+  const buttonBorder = useColorModeValue("gray.300", "gray.600");
+  const emptyBg = useColorModeValue("gray.200", "gray.700");
 
   const [packs, { refetch }] = useQuery(packsQuery, {});
   const [deletePack] = useMutation(deletePackMutation);
 
   return (
     <Fragment>
-      <HStack mb={4} justify="space-between">
-        <Heading size="md">Packs</Heading>
+      <Heading size="md" mb={6}>
+        Packs
+      </Heading>
 
-        {packs.length !== 0 && (
+      {packs.length === 0 && (
+        <Stack align="center" p={6} borderRadius="md" spacing={6} bg={emptyBg}>
+          <Text size="md" opacity="0.4">
+            You have not created any packs yet
+          </Text>
+
           <Button
-            as="a"
-            colorScheme="green"
             onClick={() => setAddingNewPack(true)}
-            size="sm"
-            cursor="pointer"
+            leftIcon={<FaPlus />}
+            colorScheme="green"
           >
-            New pack
+            Create my first pack
           </Button>
-        )}
-      </HStack>
+        </Stack>
+      )}
 
       <PackForm
         isOpen={addingNewPack}
@@ -54,23 +62,7 @@ const PacksPage: BlitzPage = () => {
         }}
       />
 
-      {packs.length === 0 && (
-        <Stack spacing={5}>
-          <Text color={textColor}>You have not created any packs yet</Text>
-          <div>
-            <Button
-              as="a"
-              colorScheme="green"
-              onClick={() => setAddingNewPack(true)}
-              cursor="pointer"
-            >
-              Create your first pack
-            </Button>
-          </div>
-        </Stack>
-      )}
-
-      {packs.length >= 1 && (
+      {packs.length > 0 && (
         <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4} mt={2}>
           {packs.map((pack) => (
             <PackCard
@@ -90,6 +82,19 @@ const PacksPage: BlitzPage = () => {
               }
             />
           ))}
+
+          <Button
+            onClick={() => setAddingNewPack(true)}
+            h="100%"
+            variant="outline"
+            leftIcon={<FaPlus />}
+            borderStyle="dashed"
+            colorScheme="blackAlpha"
+            color="green.400"
+            borderColor={buttonBorder}
+          >
+            Create new pack
+          </Button>
         </SimpleGrid>
       )}
 

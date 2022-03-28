@@ -16,7 +16,7 @@ const ForgotPasswordConfirmPage: BlitzPage = () => {
   );
 };
 
-ForgotPasswordConfirmPage.redirectAuthenticatedTo = Routes.HomePage();
+ForgotPasswordConfirmPage.redirectAuthenticatedTo = Routes.StartPage();
 ForgotPasswordConfirmPage.getLayout = (page) => (
   <BoxLayout
     title="Your email is on the way"

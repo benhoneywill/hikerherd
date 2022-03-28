@@ -10,6 +10,7 @@ import { Menu, MenuList, MenuItem, MenuButton } from "@chakra-ui/menu";
 import Icon from "@chakra-ui/icon";
 import { SkeletonCircle } from "@chakra-ui/skeleton";
 import { FaChevronDown, FaCog, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { useToast } from "@chakra-ui/react";
 
 import useCurrentUser from "app/apps/users/hooks/use-current-user";
 import logoutMutation from "app/apps/auth/mutations/logout-mutation";
@@ -48,6 +49,8 @@ const HeaderUserMenu: FC = () => {
   const [logout] = useMutation(logoutMutation);
   const user = useCurrentUser({ suspense: false });
 
+  const toast = useToast();
+
   return (
     <Suspense fallback={<UserMenuLoader />}>
       <Menu>
@@ -71,7 +74,14 @@ const HeaderUserMenu: FC = () => {
           </Link>
           <MenuItem
             as="button"
-            onClick={() => logout()}
+            onClick={() =>
+              logout().then(() =>
+                toast({
+                  title: "You have been logged out",
+                  status: "success",
+                })
+              )
+            }
             icon={<FaSignOutAlt />}
           >
             Logout
