@@ -17,7 +17,7 @@ import {
 import { Button } from "@chakra-ui/button";
 import { Icon } from "@chakra-ui/icon";
 import { Image } from "@chakra-ui/image";
-import { useColorModeValue } from "@chakra-ui/react";
+import { DarkMode, useColorModeValue } from "@chakra-ui/react";
 import { FaArrowRight } from "react-icons/fa";
 import {
   FcBinoculars,
@@ -146,7 +146,7 @@ const HomePage: BlitzPage = () => {
 
           <Image
             mx="auto"
-            mt={12}
+            my={12}
             alt="Screenshot of piechart and table"
             borderRadius="md"
             w="750px"
@@ -154,6 +154,17 @@ const HomePage: BlitzPage = () => {
             src="/pack-analytics.png"
             boxShadow="lg"
           />
+
+          <DarkMode>
+            <Link
+              href="https://www.hikerherd.com/packs/share/cl1b8mi9n01882gnlqntpniox"
+              passHref
+            >
+              <Button as="a" size="lg">
+                Check out an example pack
+              </Button>
+            </Link>
+          </DarkMode>
         </Container>
       </Box>
 
