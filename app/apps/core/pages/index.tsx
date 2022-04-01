@@ -141,7 +141,7 @@ const HomePage: BlitzPage = () => {
           </Heading>
           <Text fontSize="lg" opacity="0.8">
             <strong>hikerherd</strong> gives you the analytics tools you need to
-            decide what to take on your trip and what leave at home.
+            decide what to take on your trip and what to leave at home.
           </Text>
 
           <Image
@@ -214,8 +214,8 @@ const HomePage: BlitzPage = () => {
             Ready to get started?
           </Heading>
           <Text fontSize="lg" opacity="0.8">
-            Signing up is <strong>free</strong>, quick and easy. You&apos;ll
-            have an ultralight pack in no time!
+            Signing up is <strong>free</strong>. You&apos;ll have an ultralight
+            pack in no time!
           </Text>
 
           <Link href={Routes.SignupPage()} passHref>
