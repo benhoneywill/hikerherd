@@ -62,6 +62,23 @@ describe("signupMutation", () => {
     expect(ctx.session.userId).toEqual(null);
   });
 
+  it("should error if the password is too short with whitespace", async () => {
+    const { ctx } = await createMockContext();
+
+    await expect(
+      signupMutation(
+        {
+          email,
+          password: "     a     ",
+          username,
+        },
+        ctx
+      )
+    ).rejects.toThrow(ZodError);
+
+    expect(ctx.session.userId).toEqual(null);
+  });
+
   it("should create a new user with a hashed password and create a session", async () => {
     const { ctx } = await createMockContext();
 

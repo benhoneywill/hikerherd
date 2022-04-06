@@ -1,5 +1,9 @@
-import requiredStringSchema from "app/schemas/required-string-schema";
+import requiredStringSchema, {
+  trimmedStringSchema,
+} from "app/schemas/required-string-schema";
 
-const passwordSchema = requiredStringSchema().min(8).max(100);
+const passwordSchema = trimmedStringSchema(
+  requiredStringSchema().min(8).max(100)
+);
 
 export default passwordSchema;
