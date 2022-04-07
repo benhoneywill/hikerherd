@@ -22,6 +22,7 @@ const inventoryQuery = resolver.pipe(
               orderBy: { index: "asc" },
               select: {
                 id: true,
+                quantity: true,
                 gear: {
                   select: {
                     name: true,

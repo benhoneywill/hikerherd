@@ -3,9 +3,13 @@ import type { FC } from "react";
 import type { DragAndDropItem } from "app/components/drag-and-drop/contexts/gear-dnd-context";
 
 import { useContext } from "react";
+import { useMutation } from "blitz";
 
 import { MenuItem, MenuList } from "@chakra-ui/menu";
 import { FaEdit, FaList, FaStar, FaTrash } from "react-icons/fa";
+
+import QuantityPicker from "app/components/quantity-picker";
+import updateCategoryGearQuantityMutation from "app/apps/category-gear/mutations/update-category-gear-quantity-mutation";
 
 import gearOrganizerContext from "../contexts/gear-organizer-context";
 
@@ -18,8 +22,12 @@ const GearOrganizerItemMenu: FC<GearOrganizerItemMenuProps> = ({
   item,
   type,
 }) => {
-  const { editItem, deleteItem, toggleMetaItem } =
+  const { editItem, deleteItem, toggleMetaItem, refetch } =
     useContext(gearOrganizerContext);
+
+  const [updateQuantity, { isLoading }] = useMutation(
+    updateCategoryGearQuantityMutation
+  );
 
   return (
     <MenuList>
@@ -41,6 +49,19 @@ const GearOrganizerItemMenu: FC<GearOrganizerItemMenuProps> = ({
           Move to wish list
         </MenuItem>
       )}
+
+      <QuantityPicker
+        value={item.quantity}
+        isLoading={isLoading}
+        onDecrement={async () => {
+          await updateQuantity({ id: item.id, type: "decrement" });
+          await refetch();
+        }}
+        onIncrement={async () => {
+          await updateQuantity({ id: item.id, type: "increment" });
+          await refetch();
+        }}
+      />
     </MenuList>
   );
 };

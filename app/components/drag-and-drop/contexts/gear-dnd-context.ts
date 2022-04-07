@@ -5,7 +5,7 @@ import { createContext } from "react";
 export type DragAndDropItem = {
   id: string;
   worn?: boolean;
-  quantity?: number;
+  quantity: number;
   notes?: string | null;
   gear: {
     name: string;

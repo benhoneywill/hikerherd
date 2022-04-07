@@ -86,6 +86,7 @@ const PacksPage: BlitzPage = () => {
           <Button
             onClick={() => setAddingNewPack(true)}
             h="100%"
+            minH={28}
             variant="outline"
             leftIcon={<FaPlus />}
             borderStyle="dashed"

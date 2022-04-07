@@ -139,7 +139,8 @@ model CategoryItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  index Int
+  index    Int
+  quantity Int @default(1)
 
   gear   Gear   @relation(fields: [gearId], references: [id])
   gearId String

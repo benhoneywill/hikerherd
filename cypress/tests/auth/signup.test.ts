@@ -22,7 +22,7 @@ describe("SignupPage", () => {
     cy.findByLabelText(/password/i).type(faker.random.alphaNumeric(12));
     cy.findAllByRole("button", { name: /join hikerherd/i })
       .click()
-      .wait(100);
+      .wait(200);
 
     cy.location("pathname").should("equal", "/start");
     cy.findByText(/welcome to hikerherd/i).should("exist");

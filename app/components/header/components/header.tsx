@@ -39,7 +39,7 @@ const Header: FC = () => {
         >
           <Container maxW="100%">
             <Grid
-              templateColumns={{ base: "auto 1fr 1fr", md: "1fr auto 1fr" }}
+              templateColumns={{ base: "1fr 1fr", md: "1fr auto 1fr" }}
               alignItems="center"
               gap={3}
             >
@@ -47,7 +47,7 @@ const Header: FC = () => {
                 <HeaderActions toggleDrawer={toggleDrawer} />
               </GridItem>
 
-              <GridItem order={{ base: -1, md: 0 }}>
+              <GridItem display={{ base: "none", md: "block" }}>
                 <HeaderLogo />
               </GridItem>
 
