@@ -14,6 +14,7 @@ import {
   FcVoicePresentation,
   FcKindle,
   FcBinoculars,
+  FcHome,
 } from "react-icons/fc";
 import { Icon } from "@chakra-ui/icon";
 import { useColorModeValue } from "@chakra-ui/react";
@@ -101,6 +102,12 @@ const Navigation: FC = () => {
   return (
     <Box as="aside">
       <Stack as="aside" spacing={8}>
+        <NavigationSection title="hikerherd">
+          <NavigationItem route={Routes.HomePage()} icon={FcHome}>
+            Home
+          </NavigationItem>
+        </NavigationSection>
+
         <NavigationSection title="Gear tools">
           <NavigationItem route={Routes.InventoryPage()} icon={FcList}>
             Inventory
