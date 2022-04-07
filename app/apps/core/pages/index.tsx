@@ -256,7 +256,7 @@ const HomePage: BlitzPage = () => {
               rightIcon={<FaArrowRight />}
               colorScheme="blue"
             >
-              Sign up now
+              Sign up for free
             </Button>
           </Link>
         </Container>
