@@ -1,8 +1,8 @@
-import type { BlitzPage } from "blitz";
+import type { BlitzPage, RouteUrlObject } from "blitz";
 import type { IconType } from "react-icons";
 import type { FC } from "react";
 
-import { Link, Routes } from "blitz";
+import { useQuery, Link, Routes } from "blitz";
 import { Fragment } from "react";
 
 import {
@@ -11,14 +11,14 @@ import {
   Container,
   SimpleGrid,
   Text,
-  Stack,
   Link as Anchor,
 } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { Icon } from "@chakra-ui/icon";
+import { Tag, TagLeftIcon, TagLabel } from "@chakra-ui/tag";
 import { Image } from "@chakra-ui/image";
 import { DarkMode, useColorModeValue } from "@chakra-ui/react";
-import { FaArrowRight } from "react-icons/fa";
+import { FaUser, FaArrowRight } from "react-icons/fa";
 import {
   FcBinoculars,
   FcList,
@@ -29,30 +29,50 @@ import {
 
 import PlainLayout from "app/layouts/plain-layout";
 
+import userCountQuery from "../queries/user-count-query";
+
 type IconCardProps = {
   icon: IconType;
   title: string;
   text: string | JSX.Element;
+  actionLink?: RouteUrlObject;
+  actionText?: string;
 };
 
-const IconCard: FC<IconCardProps> = ({ icon, title, text }) => {
+const IconCard: FC<IconCardProps> = ({
+  icon,
+  title,
+  text,
+  actionLink,
+  actionText,
+}) => {
   return (
-    <Stack
+    <Box
       bg={useColorModeValue("white", "gray.800")}
-      px={4}
-      py={6}
+      p={5}
       borderRadius="md"
-      align="center"
-      spacing={2}
+      textAlign="center"
     >
-      <Icon as={icon} w={8} h={8} />
-      <Heading size="md">{title}</Heading>
+      <Icon as={icon} w={8} h={8} mb={2} />
+      <Heading size="md" mb={2}>
+        {title}
+      </Heading>
       <Text opacity="0.8">{text}</Text>
-    </Stack>
+
+      {actionLink && actionText && (
+        <Link href={actionLink} passHref>
+          <Button isFullWidth as="a" mt={5}>
+            {actionText}
+          </Button>
+        </Link>
+      )}
+    </Box>
   );
 };
 
 const HomePage: BlitzPage = () => {
+  const [userCount] = useQuery(userCountQuery, {}, { suspense: false });
+
   return (
     <Fragment>
       <Box bg={useColorModeValue("gray.50", "gray.800")}>
@@ -66,8 +86,9 @@ const HomePage: BlitzPage = () => {
             Lighten your pack with hikerherd
           </Heading>
           <Text fontSize="lg" opacity="0.8">
-            The first step towards an ultralight pack is knowing where your
-            weight is coming from. <strong>hikerherd</strong> makes it simple.
+            Join the other hikers, backpackers & minimalists who are already
+            using <strong>hikerherd</strong> to manage their gear and plan their
+            adventures.
           </Text>
           <Link href={Routes.SignupPage()} passHref>
             <Button
@@ -104,8 +125,8 @@ const HomePage: BlitzPage = () => {
           How does it work?
         </Heading>
         <Text fontSize="lg" opacity="0.8">
-          Our gear tools make it simple to organize your gear closet and plan
-          your trips.
+          Organizing your gear closet and planning packing lists has never been
+          so easy.
         </Text>
 
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mt={12}>
@@ -118,7 +139,7 @@ const HomePage: BlitzPage = () => {
           <IconCard
             icon={FcRating}
             title="Track your wish list"
-            text="Keep track of any gear you want to buy complete with links, prices and more."
+            text="Track any gear you want to buy complete with links, prices and more."
           />
 
           <IconCard
@@ -132,16 +153,17 @@ const HomePage: BlitzPage = () => {
       <Box bg="gray.700" color="white">
         <Container
           as="main"
-          maxW="container.lg"
+          maxW="container.md"
           py={{ base: 16, md: 24 }}
           textAlign="center"
         >
           <Heading size="lg" mb={4}>
-            Pack analytics
+            Pack weight analytics
           </Heading>
           <Text fontSize="lg" opacity="0.8">
-            <strong>hikerherd</strong> gives you the analytics tools you need to
-            decide what to take on your trip and what to leave at home.
+            The first step towards an ultralight pack is knowing where your
+            weight is coming from - <strong>hikerherd</strong> helps you decide
+            what to take on your trip and what to leave at home.
           </Text>
 
           <Image
@@ -149,8 +171,7 @@ const HomePage: BlitzPage = () => {
             my={12}
             alt="Screenshot of piechart and table"
             borderRadius="md"
-            w="750px"
-            maxW="100%"
+            w="100%"
             src="/pack-analytics.png"
             boxShadow="lg"
           />
@@ -177,15 +198,17 @@ const HomePage: BlitzPage = () => {
         <Heading size="lg" mb={4}>
           Discovery tools
         </Heading>
-        <Text fontSize="lg" opacity="0.8">
-          Search for gear or packs created by other hikers and easily add their
-          gear to your own inventory or wish list.
+        <Text fontSize="lg" opacity="0.8" maxW="container.md" mx="auto">
+          Need some inspiration? Search for packs and gear created by other
+          users and easily copy their gear into your own inventory or lists.
         </Text>
 
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} mt={12}>
           <IconCard
             icon={FcBinoculars}
             title="Gear search"
+            actionLink={Routes.DiscoverGearPage()}
+            actionText="Search for gear"
             text={
               <>
                 The hikerherd gear search is crowd-sourced by{" "}
@@ -198,6 +221,8 @@ const HomePage: BlitzPage = () => {
           <IconCard
             icon={FcSearch}
             title="Pack search"
+            actionLink={Routes.DiscoverPacksPage()}
+            actionText="Search for packs"
             text="Search for packs made by other hikers to see what they are taking on the trails you want to hike next."
           />
         </SimpleGrid>
@@ -206,7 +231,7 @@ const HomePage: BlitzPage = () => {
       <Box bg={useColorModeValue("gray.50", "gray.800")}>
         <Container
           as="main"
-          maxW="container.lg"
+          maxW="container.sm"
           py={{ base: 16, md: 24 }}
           textAlign="center"
         >
@@ -214,8 +239,13 @@ const HomePage: BlitzPage = () => {
             Ready to get started?
           </Heading>
           <Text fontSize="lg" opacity="0.8">
-            Signing up is <strong>free</strong>. You&apos;ll have an ultralight
-            pack in no time!
+            Join the{" "}
+            <Tag my="2px" fontWeight="bold" colorScheme="teal">
+              <TagLeftIcon boxSize="12px" as={FaUser} />
+              <TagLabel>{userCount ? userCount : "..."}</TagLabel>
+            </Tag>{" "}
+            other hikers who are already using <strong>hikerherd</strong> to
+            manage their gear and reduce their pack weight.
           </Text>
 
           <Link href={Routes.SignupPage()} passHref>
@@ -226,7 +256,7 @@ const HomePage: BlitzPage = () => {
               rightIcon={<FaArrowRight />}
               colorScheme="blue"
             >
-              Sign up to hikerherd
+              Sign up now
             </Button>
           </Link>
         </Container>
