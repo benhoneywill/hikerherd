@@ -52,8 +52,6 @@ Drop the project a ⭐️ if you you like hikerherd, and share the app with anyo
 
 #### Buy me a coffee
 
-hikerherd is free & open source, and I pay for the hosting costs out of my own pocket.
-
 If you use hikerherd and want to support the app, you can show your support by [buying me a coffee](https://ko-fi.com/benontrail).
 
 ## Author
@@ -62,6 +60,5 @@ If you use hikerherd and want to support the app, you can show your support by [
 
 - 💻 Website [benhoneywill.com](https://benhoneywill.com)
 - 🐦 Twitter [@benhoneywill](https://twitter.com/benhoneywill)
-- 🐙 Github [@benhoneywill](https://github.com/benhoneywill)
 - 🧑‍🎓 LinkedIn [@benhoneywill](https://linkedin.com/in/benhoneywill)
 - 📸 Instagram [@benontrail](https://instagram.com/benontrail)
