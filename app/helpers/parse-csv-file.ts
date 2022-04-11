@@ -29,6 +29,7 @@ const csvItemSchema = z.object({
 const parseCsvFile = (file: string): ParsedCsvResult => {
   const { data } = papaparse.parse(file, {
     header: true,
+    skipEmptyLines: true,
     transformHeader: (header) => header.toLowerCase(),
     dynamicTyping: {
       weight: true,
