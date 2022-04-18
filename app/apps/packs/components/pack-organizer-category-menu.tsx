@@ -23,11 +23,7 @@ const PackOrganizerCategoryMenu: FC<PackOrganizerCategoryMenuProps> = ({
         Edit category
       </MenuItem>
 
-      <MenuItem
-        icon={<FaTrash />}
-        onClick={() => deleteCategory(category.id)}
-        isDisabled={category.items.length > 0}
-      >
+      <MenuItem icon={<FaTrash />} onClick={() => deleteCategory(category.id)}>
         Delete category
       </MenuItem>
     </MenuList>

@@ -61,8 +61,8 @@ const PackOrganizerModals: FC<PackOrganizerModalsProps> = ({ id }) => {
       <ConfirmModal
         isOpen={!!deletingCategory}
         onClose={closeModals}
-        title="Delete category"
-        description="Are you sure?"
+        title="Delete this category?"
+        description="Are you sure you want to delete this category? All of the items inside the category will be deleted as well."
         onConfirm={async () => {
           if (deletingCategory) {
             await deleteCategory({ id: deletingCategory });
@@ -74,8 +74,8 @@ const PackOrganizerModals: FC<PackOrganizerModalsProps> = ({ id }) => {
       <ConfirmModal
         isOpen={!!deletingItem}
         onClose={closeModals}
-        title="Delete gear"
-        description="Are you sure?"
+        title="Delete this gear?"
+        description="Are you sure you want to delete this gear?"
         onConfirm={async () => {
           if (deletingItem) {
             await deleteGear({ id: deletingItem });
