@@ -1,5 +1,4 @@
 import type { FC } from "react";
-import type { DragAndDropItem } from "app/components/drag-and-drop/contexts/gear-dnd-context";
 
 import { useContext } from "react";
 
@@ -9,7 +8,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import gearOrganizerContext from "../contexts/gear-organizer-context";
 
 type GearOrganizerCategoryMenuProps = {
-  category: { id: string; items: DragAndDropItem[] };
+  category: { id: string };
 };
 
 const GearOrganizerCategoryMenu: FC<GearOrganizerCategoryMenuProps> = ({
@@ -22,11 +21,7 @@ const GearOrganizerCategoryMenu: FC<GearOrganizerCategoryMenuProps> = ({
       <MenuItem icon={<FaEdit />} onClick={() => editCategory(category.id)}>
         Edit category
       </MenuItem>
-      <MenuItem
-        icon={<FaTrash />}
-        onClick={() => deleteCategory(category.id)}
-        isDisabled={category.items.length > 0}
-      >
+      <MenuItem icon={<FaTrash />} onClick={() => deleteCategory(category.id)}>
         Delete category
       </MenuItem>
     </MenuList>

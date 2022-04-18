@@ -1,6 +1,7 @@
 import { AuthorizationError, NotFoundError, resolver } from "blitz";
 
 import idSchema from "app/schemas/id-schema";
+import conditionallyDeleteGear from "app/apps/gear/functions/conditionally-delete-gear";
 
 import db from "db";
 
@@ -19,6 +20,9 @@ const deletePackCategoryMutation = resolver.pipe(
           pack: {
             select: { id: true, userId: true },
           },
+          items: {
+            select: { gearId: true },
+          },
         },
       });
 
@@ -30,18 +34,20 @@ const deletePackCategoryMutation = resolver.pipe(
         throw new AuthorizationError();
       }
 
-      const item = await prisma.packCategoryItem.findFirst({
-        where: { categoryId: id },
-      });
-
-      if (item) {
-        throw new Error("Can not delete a category while it still has items");
-      }
-
       await decrementPackCategoryIndexesAfter(prisma, ctx, {
         packId: category.pack.id,
         index: category.index,
       });
+
+      await prisma.packCategoryItem.deleteMany({
+        where: { categoryId: id },
+      });
+
+      await Promise.all(
+        category.items.map(({ gearId }) =>
+          conditionallyDeleteGear(prisma, ctx, { id: gearId })
+        )
+      );
 
       return prisma.packCategory.delete({
         where: { id },
