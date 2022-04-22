@@ -86,7 +86,7 @@ const ImportPackCsvForm: FC<ImportPackCsvFormProps> = ({
           </Text>
           <FileField name="file" label="CSV file" accept="text/csv" />
           <HStack>
-            <Tag colorScheme="blue" flexShrink="0">
+            <Tag colorScheme="blue" flexShrink={0}>
               <TagLeftIcon as={FaList} />
               <TagLabel>Also import to inventory?</TagLabel>
             </Tag>

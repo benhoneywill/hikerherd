@@ -45,7 +45,7 @@ const GearFormFields: FC<GearFormFieldsProps> = ({ includeWorn }) => {
       <FormLabel>Tags</FormLabel>
 
       <HStack>
-        <Tag colorScheme="pink" flexShrink="0">
+        <Tag colorScheme="pink" flexShrink={0}>
           <TagLeftIcon as={FaHamburger} />
           <TagLabel>Consumable?</TagLabel>
         </Tag>
@@ -54,7 +54,7 @@ const GearFormFields: FC<GearFormFieldsProps> = ({ includeWorn }) => {
 
       {includeWorn && (
         <HStack>
-          <Tag colorScheme="blue" flexShrink="0">
+          <Tag colorScheme="blue" flexShrink={0}>
             <TagLeftIcon as={FaTshirt} />
             <TagLabel>Worn?</TagLabel>
           </Tag>

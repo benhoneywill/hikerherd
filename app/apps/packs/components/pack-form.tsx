@@ -105,7 +105,7 @@ const PackForm: FC<PackFormProps> = ({
                 floatingMenu
               />
               <HStack>
-                <Tag colorScheme="orange" flexShrink="0">
+                <Tag colorScheme="orange" flexShrink={0}>
                   <TagLeftIcon as={FaLock} />
                   <TagLabel>Make this pack private?</TagLabel>
                 </Tag>
