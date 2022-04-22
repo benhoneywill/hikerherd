@@ -2,7 +2,7 @@ import type { BlitzPage } from "blitz";
 import type { DragAndDropState } from "../contexts/gear-dnd-context";
 import type { DraggableProvided } from "react-beautiful-dnd";
 
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 
 import { Button, IconButton } from "@chakra-ui/button";
 import { Tag, TagLabel } from "@chakra-ui/tag";
@@ -37,9 +37,14 @@ const Category: BlitzPage<CategoryProps> = ({
   const borderColor = useColorModeValue("gray.200", "gray.800");
   const borderWidth = useColorModeValue("2px", "1px");
 
+  const menu = useMemo(() => {
+    return categoryMenu && categoryMenu(category);
+  }, [category]); // eslint-disable-line
+
   return (
     <Flex
       {...provided.draggableProps}
+      key={category.id}
       ref={provided.innerRef}
       style={provided.draggableProps.style}
       userSelect="none"
@@ -82,7 +87,7 @@ const Category: BlitzPage<CategoryProps> = ({
             </Tag>
           )}
           {categoryMenu && (
-            <Menu>
+            <Menu isLazy>
               <MenuButton
                 as={IconButton}
                 borderRadius="full"
@@ -90,7 +95,7 @@ const Category: BlitzPage<CategoryProps> = ({
                 size="xs"
                 aria-label="actions"
               />
-              {categoryMenu(category)}
+              {menu}
             </Menu>
           )}
         </HStack>
