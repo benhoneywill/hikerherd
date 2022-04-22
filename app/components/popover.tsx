@@ -22,7 +22,7 @@ const Popover: FC<PopoverProps & PopoverBodyProps> = ({
   ...props
 }) => {
   return (
-    <UiPopover trigger="hover" flip>
+    <UiPopover trigger="hover" flip isLazy>
       <PopoverTrigger>{trigger}</PopoverTrigger>
       {!hideContent && (
         <Portal>

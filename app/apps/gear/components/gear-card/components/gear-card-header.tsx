@@ -1,7 +1,5 @@
 import type { FC } from "react";
 
-import { useContext } from "react";
-
 import { Heading, HStack } from "@chakra-ui/layout";
 import { Image } from "@chakra-ui/image";
 import { Avatar } from "@chakra-ui/avatar";
@@ -15,14 +13,19 @@ import { useColorModeValue } from "@chakra-ui/react";
 
 import Popover from "app/components/popover";
 
-import gearCardContext from "../contexts/gear-card-context";
-
 type GearCardHeaderProps = {
   menu?: JSX.Element | null;
+  name: string;
+  imageUrl?: string | null;
+  onHeadingClick?: () => void;
 };
 
-const GearCardHeader: FC<GearCardHeaderProps> = ({ menu }) => {
-  const { name, imageUrl, onHeadingClick } = useContext(gearCardContext);
+const GearCardHeader: FC<GearCardHeaderProps> = ({
+  menu,
+  name,
+  imageUrl,
+  onHeadingClick,
+}) => {
   const avatarColor = useColorModeValue("gray.200", "gray.600");
 
   return (
@@ -63,7 +66,7 @@ const GearCardHeader: FC<GearCardHeaderProps> = ({ menu }) => {
       </HStack>
 
       {menu && (
-        <Menu>
+        <Menu isLazy>
           <MenuButton
             as={IconButton}
             borderRadius="full"
