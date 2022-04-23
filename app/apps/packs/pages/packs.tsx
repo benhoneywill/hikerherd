@@ -30,7 +30,15 @@ const PacksPage: BlitzPage = () => {
   const emptyBg = useColorModeValue("gray.200", "gray.700");
 
   const [packs, { refetch }] = useQuery(packsQuery, {});
-  const [deletePack] = useMutation(deletePackMutation);
+  const [deletePack] = useMutation(deletePackMutation, {
+    onError() {
+      setDeletingPack(null);
+      toast({
+        title: "There was an error deleting the pack",
+        status: "error",
+      });
+    },
+  });
 
   return (
     <Fragment>

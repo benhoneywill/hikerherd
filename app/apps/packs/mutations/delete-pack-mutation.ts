@@ -23,32 +23,27 @@ const deletePackMutation = resolver.pipe(
       throw new AuthorizationError();
     }
 
-    return db.$transaction(
-      async (prisma) => {
-        const packItems = await prisma.packCategoryItem.findMany({
-          where: { category: { packId: id } },
-        });
+    const packItems = await db.packCategoryItem.findMany({
+      where: { category: { packId: id } },
+    });
 
-        await prisma.packCategoryItem.deleteMany({
-          where: {
-            id: { in: packItems.map(({ id }) => id) },
-          },
-        });
-
-        await prisma.packCategory.deleteMany({
-          where: { packId: id },
-        });
-
-        await conditionallyDeleteGear(prisma, ctx, {
-          ids: packItems.map(({ gearId }) => gearId),
-        });
-
-        return prisma.pack.delete({
-          where: { id },
-        });
+    await db.packCategoryItem.deleteMany({
+      where: {
+        id: { in: packItems.map(({ id }) => id) },
       },
-      { timeout: 10000 }
-    );
+    });
+
+    await db.packCategory.deleteMany({
+      where: { packId: id },
+    });
+
+    await conditionallyDeleteGear(db, ctx, {
+      ids: packItems.map(({ gearId }) => gearId),
+    });
+
+    return db.pack.delete({
+      where: { id },
+    });
   }
 );
 
