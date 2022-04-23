@@ -27,17 +27,20 @@ const deletePackMutation = resolver.pipe(
       where: { category: { packId: id } },
     });
 
-    await db.$transaction(async (prisma) => {
-      await prisma.packCategoryItem.deleteMany({
-        where: {
-          id: { in: packItems.map(({ id }) => id) },
-        },
-      });
+    await db.$transaction(
+      async (prisma) => {
+        await prisma.packCategoryItem.deleteMany({
+          where: {
+            id: { in: packItems.map(({ id }) => id) },
+          },
+        });
 
-      await conditionallyDeleteGear(prisma, ctx, {
-        ids: packItems.map(({ gearId }) => gearId),
-      });
-    });
+        await conditionallyDeleteGear(prisma, ctx, {
+          ids: packItems.map(({ gearId }) => gearId),
+        });
+      },
+      { timeout: 10000 }
+    );
 
     await db.packCategory.deleteMany({
       where: { packId: id },
