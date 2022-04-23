@@ -96,7 +96,7 @@ const packImportCsvMutation = resolver.pipe(
             })
           );
         },
-        { timeout: 10000 }
+        { timeout: 12000 }
       );
     } catch (error) {
       if (error instanceof ZodError) {
