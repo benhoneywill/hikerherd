@@ -12,45 +12,48 @@ const deletePackCategoryMutation = resolver.pipe(
   resolver.authorize(),
 
   async ({ id }, ctx) => {
-    return db.$transaction(async (prisma) => {
-      const category = await prisma.packCategory.findUnique({
-        where: { id },
-        select: {
-          index: true,
-          pack: {
-            select: { id: true, userId: true },
+    return db.$transaction(
+      async (prisma) => {
+        const category = await prisma.packCategory.findUnique({
+          where: { id },
+          select: {
+            index: true,
+            pack: {
+              select: { id: true, userId: true },
+            },
+            items: {
+              select: { gearId: true },
+            },
           },
-          items: {
-            select: { gearId: true },
-          },
-        },
-      });
+        });
 
-      if (!category) {
-        throw new NotFoundError();
-      }
+        if (!category) {
+          throw new NotFoundError();
+        }
 
-      if (category.pack.userId !== ctx.session.userId) {
-        throw new AuthorizationError();
-      }
+        if (category.pack.userId !== ctx.session.userId) {
+          throw new AuthorizationError();
+        }
 
-      await decrementPackCategoryIndexesAfter(prisma, ctx, {
-        packId: category.pack.id,
-        index: category.index,
-      });
+        await decrementPackCategoryIndexesAfter(prisma, ctx, {
+          packId: category.pack.id,
+          index: category.index,
+        });
 
-      await prisma.packCategoryItem.deleteMany({
-        where: { categoryId: id },
-      });
+        await prisma.packCategoryItem.deleteMany({
+          where: { categoryId: id },
+        });
 
-      await conditionallyDeleteGear(prisma, ctx, {
-        ids: category.items.map(({ gearId }) => gearId),
-      });
+        await conditionallyDeleteGear(prisma, ctx, {
+          ids: category.items.map(({ gearId }) => gearId),
+        });
 
-      return prisma.packCategory.delete({
-        where: { id },
-      });
-    });
+        return prisma.packCategory.delete({
+          where: { id },
+        });
+      },
+      { timeout: 10000 }
+    );
   }
 );
 
