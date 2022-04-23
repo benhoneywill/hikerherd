@@ -13,6 +13,7 @@ import FileField from "app/components/forms/components/file-field";
 import CsvImportError from "app/apps/inventory/errors/csv-import-error";
 import CheckboxField from "app/components/forms/components/checkbox-field";
 import readFile from "app/helpers/read-file";
+import PrismaError from "app/errors/prisma-error";
 
 import packImportCsvMutation from "../mutations/pack-import-csv-mutation";
 import packImportCsvSchema from "../schemas/pack-import-csv-schema";
@@ -59,6 +60,8 @@ const ImportPackCsvForm: FC<ImportPackCsvFormProps> = ({
         } catch (error) {
           if (error instanceof CsvImportError) {
             return { [FORM_ERROR]: error.errors };
+          } else if (error instanceof PrismaError) {
+            return { [FORM_ERROR]: error.message };
           } else {
             return {
               [FORM_ERROR]:

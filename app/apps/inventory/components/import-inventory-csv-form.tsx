@@ -10,6 +10,7 @@ import { Stack, Text, Link } from "@chakra-ui/layout";
 import ModalForm from "app/components/forms/components/modal-form";
 import FileField from "app/components/forms/components/file-field";
 import readFile from "app/helpers/read-file";
+import PrismaError from "app/errors/prisma-error";
 
 import inventoryImportCsvMutation from "../mutations/inventory-import-csv-mutation";
 import CsvImportError from "../errors/csv-import-error";
@@ -56,6 +57,8 @@ const ImportInventoryCsvForm: FC<ImportInventoryCsvFormProps> = ({
         } catch (error) {
           if (error instanceof CsvImportError) {
             return { [FORM_ERROR]: error.errors };
+          } else if (error instanceof PrismaError) {
+            return { [FORM_ERROR]: error.message };
           } else {
             return {
               [FORM_ERROR]:
