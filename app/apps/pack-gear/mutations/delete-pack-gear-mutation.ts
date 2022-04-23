@@ -52,7 +52,7 @@ const deletePackGearMutation = resolver.pipe(
     });
 
     await conditionallyDeleteGear(db, ctx, {
-      id: item.gearId,
+      ids: [item.gearId],
     });
 
     return deletedItem;

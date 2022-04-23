@@ -44,7 +44,7 @@ const deleteCategoryMutation = resolver.pipe(
 
       await Promise.all(
         category.items.map(({ gearId }) =>
-          conditionallyDeleteGear(prisma, ctx, { id: gearId })
+          conditionallyDeleteGear(prisma, ctx, { ids: [gearId] })
         )
       );
 
