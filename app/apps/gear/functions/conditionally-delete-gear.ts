@@ -7,32 +7,30 @@ const conditionallyDeleteGear: TransactionFunction<Params> = async (
   ctx,
   { ids }
 ) => {
-  const idsToDelete: string[] = [];
+  const [items, packItems, clones] = await Promise.all([
+    transaction.categoryItem.findMany({
+      where: { gearId: { in: ids } },
+      select: { gearId: true },
+    }),
 
-  await Promise.all(
-    ids.map(async (id) => {
-      const [item, packItem, clone] = await Promise.all([
-        transaction.categoryItem.findFirst({
-          where: { gearId: id },
-          select: { id: true },
-        }),
+    transaction.packCategoryItem.findMany({
+      where: { gearId: { in: ids } },
+      select: { gearId: true },
+    }),
 
-        transaction.packCategoryItem.findFirst({
-          where: { gearId: id },
-          select: { id: true },
-        }),
+    transaction.gear.findMany({
+      where: { clonedFromId: { in: ids } },
+      select: { clonedFromId: true },
+    }),
+  ]);
 
-        transaction.gear.findFirst({
-          where: { clonedFromId: id },
-          select: { id: true },
-        }),
-      ]);
+  const foundGearIds = [
+    ...items.map(({ gearId }) => gearId),
+    ...packItems.map(({ gearId }) => gearId),
+    ...clones.map(({ clonedFromId }) => clonedFromId),
+  ];
 
-      if (!item && !packItem && !clone) {
-        idsToDelete.push(id);
-      }
-    })
-  );
+  const idsToDelete = ids.filter((id) => !foundGearIds.includes(id));
 
   if (idsToDelete.length) {
     await transaction.gear.deleteMany({ where: { id: { in: idsToDelete } } });
