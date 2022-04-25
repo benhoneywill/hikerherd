@@ -153,39 +153,64 @@ const HomePage: BlitzPage = () => {
       <Box bg="gray.700" color="white">
         <Container
           as="main"
-          maxW="container.md"
-          py={{ base: 16, md: 24 }}
-          textAlign="center"
+          maxW="container.lg"
+          py={16}
+          textAlign={{ base: "center", lg: "left" }}
         >
-          <Heading size="lg" mb={4}>
-            Pack weight analytics
-          </Heading>
-          <Text fontSize="lg" opacity="0.8">
-            The first step towards an ultralight pack is knowing where your
-            weight is coming from - <strong>hikerherd</strong> helps you decide
-            what to take on your trip and what to leave at home.
-          </Text>
+          <SimpleGrid
+            columns={{ base: 1, lg: 2 }}
+            spacing={8}
+            alignItems="center"
+          >
+            <Box>
+              <Heading size="lg" mb={4}>
+                Pack weight analytics
+              </Heading>
+              <Text color="blue.300" fontWeight="bold" fontSize="lg" mb={2}>
+                You need to know where your weight is coming from.
+              </Text>
+              <Text fontSize="lg" opacity="0.8">
+                The <strong>hikerherd</strong> analytics tools help you to see
+                which items are weighing you down and what to leave at home.
+              </Text>
+              <Box display={{ base: "none", lg: "block" }} mt={8}>
+                <DarkMode>
+                  <Link
+                    href="https://www.hikerherd.com/packs/share/cl1b8mi9n01882gnlqntpniox"
+                    passHref
+                  >
+                    <Button as="a" size="lg">
+                      Check out an example pack
+                    </Button>
+                  </Link>
+                </DarkMode>
+              </Box>
+            </Box>
 
-          <Image
-            mx="auto"
-            my={12}
-            alt="Screenshot of piechart and table"
-            borderRadius="md"
-            w="100%"
-            src="/pack-analytics.png"
-            boxShadow="lg"
-          />
+            <Box>
+              <Image
+                mx="auto"
+                alt="Screenshot of piechart and table"
+                borderRadius="md"
+                w="100%"
+                src="/pack-analytics.png"
+                boxShadow="lg"
+              />
+            </Box>
 
-          <DarkMode>
-            <Link
-              href="https://www.hikerherd.com/packs/share/cl1b8mi9n01882gnlqntpniox"
-              passHref
-            >
-              <Button as="a" size="lg">
-                Check out an example pack
-              </Button>
-            </Link>
-          </DarkMode>
+            <Box display={{ base: "block", lg: "none" }}>
+              <DarkMode>
+                <Link
+                  href="https://www.hikerherd.com/packs/share/cl1b8mi9n01882gnlqntpniox"
+                  passHref
+                >
+                  <Button as="a" size="lg">
+                    Check out an example pack
+                  </Button>
+                </Link>
+              </DarkMode>
+            </Box>
+          </SimpleGrid>
         </Container>
       </Box>
 
@@ -200,7 +225,7 @@ const HomePage: BlitzPage = () => {
         </Heading>
         <Text fontSize="lg" opacity="0.8" maxW="container.md" mx="auto">
           Need some inspiration? Search for packs and gear created by other
-          users and easily copy their gear into your own inventory or lists.
+          users.
         </Text>
 
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} mt={12}>
