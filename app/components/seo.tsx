@@ -7,11 +7,11 @@ type SeoProps = {
   description?: string | null;
 };
 
-const DEFAULT_TITLE = "hikerherd | the trail online";
+const DEFAULT_TITLE = "hikerherd - Manage your gear, get a lighter pack.";
 
 const DEFAULT_DESCRIPTION = `
-  Join hikerherd now and start using our free online tools designed to help you minimize
-  your pack weight and make your next adventure the best it can be!
+  hikerherd is for hikers, backpackers, and minimalists on the go. Our free gear management
+  tools will help you minimize your pack weight and organize your gear closet.
 `;
 
 const Seo: FC<SeoProps> = ({ title, description }) => (
