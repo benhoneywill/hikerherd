@@ -48,7 +48,7 @@ If you have something you desperately want to see in hikerherd then please start
 
 #### Like and share
 
-Drop the project a ⭐️ if you you like hikerherd, and share the app with anyone you think might like it.
+Drop the project a ⭐️ if you like hikerherd, and share the app with anyone you think might like it.
 
 #### Buy me a coffee
 
