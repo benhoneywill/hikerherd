@@ -1,6 +1,6 @@
 <h1 align="center">⛰️ hikerherd</h1>
 
-> hikerherd helps you plan your adventures and organize your gear while reducing the weight your pack.
+> hikerherd helps you plan your adventures and organize your gear while reducing the weight of your pack.
 
 ![screenshots](./public/readme-hero.png)
 
