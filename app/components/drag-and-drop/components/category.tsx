@@ -31,7 +31,7 @@ const Category: BlitzPage<CategoryProps> = ({
 }) => {
   const { categoryMenu, addItemToCategory, editCategory, hideCategoryTotals } =
     useContext(dragAndDropContext);
-  const { weightUnit } = useContext(userPreferencesContext);
+  const { weightUnit, compact } = useContext(userPreferencesContext);
 
   const bg = useColorModeValue("white", "gray.700");
   const borderColor = useColorModeValue("gray.200", "gray.800");
@@ -56,8 +56,9 @@ const Category: BlitzPage<CategoryProps> = ({
       bg={bg}
       borderColor={isDragging ? "blue.400" : borderColor}
       borderRadius="md"
-      mx={2}
-      width="290px"
+      mx={compact ? 0 : 2}
+      my={compact ? 2 : 0}
+      width={compact ? "100%" : "290px"}
       maxH="100%"
       direction="column"
     >
@@ -110,6 +111,8 @@ const Category: BlitzPage<CategoryProps> = ({
             size="sm"
             onClick={() => addItemToCategory(category.id)}
             colorScheme="blue"
+            variant={compact ? "outline" : "solid"}
+            height={compact ? "40px" : undefined}
           >
             Add
           </Button>

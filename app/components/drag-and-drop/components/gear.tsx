@@ -7,6 +7,7 @@ import { useContext, useMemo } from "react";
 import { Box } from "@chakra-ui/layout";
 
 import GearCard from "app/apps/gear/components/gear-card/components/gear-card";
+import userPreferencesContext from "app/apps/users/contexts/user-preferences-context";
 
 import dragAndDropContext from "../contexts/gear-dnd-context";
 
@@ -18,6 +19,7 @@ type GearProps = {
 
 const Gear: BlitzPage<GearProps> = ({ item, isDragging, provided }) => {
   const { itemMenu, editItem } = useContext(dragAndDropContext);
+  const { compact } = useContext(userPreferencesContext);
 
   const menu = useMemo(() => {
     return itemMenu && itemMenu(item);
@@ -47,6 +49,7 @@ const Gear: BlitzPage<GearProps> = ({ item, isDragging, provided }) => {
         menu={menu}
         imageUrl={item.gear.imageUrl}
         onHeadingClick={editItem && (() => editItem(item.id))}
+        compact={compact}
       />
     </Box>
   );

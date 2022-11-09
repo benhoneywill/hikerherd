@@ -16,6 +16,7 @@ const currentUserQuery = resolver.pipe(async (_, ctx) => {
       avatar_version: true,
       weightUnit: true,
       currency: true,
+      compact: true,
     },
   });
 

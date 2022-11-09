@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import type { GearCardBodyProps } from "./gear-card-body";
 
 import { Heading, HStack } from "@chakra-ui/layout";
 import { Image } from "@chakra-ui/image";
@@ -13,11 +14,16 @@ import { useColorModeValue } from "@chakra-ui/react";
 
 import Popover from "app/components/popover";
 
+import GearCardBody from "./gear-card-body";
+
 type GearCardHeaderProps = {
   menu?: JSX.Element | null;
   name: string;
   imageUrl?: string | null;
   onHeadingClick?: () => void;
+  body: GearCardBodyProps;
+  compact?: boolean;
+  disableCompact?: boolean;
 };
 
 const GearCardHeader: FC<GearCardHeaderProps> = ({
@@ -25,12 +31,23 @@ const GearCardHeader: FC<GearCardHeaderProps> = ({
   name,
   imageUrl,
   onHeadingClick,
+  body,
+  compact,
+  disableCompact,
 }) => {
   const avatarColor = useColorModeValue("gray.200", "gray.600");
 
+  const isCompact = compact && !disableCompact;
+
   return (
-    <HStack justify="space-between" p={2} pb={0}>
-      <HStack width={menu ? "calc(100% - 35px)" : "100%"}>
+    <HStack
+      justify="space-between"
+      p={2}
+      pb={isCompact ? 2 : 0}
+      maxW={"940px"}
+      w={compact ? "calc(100vw - 60px)" : undefined}
+    >
+      <HStack width={menu ? "calc(100% - 35px)" : "100%"} minW="150px">
         <Popover
           maxH="250px"
           display="flex"
@@ -57,7 +74,7 @@ const GearCardHeader: FC<GearCardHeaderProps> = ({
 
         <Heading
           size="xs"
-          noOfLines={2}
+          noOfLines={isCompact ? 1 : 2}
           cursor={onHeadingClick ? "pointer" : "inherit"}
           onClick={onHeadingClick}
         >
@@ -65,18 +82,22 @@ const GearCardHeader: FC<GearCardHeaderProps> = ({
         </Heading>
       </HStack>
 
-      {menu && (
-        <Menu isLazy>
-          <MenuButton
-            as={IconButton}
-            borderRadius="full"
-            icon={<BsThreeDotsVertical />}
-            size="xs"
-            aria-label="actions"
-          />
-          <Portal>{menu}</Portal>
-        </Menu>
-      )}
+      <HStack spacing={0} flexShrink={0}>
+        {isCompact && <GearCardBody {...body} />}
+
+        {menu && (
+          <Menu isLazy>
+            <MenuButton
+              as={IconButton}
+              borderRadius="full"
+              icon={<BsThreeDotsVertical />}
+              size="xs"
+              aria-label="actions"
+            />
+            <Portal>{menu}</Portal>
+          </Menu>
+        )}
+      </HStack>
     </HStack>
   );
 };

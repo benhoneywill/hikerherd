@@ -1,12 +1,11 @@
 import type { FC } from "react";
 import type { Currency } from "db";
 
-import { Box, Wrap, Flex } from "@chakra-ui/layout";
-import { useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/layout";
+import { useColorModeValue, useMediaQuery } from "@chakra-ui/react";
 
 import GearCardHeader from "./gear-card-header";
-import GearCardValues from "./gear-card-values";
-import GearCardTags from "./gear-card-tags";
+import GearCardBody from "./gear-card-body";
 
 type GearCardProps = {
   name: string;
@@ -22,6 +21,7 @@ type GearCardProps = {
   onHeadingClick?: () => void;
   menu?: JSX.Element | null;
   dragging?: boolean;
+  compact?: boolean;
 };
 
 const GearCard: FC<GearCardProps> = ({
@@ -38,11 +38,15 @@ const GearCard: FC<GearCardProps> = ({
   notes,
   menu = null,
   dragging = false,
+  compact = false,
   children,
 }) => {
   const bg = useColorModeValue("gray.50", "gray.800");
   const border = useColorModeValue("gray.100", "gray.900");
-  const inner = useColorModeValue("white", "gray.700");
+
+  const disableCompact = useMediaQuery("(max-width: 650px)")[0];
+
+  const isCompact = compact && !disableCompact;
 
   return (
     <Flex
@@ -58,31 +62,34 @@ const GearCard: FC<GearCardProps> = ({
         name={name}
         imageUrl={imageUrl}
         onHeadingClick={onHeadingClick}
+        compact={compact}
+        disableCompact={disableCompact}
+        body={{
+          weight,
+          price,
+          currency,
+          quantity,
+          worn,
+          consumable,
+          link,
+          notes,
+          compact: isCompact,
+        }}
       />
 
-      <Wrap
-        spacing={2}
-        p={2}
-        m={2}
-        borderRadius="md"
-        border="1px solid"
-        borderColor={border}
-        flexGrow={1}
-        bg={inner}
-      >
-        <GearCardValues
+      {!isCompact && (
+        <GearCardBody
           weight={weight}
           price={price}
           currency={currency}
           quantity={quantity}
-        />
-        <GearCardTags
           worn={worn}
           consumable={consumable}
           link={link}
           notes={notes}
+          compact={isCompact}
         />
-      </Wrap>
+      )}
 
       {children && (
         <Box p={2} pt={0} mt="auto">

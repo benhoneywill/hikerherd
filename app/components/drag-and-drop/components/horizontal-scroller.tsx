@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import { Box } from "@chakra-ui/layout";
 import {
@@ -9,8 +9,11 @@ import {
   useTheme,
 } from "@chakra-ui/react";
 
+import userPreferencesContext from "app/apps/users/contexts/user-preferences-context";
+
 const HorizontalScroller: FC = ({ children }) => {
   const theme = useTheme();
+  const { compact } = useContext(userPreferencesContext);
 
   const bgDragEnabled = useBreakpointValue({ base: false, md: true });
 
@@ -77,7 +80,7 @@ const HorizontalScroller: FC = ({ children }) => {
       css={bgDragEnabled && scrollBarStyles}
       ref={scroller}
       display="flex"
-      justifyContent="stretch"
+      justifyContent={compact ? "center" : "stretch"}
       onMouseDown={(e) => {
         if (scroller.current && bgDragEnabled) {
           setIsDown(true);
