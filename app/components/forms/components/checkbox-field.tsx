@@ -11,16 +11,18 @@ import {
 } from "@chakra-ui/form-control";
 import { HStack } from "@chakra-ui/layout";
 import { Switch } from "@chakra-ui/switch";
+import { FormHelperText } from "@chakra-ui/react";
 
 import getFieldErrorMessage from "../helpers/get-field-error-message";
 
 type CheckboxFieldProps = ComponentPropsWithoutRef<typeof Checkbox> & {
   name: string;
   label: string;
+  hint?: string;
 };
 
 const CheckboxField = forwardRef<HTMLInputElement, CheckboxFieldProps>(
-  ({ name, label, ...props }, ref) => {
+  ({ name, label, hint, ...props }, ref) => {
     const { input, meta } = useField(name, {
       type: "checkbox",
     });
@@ -44,7 +46,7 @@ const CheckboxField = forwardRef<HTMLInputElement, CheckboxFieldProps>(
             </FormLabel>
           )}
         </HStack>
-
+        {hint && <FormHelperText>{hint}</FormHelperText>}
         <FormErrorMessage>{error}</FormErrorMessage>
       </FormControl>
     );

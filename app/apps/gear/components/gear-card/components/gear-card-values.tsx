@@ -17,14 +17,15 @@ type GearCardValuesProps = {
   price?: number | null;
   currency?: Currency;
   quantity?: number;
+  compact?: boolean;
 };
 
 const GearCardValues: FC<GearCardValuesProps> = memo(
-  ({ weight, price, currency, quantity }) => {
+  ({ weight, price, currency, quantity, compact }) => {
     const { weightUnit } = useContext(userPreferencesContext);
 
     return (
-      <Wrap>
+      <Wrap direction={compact ? "row-reverse" : "row"}>
         <Tooltip label="weight">
           <Tag colorScheme="teal" size="sm">
             <TagLeftIcon as={FaWeightHanging} />

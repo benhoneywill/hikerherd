@@ -8,6 +8,7 @@ import { FORM_ERROR } from "final-form";
 
 import SimpleForm from "app/components/forms/components/simple-form";
 import SelectField from "app/components/forms/components/select-field";
+import CheckboxField from "app/components/forms/components/checkbox-field";
 
 import { Currency, WeightUnit } from "db";
 
@@ -23,7 +24,11 @@ const UserPreferencesForm: BlitzPage = () => {
   return (
     <SimpleForm
       schema={updatePreferencesSchema}
-      initialValues={{ weightUnit: user?.weightUnit, currency: user?.currency }}
+      initialValues={{
+        weightUnit: user?.weightUnit,
+        currency: user?.currency,
+        compact: user?.compact,
+      }}
       submitText="Save preferences"
       onSubmit={async (values) => {
         try {
@@ -52,6 +57,12 @@ const UserPreferencesForm: BlitzPage = () => {
             <option value={Currency.GBP}>Pounds (£)</option>
             <option value={Currency.EUR}>Euros (€)</option>
           </SelectField>
+
+          <CheckboxField
+            name="compact"
+            label="Enable compact view"
+            hint="When viewing a pack or your inventory in compact mode you will see a vertical view with more information density than the default."
+          />
         </Fragment>
       )}
     />

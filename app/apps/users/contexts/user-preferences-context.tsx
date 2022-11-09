@@ -7,6 +7,7 @@ type UserPreferencesContext = {
   toggleWeightUnits: () => void;
   currency: Currency;
   setCurrency: (currency: Currency) => void;
+  compact: boolean;
 };
 
 const userPreferencesContext = createContext<UserPreferencesContext>(

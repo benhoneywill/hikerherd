@@ -39,6 +39,7 @@ const UserPreferencesProvider: FC = ({ children }) => {
         toggleWeightUnits,
         currency,
         setCurrency,
+        compact: !!user?.compact,
       }}
     >
       {children}
