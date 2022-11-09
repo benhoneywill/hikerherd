@@ -51,6 +51,7 @@ const GearCardBody: FC<GearCardBodyProps> = ({
         price={price}
         currency={currency}
         quantity={quantity}
+        compact={compact}
       />
       <GearCardTags
         worn={worn}
