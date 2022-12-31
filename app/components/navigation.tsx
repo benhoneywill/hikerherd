@@ -139,14 +139,12 @@ const Navigation: FC = () => {
             </NavigationExternalItem>
           )}
 
-          {process.env.BLITZ_PUBLIC_CONTACT_LINK && (
-            <NavigationExternalItem
-              href={process.env.BLITZ_PUBLIC_CONTACT_LINK}
-              icon={FcVoicePresentation}
-            >
-              Contact
-            </NavigationExternalItem>
-          )}
+          <NavigationItem
+            icon={FcVoicePresentation}
+            route={Routes.ContactPage()}
+          >
+            Contact me
+          </NavigationItem>
 
           {process.env.BLITZ_PUBLIC_SUPPORT_LINK && (
             <NavigationExternalItem

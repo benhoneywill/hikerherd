@@ -79,11 +79,11 @@ const ImportPackCsvForm: FC<ImportPackCsvFormProps> = ({
           <Text>
             <strong>Your CSV file must be in the correct format.</strong>{" "}
             <Link
-              href="https://blog.hikerherd.com/the-csv-import-guide/"
+              href="https://docs.google.com/spreadsheets/d/1WoYCmv7nu9M1f-PMVqdQ1Za0FTyHvKJxWcJtww9r6II/edit?usp=sharing"
               isExternal
               textDecoration="underline"
             >
-              Read the importing guide
+              View the example spreadsheet
             </Link>{" "}
             for more details.
           </Text>

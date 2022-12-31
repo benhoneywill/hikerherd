@@ -6,8 +6,6 @@
 
 [Go to hikerherd](https://www.hikerherd.com) to start managing your gear.
 
-[Read the blog](https://blog.hikerherd.com) or [subscribe to the newsletter](https://blog.hikerherd.com/#/portal/signup) to stay up to date with hikerherd development.
-
 ## Developer quick start
 
 ### Prerequisites
