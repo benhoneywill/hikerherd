@@ -145,14 +145,12 @@ const StartPage: BlitzPage = () => {
             />
           )}
 
-          {process.env.BLITZ_PUBLIC_CONTACT_LINK && (
-            <IndexCard
-              icon={FcVoicePresentation}
-              href={process.env.BLITZ_PUBLIC_CONTACT_LINK}
-              title="Contact me"
-              text="Leave me feedback or ask a question"
-            />
-          )}
+          <IndexCard
+            icon={FcVoicePresentation}
+            href={Routes.ContactPage()}
+            title="Contact me"
+            text="Leave me feedback or ask a question"
+          />
 
           {process.env.BLITZ_PUBLIC_SUPPORT_LINK && (
             <IndexCard
