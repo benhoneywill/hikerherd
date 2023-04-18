@@ -43,6 +43,9 @@ const SignupForm: FC<SignupFormProps> = ({ onSuccess }) => {
     };
   };
 
+  // Not currently accepting new signups
+  return null;
+
   return (
     <SimpleForm
       schema={signupSchema}

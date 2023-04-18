@@ -7,7 +7,7 @@ import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/toast";
 
 import BoxLayout from "app/layouts/box-layout";
-import TextDivider from "app/components/text-divider";
+// import TextDivider from "app/components/text-divider";
 
 import SignupForm from "../components/signup-form";
 
@@ -28,7 +28,7 @@ const SignupPage: BlitzPage = () => {
         }}
       />
 
-      <TextDivider>Or</TextDivider>
+      {/* <TextDivider>Or</TextDivider> */}
       <Link href={Routes.LoginPage()} passHref>
         <Button size="lg" as="a">
           Log in
@@ -42,7 +42,7 @@ SignupPage.redirectAuthenticatedTo = Routes.StartPage();
 SignupPage.getLayout = (page) => (
   <BoxLayout
     title="Sign up"
-    description="You are at the trailhead, time to take your first step."
+    description="Hikerherd is not currently accepting new signups."
   >
     {page}
   </BoxLayout>
