@@ -10,8 +10,6 @@
 
 ---
 
-[Go to hikerherd](https://www.hikerherd.com) to start managing your gear.
-
 ## Developer quick start
 
 ### Prerequisites
